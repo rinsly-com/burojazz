@@ -1,0 +1,66 @@
+{
+  // ===========================================================================
+  // PAYLOAD CMS worker — runs on dev (local) and accp only.
+  // Production is NOT a Payload worker: it is a fully static site deployed via
+  // wrangler.static.jsonc. See docs/DEPLOYMENT.md.
+  // ===========================================================================
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2025-08-15",
+  "compatibility_flags": [
+    // Enable Node.js APIs in the Worker runtime.
+    // https://developers.cloudflare.com/workers/configuration/compatibility-flags/#nodejs-compatibility-flag
+    "nodejs_compat",
+    // Allow the app to fetch public URLs.
+    // https://developers.cloudflare.com/workers/configuration/compatibility-flags/#global-fetch-strictly-public
+    "global_fetch_strictly_public",
+  ],
+
+  // ---------------------------------------------------------------------------
+  // Top-level config = the "dev" environment used by `pnpm dev`. The D1 binding
+  // is served from a local SQLite mock under .wrangler/state. CLOUDFLARE_ENV is
+  // left unset for dev.
+  // ---------------------------------------------------------------------------
+  "name": "burojazz-dev",
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS",
+  },
+  "d1_databases": [
+    {
+      "binding": "D1",
+      "database_name": "burojazz-dev",
+      "database_id": "PLACEHOLDER_DEV_DB_ID",
+      "remote": true,
+    },
+  ],
+  // R2 is prepared but not enabled (it costs money). Uncomment + create the
+  // bucket to turn on media storage; payload.config.ts activates the R2 adapter
+  // automatically once the binding exists.
+  // "r2_buckets": [
+  //   { "binding": "R2", "bucket_name": "burojazz-dev" },
+  // ],
+
+  "env": {
+    // ACCP — the full Payload CMS (admin + API + D1). This is the editor
+    // environment and the "default preview". Deploy: CLOUDFLARE_ENV=accp pnpm run deploy
+    "accp": {
+      "name": "burojazz-accp",
+      "assets": {
+        "directory": ".open-next/assets",
+        "binding": "ASSETS",
+      },
+      "d1_databases": [
+        {
+          "binding": "D1",
+          "database_name": "burojazz-accp",
+          "database_id": "e1347ebb-09ec-483f-aa78-361e7ba9726f",
+          "remote": true,
+        },
+      ],
+      // "r2_buckets": [
+      //   { "binding": "R2", "bucket_name": "burojazz-accp" },
+      // ],
+    },
+  },
+}
