@@ -1,3 +1,6 @@
+// @vitest-environment node
+// Local API tests load the D1/wrangler config, which needs a real Node runtime
+// (jsdom breaks esbuild's Uint8Array invariant used by wrangler).
 import { getPayload, Payload } from 'payload'
 import config from '@/payload.config'
 

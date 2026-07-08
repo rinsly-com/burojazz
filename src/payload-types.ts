@@ -70,6 +70,7 @@ export interface Config {
     users: User;
     media: Media;
     pages: Page;
+    comments: Comment;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -80,6 +81,7 @@ export interface Config {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     pages: PagesSelect<false> | PagesSelect<true>;
+    comments: CommentsSelect<false> | CommentsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -125,6 +127,10 @@ export interface UserAuthOperations {
  */
 export interface User {
   id: number;
+  /**
+   * Authors edit & submit for review. Reviewers approve (Ready) and publish.
+   */
+  roles: ('admin' | 'reviewer' | 'author')[];
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -172,9 +178,9 @@ export interface Page {
   title: string;
   slug: string;
   /**
-   * Editorial stage. When the page is ready, set Status to Published to push the site to production.
+   * Advanced with the action button (Submit for review → Approve → Publish).
    */
-  reviewState: 'draft' | 'in_review';
+  workflowStatus: 'draft' | 'review' | 'ready';
   content?: {
     root: {
       type: string;
@@ -193,6 +199,31 @@ export interface Page {
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "comments".
+ */
+export interface Comment {
+  id: number;
+  page: number | Page;
+  /**
+   * The page version this comment was made against.
+   */
+  versionId?: string | null;
+  /**
+   * Optional dot-path of the field the comment targets (for inline comments).
+   */
+  fieldPath?: string | null;
+  body: string;
+  author?: (number | null) | User;
+  resolved?: boolean | null;
+  /**
+   * Set to reply within a thread.
+   */
+  parent?: (number | null) | Comment;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -229,6 +260,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'pages';
         value: number | Page;
+      } | null)
+    | ({
+        relationTo: 'comments';
+        value: number | Comment;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -277,6 +312,7 @@ export interface PayloadMigration {
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
+  roles?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -319,11 +355,26 @@ export interface MediaSelect<T extends boolean = true> {
 export interface PagesSelect<T extends boolean = true> {
   title?: T;
   slug?: T;
-  reviewState?: T;
+  workflowStatus?: T;
   content?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "comments_select".
+ */
+export interface CommentsSelect<T extends boolean = true> {
+  page?: T;
+  versionId?: T;
+  fieldPath?: T;
+  body?: T;
+  author?: T;
+  resolved?: T;
+  parent?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

@@ -1,50 +1,69 @@
 import type { CollectionConfig } from 'payload'
 
+import { authenticated, reviewerOnly, isReviewer } from '../access/roles'
+import { enforceWorkflow } from '../hooks/enforceWorkflow'
 import {
   triggerStaticDeployAfterChange,
   triggerStaticDeployAfterDelete,
 } from '../hooks/triggerStaticDeploy'
+import type { User } from '@/payload-types'
 
 /**
- * Pages — the seed content type that exercises the editorial workflow:
+ * Pages — content with a per-document PR-style review workflow:
  *
- *   draft  ->  in_review (staging)  ->  published (pushed to prod)
+ *   Draft → Review → Ready → Published
  *
- * `reviewState` tracks the editorial stage while the document is still a draft.
- * Publishing (Payload's Status -> published) is the final "push": it flips
- * `_status` to `published` and fires the Cloudflare Deploy Hook, which rebuilds
- * the static production site from published content.
+ * `workflowStatus` tracks the editorial pipeline while the document is a draft;
+ * **Published** is Payload's native publish (`_status: published`), which fires
+ * the Cloudflare Deploy Hook to rebuild the static production site. Transition
+ * and publish rules are enforced server-side by `enforceWorkflow`.
  */
 export const Pages: CollectionConfig = {
   slug: 'pages',
   admin: {
     useAsTitle: 'title',
-    defaultColumns: ['title', 'slug', 'reviewState', '_status', 'updatedAt'],
+    defaultColumns: ['title', 'slug', 'workflowStatus', 'updatedAt'],
+    components: {
+      edit: {
+        // Stage-aware action button (Submit for review / Approve / Publish).
+        PublishButton: '/components/WorkflowAction#WorkflowAction',
+      },
+    },
   },
   access: {
-    // Public (unauthenticated) reads are limited to published documents; the
-    // static prod build fetches over HTTP with no auth, so it only ever sees
-    // published content. Editors (authenticated) see drafts too.
+    // Public reads see published only; the static build fetches unauthenticated.
     read: ({ req: { user } }) => {
       if (user) return true
       return { _status: { equals: 'published' } }
     },
-    create: ({ req: { user } }) => Boolean(user),
-    update: ({ req: { user } }) => Boolean(user),
-    delete: ({ req: { user } }) => Boolean(user),
+    create: authenticated,
+    update: authenticated,
+    delete: reviewerOnly,
   },
   versions: {
     drafts: {
-      // Flip to `{ interval: 100 }` later to enable autosave drafts.
       autosave: false,
     },
-    maxPerDoc: 25,
+    maxPerDoc: 50,
   },
   hooks: {
+    beforeChange: [enforceWorkflow],
     afterChange: [triggerStaticDeployAfterChange],
     afterDelete: [triggerStaticDeployAfterDelete],
   },
   fields: [
+    {
+      // Review status card — status, unpublished-changes flag, and a
+      // "compare with production" link into the native version diff.
+      name: 'reviewStatus',
+      type: 'ui',
+      admin: {
+        position: 'sidebar',
+        components: {
+          Field: '/components/ReviewPanel#ReviewPanel',
+        },
+      },
+    },
     {
       name: 'title',
       type: 'text',
@@ -59,24 +78,44 @@ export const Pages: CollectionConfig = {
       admin: { position: 'sidebar' },
     },
     {
-      name: 'reviewState',
+      name: 'workflowStatus',
+      label: 'Stage',
       type: 'select',
       required: true,
       defaultValue: 'draft',
       options: [
         { label: 'Draft', value: 'draft' },
-        { label: 'In review / staging', value: 'in_review' },
+        { label: 'Review', value: 'review' },
+        { label: 'Ready', value: 'ready' },
       ],
       admin: {
         position: 'sidebar',
-        description:
-          'Editorial stage. When the page is ready, set Status to Published to push the site to production.',
+        // Driven by the stage-aware action button, not edited directly.
+        readOnly: true,
+        description: 'Advanced with the action button (Submit for review → Approve → Publish).',
+        components: {
+          // Colored stage chip in the list/table view.
+          Cell: '/components/WorkflowStatusCell#WorkflowStatusCell',
+        },
       },
     },
     {
       name: 'content',
       type: 'richText',
     },
+    {
+      // PR-style review comments for this page (see CommentsPanel).
+      name: 'reviewComments',
+      type: 'ui',
+      admin: {
+        components: {
+          Field: '/components/CommentsPanel#CommentsPanel',
+        },
+      },
+    },
   ],
   timestamps: true,
 }
+
+/** Whether the given user may publish this collection (used by the UI too). */
+export const canPublishPages = (user: User | null | undefined): boolean => isReviewer(user)

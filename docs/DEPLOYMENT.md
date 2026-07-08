@@ -28,17 +28,28 @@ architecture on Cloudflare.
 
 ---
 
-## Content workflow (draft → in review → published)
+## Content workflow (Draft → Review → Ready → Published)
 
-The `pages` collection has drafts/versions enabled plus a `reviewState` field:
+The `pages` collection has drafts/versions enabled plus a `workflowStatus` field,
+with rules enforced server-side by `src/hooks/enforceWorkflow.ts`:
 
-1. **Draft** — `reviewState = draft`, status `draft`. Work in progress.
-2. **In review / staging** — `reviewState = in_review`, status still `draft`.
-3. **Published (pushed)** — set **Status → Published**. This flips `_status` to
-   `published` and fires the deploy hook, rebuilding production.
+1. **Draft** — `workflowStatus = draft`. Work in progress.
+2. **Review** — author moves it to `review` to request review.
+3. **Ready** — a **reviewer** approves it (`ready`). Only reviewers can do this.
+4. **Published** — a **reviewer** publishes (Status → Published, i.e. `_status`
+   set to `published`). This is only allowed from **Ready**, and fires the deploy
+   hook to rebuild production. Publishing resets `workflowStatus` to `draft` for
+   the next edit cycle.
+
+### Roles (`users.roles`)
+
+- **author** — create/edit content, submit Draft → Review.
+- **reviewer** — everything an author can do, plus approve (Ready) and Publish.
+- **admin** — everything, plus manage user roles.
 
 The public frontend and the static build only ever read **published** documents
-(enforced by the collection's `read` access control).
+(enforced by the collection's `read` access control). PR-style review comments
+live in the `comments` collection.
 
 ---
 
