@@ -2,6 +2,7 @@ import Link from 'next/link'
 
 import { ArrowIcon } from '@/components/frontend/ui/ArrowIcon'
 import { Button } from '@/components/frontend/ui/Button'
+import { Buttons, hrefFor } from '@/components/frontend/ui/CMSLink'
 import type { Page } from '@/payload-types'
 
 type Props = Extract<NonNullable<Page['layout']>[number], { blockType: 'hero' }>
@@ -14,26 +15,20 @@ type Props = Extract<NonNullable<Page['layout']>[number], { blockType: 'hero' }>
  * top padding. Server component — decorative shapes are pure CSS/images.
  */
 export function Hero(props: Props) {
-  const title = props.title ?? 'BURO J.A.Z.Z.'
-  const subtitle = props.subtitle ?? 'Jeugdhulp en Ambulante Zorg met Zorgzaamheid'
+  const title = props.header?.title ?? 'BURO J.A.Z.Z.'
+  const subtitle = props.header?.subtitle ?? 'Jeugdhulp en Ambulante Zorg met Zorgzaamheid'
   const description =
-    props.description ??
+    props.header?.intro ??
     'Wij bieden ambulante jeugdhulp en jeugdhulp met verblijf, gericht op behandeling en begeleiding.'
-  const primaryCta = {
-    label: props.primaryCta?.label ?? 'Direct aanmelden',
-    url: props.primaryCta?.url ?? '/aanmelden',
-  }
-  const secondaryCta = {
-    label: props.secondaryCta?.label ?? 'Neem contact op',
-    url: props.secondaryCta?.url ?? '/contact',
-  }
+  const certHref = props.cert?.link ? hrefFor(props.cert.link) : '#'
   const cert = {
     title: props.cert?.title ?? 'Kiwa gecertificeerd',
     text:
       props.cert?.text ??
       'Buro J.A.Z.Z. is Kiwa gecertificeerd en voldoet aan de kwaliteitseisen voor jeugdhulp.',
-    linkLabel: props.cert?.linkLabel ?? 'Lees meer',
-    linkUrl: props.cert?.linkUrl ?? '/over-ons',
+    linkLabel: props.cert?.link?.label ?? 'Lees meer',
+    linkUrl: certHref === '#' ? '/over-ons' : certHref,
+    linkNewTab: props.cert?.link?.newTab ?? false,
   }
 
   return (
@@ -99,10 +94,14 @@ export function Hero(props: Props) {
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-6">
-            <Button label={primaryCta.label} href={primaryCta.url} />
-            <Button label={secondaryCta.label} href={secondaryCta.url} variant="secondary" />
-          </div>
+          {props.buttons?.length ? (
+            <Buttons buttons={props.buttons} />
+          ) : (
+            <div className="flex flex-wrap items-center gap-6">
+              <Button label="Direct aanmelden" href="/aanmelden" />
+              <Button label="Neem contact op" href="/contact" variant="secondary" />
+            </div>
+          )}
 
           {/* Kiwa certification callout card */}
           <div className="max-w-[420px] rounded-[32px] bg-white p-6 shadow-[0px_9px_26.9px_0px_rgba(0,0,0,0.1)]">
@@ -110,6 +109,8 @@ export function Hero(props: Props) {
             <p className="mt-2 text-sm font-medium leading-normal text-ink/80">{cert.text}</p>
             <Link
               href={cert.linkUrl}
+              target={cert.linkNewTab ? '_blank' : undefined}
+              rel={cert.linkNewTab ? 'noopener noreferrer' : undefined}
               className="mt-3 inline-flex items-center gap-2.5 text-sm font-medium text-brand transition-colors hover:text-[#3fadb7]"
             >
               {cert.linkLabel}

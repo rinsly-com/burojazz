@@ -127,9 +127,9 @@ function PersonCard({
  * with a portrait fading into the card and phone/mail roundels.
  */
 export function ContactPersons(props: Props) {
-  const eyebrow = props.eyebrow ?? 'Kom in contact'
-  const title = props.title ?? 'Jouw contactpersonen'
-  const subtitle = props.subtitle ?? 'Wij staan altijd voor u klaar.'
+  const eyebrow = props.header?.eyebrow ?? 'Kom in contact'
+  const title = props.header?.title ?? 'Jouw contactpersonen'
+  const subtitle = props.header?.subtitle ?? 'Wij staan altijd voor u klaar.'
   const people = props.people?.length ? props.people : DEFAULT_PEOPLE
 
   return (
@@ -146,7 +146,7 @@ export function ContactPersons(props: Props) {
           <p className="max-w-[549px] text-sm font-medium text-ink">{subtitle}</p>
         </div>
 
-        <div className="flex w-full flex-col items-center justify-center gap-6 md:flex-row md:items-stretch">
+        <div className="flex w-full flex-col items-center justify-center gap-6 md:flex-row md:flex-wrap md:items-stretch">
           {people.map((person, i) => (
             <PersonCard
               key={('id' in person && person.id) || `${person.name}-${i}`}

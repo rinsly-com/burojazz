@@ -1,6 +1,7 @@
 import type { Page } from '@/payload-types'
 
 import { Button } from '@/components/frontend/ui/Button'
+import { Buttons } from '@/components/frontend/ui/CMSLink'
 import { Eyebrow } from '@/components/frontend/ui/Eyebrow'
 import { Section } from '@/components/frontend/ui/Section'
 
@@ -65,10 +66,9 @@ function MailIcon() {
  * eyebrow pill + title + body copy + CTAs right. Stacks on mobile.
  */
 export function About(props: Props) {
-  const eyebrow = props.eyebrow ?? 'Wie wij zijn'
-  const title = props.title ?? DEFAULT_TITLE
+  const eyebrow = props.header?.eyebrow ?? 'Wie wij zijn'
+  const title = props.header?.title ?? DEFAULT_TITLE
   const email = props.email ?? 'contact@burojazz.nl'
-  const ctaLabel = props.ctaLabel ?? 'Direct aanmelden'
 
   const bodyParagraphs = props.body
     ? props.body.split(/\n\s*\n/).filter((p) => p.trim().length > 0)
@@ -128,10 +128,14 @@ export function About(props: Props) {
               )}
             </div>
           </div>
-          <div className="flex flex-wrap items-center gap-6">
-            <Button label={ctaLabel} href="/aanmelden" />
-            <Button label="Neem contact op" href="/contact" variant="secondary" />
-          </div>
+          {props.buttons?.length ? (
+            <Buttons buttons={props.buttons} />
+          ) : (
+            <div className="flex flex-wrap items-center gap-6">
+              <Button label="Direct aanmelden" href="/aanmelden" />
+              <Button label="Neem contact op" href="/contact" variant="secondary" />
+            </div>
+          )}
         </div>
       </div>
     </Section>

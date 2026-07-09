@@ -5,6 +5,8 @@
  * Run with:  pnpm payload run scripts/seed-home.ts
  *
  * Idempotent: re-running updates the existing page/globals and re-publishes.
+ * If the database has no users (fresh local DB), a dev admin is created:
+ * dev@burojazz.local / burojazz-dev — change or replace it via /admin.
  */
 import { getPayload } from 'payload'
 
@@ -13,26 +15,42 @@ import type { Page, User } from '../src/payload-types'
 
 type Layout = NonNullable<Page['layout']>
 
+// Buttons/links use the shared link shape. Internal pages for these routes
+// don't exist yet, so they are seeded as external (relative) URLs — switch to
+// type 'internal' + a page reference once the target pages exist.
+const extLink = (label: string, url: string, variant: 'primary' | 'secondary' = 'primary') => ({
+  label,
+  variant,
+  type: 'external' as const,
+  url,
+  newTab: false,
+})
+
 const layout: Layout = [
   {
     blockType: 'hero',
-    title: 'BURO J.A.Z.Z.',
-    subtitle: 'Jeugdhulp en Ambulante Zorg met Zorgzaamheid',
-    description:
-      'Wij bieden ambulante jeugdhulp en jeugdhulp met verblijf, gericht op behandeling en begeleiding.',
-    primaryCta: { label: 'Direct aanmelden', url: '/aanmelden' },
-    secondaryCta: { label: 'Neem contact op', url: '/contact' },
+    header: {
+      title: 'BURO J.A.Z.Z.',
+      subtitle: 'Jeugdhulp en Ambulante Zorg met Zorgzaamheid',
+      intro:
+        'Wij bieden ambulante jeugdhulp en jeugdhulp met verblijf, gericht op behandeling en begeleiding.',
+    },
+    buttons: [
+      extLink('Direct aanmelden', '/aanmelden', 'primary'),
+      extLink('Neem contact op', '/contact', 'secondary'),
+    ],
     cert: {
       title: 'Gecertificeerde kwaliteit',
       text: 'Buro J.A.Z.Z. is Kiwa gecertificeerd voor betrouwbare en veilige zorg.',
-      linkLabel: 'Meer informatie',
-      linkUrl: '/certificaat',
+      link: extLink('Meer informatie', '/certificaat', 'secondary'),
     },
   },
   {
     blockType: 'services',
-    eyebrow: 'Hulpverleningsvormen',
-    title: 'Ambulante jeugdhulp en verblijf, gericht op behandeling en begeleiding.',
+    header: {
+      eyebrow: 'Hulpverleningsvormen',
+      title: 'Ambulante jeugdhulp en verblijf, gericht op behandeling en begeleiding.',
+    },
     tabs: [
       { label: 'Behandeling' },
       { label: 'Begeleiding' },
@@ -45,55 +63,47 @@ const layout: Layout = [
         title: 'Cognitieve Gedragstherapie (CGT)',
         description:
           'Korte, doelgerichte behandeling om negatieve denk- en gedragspatronen te veranderen.',
-        linkLabel: 'Lees verder',
-        linkUrl: '#',
+        link: extLink('Lees verder', '#', 'secondary'),
       },
       {
         number: '02',
         title: 'Trauma behandeling',
-        description:
-          'Hulp bij het verwerken van ingrijpende ervaringen in een veilige setting.',
-        linkLabel: 'Lees verder',
-        linkUrl: '#',
+        description: 'Hulp bij het verwerken van ingrijpende ervaringen in een veilige setting.',
+        link: extLink('Lees verder', '#', 'secondary'),
       },
       {
         number: '03',
         title: 'Systeemtherapie',
         description: 'Behandeling die relaties en gezinsdynamiek centraal stelt.',
-        linkLabel: 'Lees verder',
-        linkUrl: '#',
+        link: extLink('Lees verder', '#', 'secondary'),
       },
       {
         number: '04',
         title: 'Psychomotore Therapie (PMT)',
-        description:
-          'Therapie gericht op lichaam, gedrag en emotie via beweging en ervaring.',
-        linkLabel: 'Lees verder',
-        linkUrl: '#',
+        description: 'Therapie gericht op lichaam, gedrag en emotie via beweging en ervaring.',
+        link: extLink('Lees verder', '#', 'secondary'),
       },
       {
         number: '05',
         title: 'Theraplay',
         description: 'Speelse therapie om de band tussen ouder en kind te verbeteren.',
-        linkLabel: 'Lees verder',
-        linkUrl: '#',
+        link: extLink('Lees verder', '#', 'secondary'),
       },
     ],
   },
   {
     blockType: 'about',
-    eyebrow: 'Wie wij zijn',
-    title: 'Ook Buro J.A.Z.Z heeft goede zorg nodig',
-    body:
-      'Andres en Egbert zijn de bestuurders van Stichting Buro J.A.Z.Z. Vanuit de kern van waar Buro J.A.Z.Z. voor staat – Jeugdhulp en Ambulante Zorg met Zorgzaamheid – zetten zij zich dagelijks in voor kwalitatieve en verantwoorde zorg. Met hun jarenlange ervaring als jeugdhulpverleners staan zij dicht bij de praktijk en ondersteunen zij begeleiders en behandelaren in hun werk.',
+    header: {
+      eyebrow: 'Wie wij zijn',
+      title: 'Ook Buro J.A.Z.Z heeft goede zorg nodig',
+    },
+    body: 'Andres en Egbert zijn de bestuurders van Stichting Buro J.A.Z.Z. Vanuit de kern van waar Buro J.A.Z.Z. voor staat – Jeugdhulp en Ambulante Zorg met Zorgzaamheid – zetten zij zich dagelijks in voor kwalitatieve en verantwoorde zorg. Met hun jarenlange ervaring als jeugdhulpverleners staan zij dicht bij de praktijk en ondersteunen zij begeleiders en behandelaren in hun werk.',
     email: 'contact@burojazz.nl',
-    // NOTE: About.tsx hardcodes the CTA href to /aanmelden, so this label
-    // must describe that destination (the block has no ctaUrl field yet).
-    ctaLabel: 'Direct aanmelden',
+    buttons: [extLink('Direct aanmelden', '/aanmelden', 'primary')],
   },
   {
     blockType: 'coreValues',
-    title: 'Dit zijn onze kernwaarden',
+    header: { title: 'Dit zijn onze kernwaarden' },
     values: [
       { label: 'Zorgzaam' },
       { label: 'Eerlijk' },
@@ -107,30 +117,29 @@ const layout: Layout = [
   },
   {
     blockType: 'visionMission',
-    title: 'Waar wij in geloven, en hoe wij daar naar toe werken',
+    header: { title: 'Waar wij in geloven, en hoe wij daar naar toe werken' },
     items: [
       {
         heading: 'Onze visie',
-        body:
-          'Wij geloven in een inclusieve samenleving waarin ieder kind en iedere jongere veilig kan opgroeien en volwaardig kan meedoen, ongeacht achtergrond of beperking.',
+        body: 'Wij geloven in een inclusieve samenleving waarin ieder kind en iedere jongere veilig kan opgroeien en volwaardig kan meedoen, ongeacht achtergrond of beperking.',
       },
       {
         heading: 'Onze missie',
-        body:
-          'Wij bieden jeugdhulp die aansluit bij de leefwereld van jeugdigen en hun gezin: dichtbij, betrouwbaar en met oprechte aandacht, zodat zij weer grip krijgen op hun eigen toekomst.',
+        body: 'Wij bieden jeugdhulp die aansluit bij de leefwereld van jeugdigen en hun gezin: dichtbij, betrouwbaar en met oprechte aandacht, zodat zij weer grip krijgen op hun eigen toekomst.',
       },
       {
         heading: 'Onze kernwaarden',
-        body:
-          'Zorgzaamheid, eerlijkheid en presentie vormen de basis van ons handelen. We sluiten aan bij wat nodig is, werken passend en integraal, en willen daarin betrouwbaar, vernieuwend en een voorbeeld zijn.',
+        body: 'Zorgzaamheid, eerlijkheid en presentie vormen de basis van ons handelen. We sluiten aan bij wat nodig is, werken passend en integraal, en willen daarin betrouwbaar, vernieuwend en een voorbeeld zijn.',
       },
     ],
   },
   {
     blockType: 'contactPersons',
-    eyebrow: 'Kom in contact',
-    title: 'Jouw contactpersonen',
-    subtitle: 'Wij staan altijd voor u klaar.',
+    header: {
+      eyebrow: 'Kom in contact',
+      title: 'Jouw contactpersonen',
+      subtitle: 'Wij staan altijd voor u klaar.',
+    },
     people: [
       { name: 'Egbert de Boer', role: 'Bestuurder' },
       { name: 'Andres van Eeten', role: 'Bestuurder' },
@@ -138,72 +147,70 @@ const layout: Layout = [
   },
   {
     blockType: 'complaints',
-    eyebrow: 'Stap voor stap',
-    title: 'Klachtenregeling',
-    intro:
-      'Hieronder de klachtenprocedure Wkkgz in het kort... Op de achterzijde vindt u meer toelichting.',
+    header: {
+      eyebrow: 'Stap voor stap',
+      title: 'Klachtenregeling',
+      intro:
+        'Hieronder de klachtenprocedure Wkkgz in het kort... Op de achterzijde vindt u meer toelichting.',
+    },
     steps: [
       {
         title: 'Maak uw klacht bespreekbaar',
-        text:
-          'Praat met uw zorgverlener over uw klacht, misschien kunt u het samen oplossen.',
+        text: 'Praat met uw zorgverlener over uw klacht, misschien kunt u het samen oplossen.',
       },
       {
         title: 'Klacht indienen',
-        text:
-          'Stuur Klachtenportaal Zorg (KPZ) uw klacht. KPZ leest uw klacht en, als uw zorgaanbieder aangesloten is bij KPZ, neemt een klachtenfunctionaris contact met u op.',
+        text: 'Stuur Klachtenportaal Zorg (KPZ) uw klacht. KPZ leest uw klacht en, als uw zorgaanbieder aangesloten is bij KPZ, neemt een klachtenfunctionaris contact met u op.',
       },
       {
         title: 'Klachtbrief maken',
-        text:
-          'De klachtenfunctionaris beschrift uw klacht in de klachtbrief, deze wordt, na uw akkoord, aan de zorgaanbieder gestuurd. De zorgaanbieder reageert naar de klachtenfunctionaris. Deze bespreekt de reactie met u.',
+        text: 'De klachtenfunctionaris beschrift uw klacht in de klachtbrief, deze wordt, na uw akkoord, aan de zorgaanbieder gestuurd. De zorgaanbieder reageert naar de klachtenfunctionaris. Deze bespreekt de reactie met u.',
       },
       {
         title: 'Reactie zorgaanbieder',
-        text:
-          'De zorgaanbieder schrijft alle gemaakte afspraken op in een brief. De klachtenfunctionaris schrift een afsluitende brief.',
+        text: 'De zorgaanbieder schrijft alle gemaakte afspraken op in een brief. De klachtenfunctionaris schrift een afsluitende brief.',
       },
     ],
   },
   {
     blockType: 'social',
-    title: 'Samen in verbinding, ook online',
+    header: {
+      title: 'Samen in verbinding, ook online',
+      subtitle: 'We delen inzichten, verhalen en inspiratie uit onze dagelijkse praktijk.',
+    },
     handle: '@buro.jazz',
-    subtitle: 'We delen inzichten, verhalen en inspiratie uit onze dagelijkse praktijk.',
-    linkLabel: 'Volg ons op Instagram',
-    linkUrl: 'https://instagram.com/buro.jazz',
+    link: {
+      ...extLink('Volg ons op Instagram', 'https://instagram.com/buro.jazz', 'primary'),
+      newTab: true,
+    },
   },
   {
     blockType: 'vacancies',
-    title: 'Word onderdeel van ons team',
-    intro: 'Samen aan de missie en visie werken van Buro J.A.Z.Z.?',
+    header: {
+      title: 'Word onderdeel van ons team',
+      intro: 'Samen aan de missie en visie werken van Buro J.A.Z.Z.?',
+    },
     cards: [
       {
         title: 'Ambulant Jeugdhulpverlener',
         location: 'Montfoort',
         hours: 'Voltijd of deeltijd',
-        text:
-          'Begeleid jeugdigen en gezinnen in hun eigen omgeving en bouw mee aan zorg met zorgzaamheid.',
-        linkLabel: 'Bekijk vacature',
-        linkUrl: '#',
+        text: 'Begeleid jeugdigen en gezinnen in hun eigen omgeving en bouw mee aan zorg met zorgzaamheid.',
+        link: extLink('Bekijk vacature', '#', 'secondary'),
       },
       {
         title: 'Gedragswetenschapper',
         location: 'Montfoort',
         hours: 'Voltijd of deeltijd',
-        text:
-          'Versterk ons team met diagnostiek en behandelinhoudelijke expertise voor onze jeugdigen.',
-        linkLabel: 'Bekijk vacature',
-        linkUrl: '#',
+        text: 'Versterk ons team met diagnostiek en behandelinhoudelijke expertise voor onze jeugdigen.',
+        link: extLink('Bekijk vacature', '#', 'secondary'),
       },
       {
         title: 'Pedagogisch Medewerker Verblijf',
         location: 'Montfoort',
         hours: 'Voltijd of deeltijd',
-        text:
-          'Bied een veilige en huiselijke omgeving aan jongeren die tijdelijk niet thuis kunnen wonen.',
-        linkLabel: 'Bekijk vacature',
-        linkUrl: '#',
+        text: 'Bied een veilige en huiselijke omgeving aan jongeren die tijdelijk niet thuis kunnen wonen.',
+        link: extLink('Bekijk vacature', '#', 'secondary'),
       },
     ],
   },
@@ -247,11 +254,19 @@ const footerData = {
 async function run() {
   const payload = await getPayload({ config })
 
-  // --- a. Ensure the first user is an admin (the workflow hook checks roles) ---
+  // --- a. Ensure an admin user exists (the workflow hook checks roles) ---
   const users = await payload.find({ collection: 'users', limit: 1, sort: 'createdAt' })
   let user = users.docs[0] as User | undefined
   if (!user) {
-    throw new Error('No users found — create a user via /admin first, then re-run the seed.')
+    user = (await payload.create({
+      collection: 'users',
+      data: {
+        email: 'dev@burojazz.local',
+        password: 'burojazz-dev',
+        roles: ['admin'],
+      },
+    })) as User
+    console.log('No users found — created dev admin dev@burojazz.local / burojazz-dev')
   }
   if (!user.roles?.includes('admin')) {
     user = (await payload.update({

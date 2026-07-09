@@ -2,35 +2,36 @@ import Link from 'next/link'
 
 import type { Page } from '@/payload-types'
 import { ArrowIcon } from '@/components/frontend/ui/ArrowIcon'
+import { hrefFor, type LinkFields } from '@/components/frontend/ui/CMSLink'
 import { Eyebrow } from '@/components/frontend/ui/Eyebrow'
 import { Section } from '@/components/frontend/ui/Section'
 
 type Props = Extract<NonNullable<Page['layout']>[number], { blockType: 'vacancies' }>
 
-const FALLBACK_CARDS = [
+const FALLBACK_CARDS: {
+  title: string
+  location: string
+  hours: string
+  text: string
+  link?: LinkFields
+}[] = [
   {
     title: 'Ambulant Jeugd- en Gezinshulpverlener (m/v)',
     location: 'Montfoort',
     hours: 'Voltijd of deeltijd',
     text: 'Begeleid jongeren en gezinnen in hun eigen leefomgeving met aandacht en betrokkenheid.',
-    linkLabel: 'Bekijk vacature',
-    linkUrl: '#',
   },
   {
     title: 'Behandelaar Jeugd (m/v)',
     location: 'Montfoort',
     hours: 'Voltijd of deeltijd',
     text: 'Bied passende behandeling en ondersteuning aan jongeren in hun ontwikkeling.',
-    linkLabel: 'Bekijk vacature',
-    linkUrl: '#',
   },
   {
     title: 'Regiebehandelaar (m/v)',
     location: 'Montfoort',
     hours: 'Voltijd of deeltijd',
     text: 'Neem de regie in complexe behandeltrajecten en werk samen aan duurzame zorg.',
-    linkLabel: 'Bekijk vacature',
-    linkUrl: '#',
   },
 ]
 
@@ -156,8 +157,8 @@ function Tag({
  * First card is the featured teal variant; the rest are white with a hairline border.
  */
 export function Vacancies(props: Props) {
-  const title = props.title ?? 'Word onderdeel van ons team'
-  const intro = props.intro ?? 'Samen aan de missie en visie van Buro J.A.Z.Z werken'
+  const title = props.header?.title ?? 'Word onderdeel van ons team'
+  const intro = props.header?.intro ?? 'Samen aan de missie en visie van Buro J.A.Z.Z werken'
   const cards = props.cards && props.cards.length > 0 ? props.cards : FALLBACK_CARDS
 
   return (
@@ -182,8 +183,8 @@ export function Vacancies(props: Props) {
           const location = card.location ?? 'Montfoort'
           const hours = card.hours ?? 'Voltijd of deeltijd'
           const text = card.text ?? FALLBACK_CARDS[i % FALLBACK_CARDS.length].text
-          const linkLabel = card.linkLabel ?? 'Bekijk vacature'
-          const linkUrl = card.linkUrl ?? '#'
+          const linkLabel = card.link?.label || 'Bekijk vacature'
+          const linkUrl = hrefFor(card.link)
 
           return (
             <article
@@ -236,6 +237,8 @@ export function Vacancies(props: Props) {
               <div className="relative flex items-start px-6 pb-6 md:py-8 md:pl-4 md:pr-8">
                 <Link
                   href={linkUrl}
+                  target={card.link?.newTab ? '_blank' : undefined}
+                  rel={card.link?.newTab ? 'noopener noreferrer' : undefined}
                   aria-label={`${linkLabel}: ${cardTitle}`}
                   className={`inline-flex size-12 items-center justify-center rounded-full transition-colors ${
                     featured

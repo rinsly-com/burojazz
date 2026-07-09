@@ -1,23 +1,17 @@
 import type { Block } from 'payload'
 
+import { sectionHeader } from '../fields/sectionHeader'
+
 export const contactPersonsBlock: Block = {
   slug: 'contactPersons',
   interfaceName: 'ContactPersonsBlock',
-  labels: {
-    singular: 'Contact persons',
-    plural: 'Contact persons sections',
-  },
+  labels: { singular: 'Contact persons', plural: 'Contact persons sections' },
   fields: [
-    { name: 'eyebrow', type: 'text' },
-    { name: 'title', type: 'text' },
-    { name: 'subtitle', type: 'text' },
+    sectionHeader(),
     {
       name: 'people',
       label: 'People',
-      labels: {
-        singular: 'Person',
-        plural: 'People',
-      },
+      labels: { singular: 'Person', plural: 'People' },
       type: 'array',
       admin: { initCollapsed: true },
       fields: [

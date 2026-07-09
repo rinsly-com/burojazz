@@ -2,6 +2,7 @@ import Link from 'next/link'
 
 import type { Page } from '@/payload-types'
 import { ArrowIcon } from '@/components/frontend/ui/ArrowIcon'
+import { hrefFor } from '@/components/frontend/ui/CMSLink'
 import { Eyebrow } from '@/components/frontend/ui/Eyebrow'
 import { Section } from '@/components/frontend/ui/Section'
 
@@ -36,12 +37,16 @@ function PhoneIcon() {
  * "Kijk achter de schermen!" and a teal @buro.jazz Instagram badge.
  */
 export function Social(props: Props) {
-  const title = props.title ?? 'Samen in verbinding, ook online'
+  const title = props.header?.title ?? 'Samen in verbinding, ook online'
   const handle = props.handle ?? '@buro.jazz'
   const subtitle =
-    props.subtitle ?? 'We delen inzichten, verhalen en inspiratie uit onze dagelijkse praktijk.'
-  const linkLabel = props.linkLabel ?? 'Volg ons op Instagram'
-  const linkUrl = props.linkUrl ?? 'https://www.instagram.com/buro.jazz'
+    props.header?.subtitle ??
+    'We delen inzichten, verhalen en inspiratie uit onze dagelijkse praktijk.'
+  const link = props.link
+  const linkLabel = link?.label || 'Volg ons op Instagram'
+  const resolvedHref = hrefFor(link)
+  const linkUrl = resolvedHref === '#' ? 'https://www.instagram.com/buro.jazz' : resolvedHref
+  const newTab = link?.newTab ?? true
 
   return (
     <div className="relative overflow-hidden bg-[#e5f6f7]">
@@ -124,8 +129,8 @@ export function Social(props: Props) {
           {/* Instagram badge */}
           <Link
             href={linkUrl}
-            target="_blank"
-            rel="noopener noreferrer"
+            target={newTab ? '_blank' : undefined}
+            rel={newTab ? 'noopener noreferrer' : undefined}
             className="absolute bottom-[4%] left-1/2 z-30 block -translate-x-1/2 rounded-[24px] border border-ink/5 bg-brand p-3 shadow-[-34px_33px_47px_0px_rgba(81,194,204,0.15),-8px_8px_26px_0px_rgba(81,194,204,0.2)] transition-transform hover:scale-[1.03] md:left-[56%] md:translate-x-0"
             style={{
               backgroundImage:

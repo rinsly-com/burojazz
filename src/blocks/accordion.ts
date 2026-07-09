@@ -2,10 +2,10 @@ import type { Block } from 'payload'
 
 import { sectionHeader } from '../fields/sectionHeader'
 
-export const visionMissionBlock: Block = {
-  slug: 'visionMission',
-  interfaceName: 'VisionMissionBlock',
-  labels: { singular: 'Vision & mission', plural: 'Vision & mission sections' },
+export const accordionBlock: Block = {
+  slug: 'accordion',
+  interfaceName: 'AccordionBlock',
+  labels: { singular: 'Accordion', plural: 'Accordions' },
   fields: [
     sectionHeader(),
     {
@@ -15,8 +15,8 @@ export const visionMissionBlock: Block = {
       type: 'array',
       admin: { initCollapsed: true },
       fields: [
-        { name: 'heading', type: 'text' },
-        { name: 'body', type: 'textarea' },
+        { name: 'title', type: 'text', required: true },
+        { name: 'body', type: 'richText' },
       ],
     },
   ],

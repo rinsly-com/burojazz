@@ -62,10 +62,10 @@ function CurvedArrow({ flipped }: { flipped?: boolean }) {
  * step is highlighted as a teal card; the rest are white outlined cards.
  */
 export function Complaints(props: Props) {
-  const eyebrow = props.eyebrow ?? 'Stap voor stap'
-  const title = props.title ?? 'Klachtenregeling'
+  const eyebrow = props.header?.eyebrow ?? 'Stap voor stap'
+  const title = props.header?.title ?? 'Klachtenregeling'
   const intro =
-    props.intro ??
+    props.header?.intro ??
     'Hieronder de klachtenprocedure Wkkgz in het kort. Op de achterzijde vindt u meer toelichting.'
   const steps = props.steps?.length ? props.steps : FALLBACK_STEPS
 

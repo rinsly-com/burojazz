@@ -9,6 +9,9 @@ import { contactPersonsBlock } from './contactPersons'
 import { complaintsBlock } from './complaints'
 import { socialBlock } from './social'
 import { vacanciesBlock } from './vacancies'
+import { accordionBlock } from './accordion'
+import { buttonRowBlock } from './buttonRow'
+import { richTextBlock } from './richText'
 
 export const pageBlocks: Block[] = [
   heroBlock,
@@ -20,4 +23,7 @@ export const pageBlocks: Block[] = [
   complaintsBlock,
   socialBlock,
   vacanciesBlock,
+  accordionBlock,
+  buttonRowBlock,
+  richTextBlock,
 ]

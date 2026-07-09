@@ -1,17 +1,16 @@
 import type { Block } from 'payload'
 
+import { linkGroup } from '../fields/link'
+import { sectionHeader } from '../fields/sectionHeader'
+
 export const aboutBlock: Block = {
   slug: 'about',
   interfaceName: 'AboutBlock',
-  labels: {
-    singular: 'About',
-    plural: 'About sections',
-  },
+  labels: { singular: 'About', plural: 'About sections' },
   fields: [
-    { name: 'eyebrow', type: 'text' },
-    { name: 'title', type: 'text' },
+    sectionHeader(),
     { name: 'body', type: 'textarea' },
     { name: 'email', type: 'text' },
-    { name: 'ctaLabel', type: 'text' },
+    linkGroup(),
   ],
 }

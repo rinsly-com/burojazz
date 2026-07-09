@@ -3,10 +3,13 @@ import React from 'react'
 import type { Page } from '@/payload-types'
 
 import { About } from '@/components/frontend/blocks/About'
+import { Accordion } from '@/components/frontend/blocks/Accordion'
+import { ButtonRow } from '@/components/frontend/blocks/ButtonRow'
 import { Complaints } from '@/components/frontend/blocks/Complaints'
 import { ContactPersons } from '@/components/frontend/blocks/ContactPersons'
 import { CoreValues } from '@/components/frontend/blocks/CoreValues'
 import { Hero } from '@/components/frontend/blocks/Hero'
+import { RichTextBlock } from '@/components/frontend/blocks/RichTextBlock'
 import { Services } from '@/components/frontend/blocks/Services'
 import { Social } from '@/components/frontend/blocks/Social'
 import { Vacancies } from '@/components/frontend/blocks/Vacancies'
@@ -38,6 +41,12 @@ function RenderBlock({ block }: { block: Block }) {
       return <Social {...block} />
     case 'vacancies':
       return <Vacancies {...block} />
+    case 'accordion':
+      return <Accordion {...block} />
+    case 'buttonRow':
+      return <ButtonRow {...block} />
+    case 'richText':
+      return <RichTextBlock {...block} />
     default:
       return null
   }

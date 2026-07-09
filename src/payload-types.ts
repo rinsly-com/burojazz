@@ -220,6 +220,9 @@ export interface Page {
         | ComplaintsBlock
         | SocialBlock
         | VacanciesBlock
+        | AccordionBlock
+        | ButtonRowBlock
+        | RichTextBlock
       )[]
     | null;
   updatedAt: string;
@@ -231,22 +234,34 @@ export interface Page {
  * via the `definition` "HeroBlock".
  */
 export interface HeroBlock {
-  title?: string | null;
-  subtitle?: string | null;
-  description?: string | null;
-  primaryCta?: {
-    label?: string | null;
-    url?: string | null;
+  header?: {
+    eyebrow?: string | null;
+    title?: string | null;
+    subtitle?: string | null;
+    intro?: string | null;
   };
-  secondaryCta?: {
-    label?: string | null;
-    url?: string | null;
-  };
-  cert?: {
+  buttons?:
+    | {
+        label: string;
+        variant?: ('primary' | 'secondary') | null;
+        type?: ('internal' | 'external') | null;
+        page?: (number | null) | Page;
+        url?: string | null;
+        newTab?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  cert: {
     title?: string | null;
     text?: string | null;
-    linkLabel?: string | null;
-    linkUrl?: string | null;
+    link: {
+      label: string;
+      variant?: ('primary' | 'secondary') | null;
+      type?: ('internal' | 'external') | null;
+      page?: (number | null) | Page;
+      url?: string | null;
+      newTab?: boolean | null;
+    };
   };
   id?: string | null;
   blockName?: string | null;
@@ -257,8 +272,12 @@ export interface HeroBlock {
  * via the `definition` "ServicesBlock".
  */
 export interface ServicesBlock {
-  eyebrow?: string | null;
-  title?: string | null;
+  header?: {
+    eyebrow?: string | null;
+    title?: string | null;
+    subtitle?: string | null;
+    intro?: string | null;
+  };
   tabs?:
     | {
         label?: string | null;
@@ -270,8 +289,14 @@ export interface ServicesBlock {
         number?: string | null;
         title?: string | null;
         description?: string | null;
-        linkLabel?: string | null;
-        linkUrl?: string | null;
+        link: {
+          label: string;
+          variant?: ('primary' | 'secondary') | null;
+          type?: ('internal' | 'external') | null;
+          page?: (number | null) | Page;
+          url?: string | null;
+          newTab?: boolean | null;
+        };
         id?: string | null;
       }[]
     | null;
@@ -284,11 +309,25 @@ export interface ServicesBlock {
  * via the `definition` "AboutBlock".
  */
 export interface AboutBlock {
-  eyebrow?: string | null;
-  title?: string | null;
+  header?: {
+    eyebrow?: string | null;
+    title?: string | null;
+    subtitle?: string | null;
+    intro?: string | null;
+  };
   body?: string | null;
   email?: string | null;
-  ctaLabel?: string | null;
+  buttons?:
+    | {
+        label: string;
+        variant?: ('primary' | 'secondary') | null;
+        type?: ('internal' | 'external') | null;
+        page?: (number | null) | Page;
+        url?: string | null;
+        newTab?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'about';
@@ -298,7 +337,12 @@ export interface AboutBlock {
  * via the `definition` "CoreValuesBlock".
  */
 export interface CoreValuesBlock {
-  title?: string | null;
+  header?: {
+    eyebrow?: string | null;
+    title?: string | null;
+    subtitle?: string | null;
+    intro?: string | null;
+  };
   values?:
     | {
         label?: string | null;
@@ -314,7 +358,12 @@ export interface CoreValuesBlock {
  * via the `definition` "VisionMissionBlock".
  */
 export interface VisionMissionBlock {
-  title?: string | null;
+  header?: {
+    eyebrow?: string | null;
+    title?: string | null;
+    subtitle?: string | null;
+    intro?: string | null;
+  };
   items?:
     | {
         heading?: string | null;
@@ -331,9 +380,12 @@ export interface VisionMissionBlock {
  * via the `definition` "ContactPersonsBlock".
  */
 export interface ContactPersonsBlock {
-  eyebrow?: string | null;
-  title?: string | null;
-  subtitle?: string | null;
+  header?: {
+    eyebrow?: string | null;
+    title?: string | null;
+    subtitle?: string | null;
+    intro?: string | null;
+  };
   people?:
     | {
         name?: string | null;
@@ -350,9 +402,12 @@ export interface ContactPersonsBlock {
  * via the `definition` "ComplaintsBlock".
  */
 export interface ComplaintsBlock {
-  eyebrow?: string | null;
-  title?: string | null;
-  intro?: string | null;
+  header?: {
+    eyebrow?: string | null;
+    title?: string | null;
+    subtitle?: string | null;
+    intro?: string | null;
+  };
   steps?:
     | {
         title?: string | null;
@@ -369,11 +424,21 @@ export interface ComplaintsBlock {
  * via the `definition` "SocialBlock".
  */
 export interface SocialBlock {
-  title?: string | null;
+  header?: {
+    eyebrow?: string | null;
+    title?: string | null;
+    subtitle?: string | null;
+    intro?: string | null;
+  };
   handle?: string | null;
-  subtitle?: string | null;
-  linkLabel?: string | null;
-  linkUrl?: string | null;
+  link: {
+    label: string;
+    variant?: ('primary' | 'secondary') | null;
+    type?: ('internal' | 'external') | null;
+    page?: (number | null) | Page;
+    url?: string | null;
+    newTab?: boolean | null;
+  };
   id?: string | null;
   blockName?: string | null;
   blockType: 'social';
@@ -383,22 +448,114 @@ export interface SocialBlock {
  * via the `definition` "VacanciesBlock".
  */
 export interface VacanciesBlock {
-  title?: string | null;
-  intro?: string | null;
+  header?: {
+    eyebrow?: string | null;
+    title?: string | null;
+    subtitle?: string | null;
+    intro?: string | null;
+  };
   cards?:
     | {
         title?: string | null;
         location?: string | null;
         hours?: string | null;
         text?: string | null;
-        linkLabel?: string | null;
-        linkUrl?: string | null;
+        link: {
+          label: string;
+          variant?: ('primary' | 'secondary') | null;
+          type?: ('internal' | 'external') | null;
+          page?: (number | null) | Page;
+          url?: string | null;
+          newTab?: boolean | null;
+        };
         id?: string | null;
       }[]
     | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'vacancies';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "AccordionBlock".
+ */
+export interface AccordionBlock {
+  header?: {
+    eyebrow?: string | null;
+    title?: string | null;
+    subtitle?: string | null;
+    intro?: string | null;
+  };
+  items?:
+    | {
+        title: string;
+        body?: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        } | null;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'accordion';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ButtonRowBlock".
+ */
+export interface ButtonRowBlock {
+  buttons?:
+    | {
+        label: string;
+        variant?: ('primary' | 'secondary') | null;
+        type?: ('internal' | 'external') | null;
+        page?: (number | null) | Page;
+        url?: string | null;
+        newTab?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  alignment?: ('left' | 'center' | 'right') | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'buttonRow';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "RichTextBlock".
+ */
+export interface RichTextBlock {
+  content?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  width?: ('narrow' | 'wide') | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'richText';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -570,6 +727,9 @@ export interface PagesSelect<T extends boolean = true> {
         complaints?: T | ComplaintsBlockSelect<T>;
         social?: T | SocialBlockSelect<T>;
         vacancies?: T | VacanciesBlockSelect<T>;
+        accordion?: T | AccordionBlockSelect<T>;
+        buttonRow?: T | ButtonRowBlockSelect<T>;
+        richText?: T | RichTextBlockSelect<T>;
       };
   updatedAt?: T;
   createdAt?: T;
@@ -580,28 +740,40 @@ export interface PagesSelect<T extends boolean = true> {
  * via the `definition` "HeroBlock_select".
  */
 export interface HeroBlockSelect<T extends boolean = true> {
-  title?: T;
-  subtitle?: T;
-  description?: T;
-  primaryCta?:
+  header?:
     | T
     | {
-        label?: T;
-        url?: T;
+        eyebrow?: T;
+        title?: T;
+        subtitle?: T;
+        intro?: T;
       };
-  secondaryCta?:
+  buttons?:
     | T
     | {
         label?: T;
+        variant?: T;
+        type?: T;
+        page?: T;
         url?: T;
+        newTab?: T;
+        id?: T;
       };
   cert?:
     | T
     | {
         title?: T;
         text?: T;
-        linkLabel?: T;
-        linkUrl?: T;
+        link?:
+          | T
+          | {
+              label?: T;
+              variant?: T;
+              type?: T;
+              page?: T;
+              url?: T;
+              newTab?: T;
+            };
       };
   id?: T;
   blockName?: T;
@@ -611,8 +783,14 @@ export interface HeroBlockSelect<T extends boolean = true> {
  * via the `definition` "ServicesBlock_select".
  */
 export interface ServicesBlockSelect<T extends boolean = true> {
-  eyebrow?: T;
-  title?: T;
+  header?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        subtitle?: T;
+        intro?: T;
+      };
   tabs?:
     | T
     | {
@@ -625,8 +803,16 @@ export interface ServicesBlockSelect<T extends boolean = true> {
         number?: T;
         title?: T;
         description?: T;
-        linkLabel?: T;
-        linkUrl?: T;
+        link?:
+          | T
+          | {
+              label?: T;
+              variant?: T;
+              type?: T;
+              page?: T;
+              url?: T;
+              newTab?: T;
+            };
         id?: T;
       };
   id?: T;
@@ -637,11 +823,27 @@ export interface ServicesBlockSelect<T extends boolean = true> {
  * via the `definition` "AboutBlock_select".
  */
 export interface AboutBlockSelect<T extends boolean = true> {
-  eyebrow?: T;
-  title?: T;
+  header?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        subtitle?: T;
+        intro?: T;
+      };
   body?: T;
   email?: T;
-  ctaLabel?: T;
+  buttons?:
+    | T
+    | {
+        label?: T;
+        variant?: T;
+        type?: T;
+        page?: T;
+        url?: T;
+        newTab?: T;
+        id?: T;
+      };
   id?: T;
   blockName?: T;
 }
@@ -650,7 +852,14 @@ export interface AboutBlockSelect<T extends boolean = true> {
  * via the `definition` "CoreValuesBlock_select".
  */
 export interface CoreValuesBlockSelect<T extends boolean = true> {
-  title?: T;
+  header?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        subtitle?: T;
+        intro?: T;
+      };
   values?:
     | T
     | {
@@ -665,7 +874,14 @@ export interface CoreValuesBlockSelect<T extends boolean = true> {
  * via the `definition` "VisionMissionBlock_select".
  */
 export interface VisionMissionBlockSelect<T extends boolean = true> {
-  title?: T;
+  header?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        subtitle?: T;
+        intro?: T;
+      };
   items?:
     | T
     | {
@@ -681,9 +897,14 @@ export interface VisionMissionBlockSelect<T extends boolean = true> {
  * via the `definition` "ContactPersonsBlock_select".
  */
 export interface ContactPersonsBlockSelect<T extends boolean = true> {
-  eyebrow?: T;
-  title?: T;
-  subtitle?: T;
+  header?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        subtitle?: T;
+        intro?: T;
+      };
   people?:
     | T
     | {
@@ -699,9 +920,14 @@ export interface ContactPersonsBlockSelect<T extends boolean = true> {
  * via the `definition` "ComplaintsBlock_select".
  */
 export interface ComplaintsBlockSelect<T extends boolean = true> {
-  eyebrow?: T;
-  title?: T;
-  intro?: T;
+  header?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        subtitle?: T;
+        intro?: T;
+      };
   steps?:
     | T
     | {
@@ -717,11 +943,25 @@ export interface ComplaintsBlockSelect<T extends boolean = true> {
  * via the `definition` "SocialBlock_select".
  */
 export interface SocialBlockSelect<T extends boolean = true> {
-  title?: T;
+  header?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        subtitle?: T;
+        intro?: T;
+      };
   handle?: T;
-  subtitle?: T;
-  linkLabel?: T;
-  linkUrl?: T;
+  link?:
+    | T
+    | {
+        label?: T;
+        variant?: T;
+        type?: T;
+        page?: T;
+        url?: T;
+        newTab?: T;
+      };
   id?: T;
   blockName?: T;
 }
@@ -730,8 +970,14 @@ export interface SocialBlockSelect<T extends boolean = true> {
  * via the `definition` "VacanciesBlock_select".
  */
 export interface VacanciesBlockSelect<T extends boolean = true> {
-  title?: T;
-  intro?: T;
+  header?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        subtitle?: T;
+        intro?: T;
+      };
   cards?:
     | T
     | {
@@ -739,10 +985,71 @@ export interface VacanciesBlockSelect<T extends boolean = true> {
         location?: T;
         hours?: T;
         text?: T;
-        linkLabel?: T;
-        linkUrl?: T;
+        link?:
+          | T
+          | {
+              label?: T;
+              variant?: T;
+              type?: T;
+              page?: T;
+              url?: T;
+              newTab?: T;
+            };
         id?: T;
       };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "AccordionBlock_select".
+ */
+export interface AccordionBlockSelect<T extends boolean = true> {
+  header?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        subtitle?: T;
+        intro?: T;
+      };
+  items?:
+    | T
+    | {
+        title?: T;
+        body?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ButtonRowBlock_select".
+ */
+export interface ButtonRowBlockSelect<T extends boolean = true> {
+  buttons?:
+    | T
+    | {
+        label?: T;
+        variant?: T;
+        type?: T;
+        page?: T;
+        url?: T;
+        newTab?: T;
+        id?: T;
+      };
+  alignment?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "RichTextBlock_select".
+ */
+export interface RichTextBlockSelect<T extends boolean = true> {
+  content?: T;
+  width?: T;
   id?: T;
   blockName?: T;
 }

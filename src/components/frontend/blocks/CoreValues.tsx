@@ -145,7 +145,7 @@ function ValueChip({ label, highlight }: { label: string; highlight: boolean }) 
  * screens fall back to a wrapped row of chips led by the logo tile.
  */
 export function CoreValues(props: Props) {
-  const title = props.title ?? 'Dit zijn onze kernwaarden'
+  const title = props.header?.title ?? 'Dit zijn onze kernwaarden'
   const rawValues = props.values?.length
     ? props.values.map((v) => v.label ?? '')
     : FALLBACK_VALUES
@@ -167,7 +167,7 @@ export function CoreValues(props: Props) {
         <div className="flex flex-col items-center gap-6 text-center">
           <div className="inline-flex items-center gap-2.5 rounded-pill bg-brand/5 px-3 py-2.5">
             <img src="/images/core-values/heart.svg" alt="" aria-hidden="true" className="size-3.5" />
-            <Eyebrow>Over ons</Eyebrow>
+            <Eyebrow>{props.header?.eyebrow ?? 'Over ons'}</Eyebrow>
           </div>
           <h2 className="font-sans text-3xl font-semibold tracking-[-0.8px] text-ink md:text-[40px] md:leading-[1.2]">
             {title}

@@ -1,34 +1,15 @@
 import type { Block } from 'payload'
 
+import { link, linkGroup } from '../fields/link'
+import { sectionHeader } from '../fields/sectionHeader'
+
 export const heroBlock: Block = {
   slug: 'hero',
   interfaceName: 'HeroBlock',
-  labels: {
-    singular: 'Hero',
-    plural: 'Heroes',
-  },
+  labels: { singular: 'Hero', plural: 'Heroes' },
   fields: [
-    { name: 'title', type: 'text' },
-    { name: 'subtitle', type: 'text' },
-    { name: 'description', type: 'textarea' },
-    {
-      name: 'primaryCta',
-      label: 'Primary CTA',
-      type: 'group',
-      fields: [
-        { name: 'label', type: 'text' },
-        { name: 'url', type: 'text' },
-      ],
-    },
-    {
-      name: 'secondaryCta',
-      label: 'Secondary CTA',
-      type: 'group',
-      fields: [
-        { name: 'label', type: 'text' },
-        { name: 'url', type: 'text' },
-      ],
-    },
+    sectionHeader(),
+    linkGroup(),
     {
       name: 'cert',
       label: 'Certification',
@@ -36,8 +17,7 @@ export const heroBlock: Block = {
       fields: [
         { name: 'title', type: 'text' },
         { name: 'text', type: 'text' },
-        { name: 'linkLabel', type: 'text' },
-        { name: 'linkUrl', type: 'text' },
+        link(),
       ],
     },
   ],

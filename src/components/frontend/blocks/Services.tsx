@@ -2,6 +2,7 @@ import Link from 'next/link'
 
 import type { Page } from '@/payload-types'
 import { ArrowIcon } from '@/components/frontend/ui/ArrowIcon'
+import { hrefFor, type LinkFields } from '@/components/frontend/ui/CMSLink'
 import { Eyebrow } from '@/components/frontend/ui/Eyebrow'
 import { Section } from '@/components/frontend/ui/Section'
 
@@ -41,8 +42,7 @@ type CardData = {
   number?: string | null
   title?: string | null
   description?: string | null
-  linkLabel?: string | null
-  linkUrl?: string | null
+  link?: LinkFields | null
   id?: string | null
 }
 
@@ -73,10 +73,12 @@ function ServiceCard({ card, index }: { card: CardData; index: number }) {
           </p>
         </div>
         <Link
-          href={card.linkUrl ?? '#'}
+          href={hrefFor(card.link)}
+          target={card.link?.newTab ? '_blank' : undefined}
+          rel={card.link?.newTab ? 'noopener noreferrer' : undefined}
           className="inline-flex items-center gap-2.5 text-sm font-medium text-white transition-opacity hover:opacity-80"
         >
-          {card.linkLabel ?? 'Lees verder'}
+          {card.link?.label ?? 'Lees verder'}
           <ArrowIcon />
         </Link>
       </div>
@@ -98,8 +100,8 @@ function ServiceCard({ card, index }: { card: CardData; index: number }) {
  * stacking on mobile).
  */
 export function Services(props: Props) {
-  const eyebrow = props.eyebrow ?? 'Hulpverleningsvormen'
-  const title = props.title ?? 'Ambulante jeugdhulp en verblijf, gericht op behandeling en begeleiding.'
+  const eyebrow = props.header?.eyebrow ?? 'Hulpverleningsvormen'
+  const title = props.header?.title ?? 'Ambulante jeugdhulp en verblijf, gericht op behandeling en begeleiding.'
   const tabs = props.tabs?.length
     ? props.tabs.map((tab) => tab.label ?? '')
     : DEFAULT_TABS

@@ -98,7 +98,7 @@ const ITEM_ICONS = [StarIcon, HandshakeIcon]
  * native <details>/<summary>, so it stays static-export-safe without JS.
  */
 export function VisionMission(props: Props) {
-  const title = props.title ?? DEFAULT_TITLE
+  const title = props.header?.title ?? DEFAULT_TITLE
   const rawItems = props.items && props.items.length > 0 ? props.items : DEFAULT_ITEMS
   const items = rawItems.map((item, i) => ({
     heading: item.heading ?? DEFAULT_ITEMS[i]?.heading ?? '',
@@ -113,7 +113,7 @@ export function VisionMission(props: Props) {
         <div className="flex w-full flex-col items-start gap-6 lg:max-w-[568px] lg:shrink-0">
           <span className="inline-flex items-center justify-center gap-2.5 rounded-pill bg-brand/5 px-3 py-2.5 text-brand">
             <RocketIcon />
-            <Eyebrow>Visie en missie</Eyebrow>
+            <Eyebrow>{props.header?.eyebrow ?? 'Visie en missie'}</Eyebrow>
           </span>
 
           <h2 className="font-sans text-[28px] leading-[1.2] font-semibold tracking-[0.02em] text-black md:text-[40px]">
