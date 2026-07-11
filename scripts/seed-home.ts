@@ -48,6 +48,7 @@ const layout: Layout = [
   {
     blockType: 'services',
     header: {
+      icon: 'IconDiamond',
       eyebrow: 'Hulpverleningsvormen',
       title: 'Ambulante jeugdhulp en verblijf, gericht op behandeling en begeleiding.',
     },
@@ -94,16 +95,20 @@ const layout: Layout = [
   {
     blockType: 'about',
     header: {
+      icon: 'IconUsers',
       eyebrow: 'Wie wij zijn',
       title: 'Ook Buro J.A.Z.Z heeft goede zorg nodig',
     },
-    body: 'Andres en Egbert zijn de bestuurders van Stichting Buro J.A.Z.Z. Vanuit de kern van waar Buro J.A.Z.Z. voor staat – Jeugdhulp en Ambulante Zorg met Zorgzaamheid – zetten zij zich dagelijks in voor kwalitatieve en verantwoorde zorg. Met hun jarenlange ervaring als jeugdhulpverleners staan zij dicht bij de praktijk en ondersteunen zij begeleiders en behandelaren in hun werk.',
+    body: 'Andres en Egbert zijn de bestuurders van Stichting Buro J.A.Z.Z. Vanuit de kern van waar Buro J.A.Z.Z. voor staat – Jeugdhulp en Ambulante Zorg met Zorgzaamheid – zetten zij zich dagelijks in voor kwalitatieve en verantwoorde zorg. Met hun jarenlange ervaring als jeugdhulpverleners staan zij dicht bij de praktijk en ondersteunen zij begeleiders en behandelaren in hun werk. De raad van toezicht bewaakt daarbij de koers: zij houdt onafhankelijk toezicht, adviseert het bestuur en fungeert als kritische sparringpartner. Samen met de inspraak van cliënten en medewerkers vormt dit de basis voor de goede zorg die wij elke dag willen blijven leveren.',
     email: 'contact@burojazz.nl',
-    buttons: [extLink('Direct aanmelden', '/aanmelden', 'primary')],
+    buttons: [
+      extLink('Direct aanmelden', '/aanmelden', 'primary'),
+      extLink('Neem contact op', '/contact', 'secondary'),
+    ],
   },
   {
     blockType: 'coreValues',
-    header: { title: 'Dit zijn onze kernwaarden' },
+    header: { icon: 'IconHeart', eyebrow: 'Over ons', title: 'Dit zijn onze kernwaarden' },
     values: [
       { label: 'Zorgzaam' },
       { label: 'Eerlijk' },
@@ -117,17 +122,24 @@ const layout: Layout = [
   },
   {
     blockType: 'visionMission',
-    header: { title: 'Waar wij in geloven, en hoe wij daar naar toe werken' },
+    header: {
+      icon: 'IconRocket',
+      eyebrow: 'Visie en missie',
+      title: 'Waar wij in geloven, en hoe wij daar naar toe werken',
+    },
     items: [
       {
+        icon: 'IconStar',
         heading: 'Onze visie',
-        body: 'Wij geloven in een inclusieve samenleving waarin ieder kind en iedere jongere veilig kan opgroeien en volwaardig kan meedoen, ongeacht achtergrond of beperking.',
+        body: 'Buro J.A.Z.Z. gelooft in een inclusieve samenleving waarin iedereen op een gezonde manier kan deelnemen. Iedereen staat in verbinding met zichzelf en de ander, vrij van belemmerende ervaringen of beperkingen.',
       },
       {
+        icon: 'IconHeartHandshake',
         heading: 'Onze missie',
         body: 'Wij bieden jeugdhulp die aansluit bij de leefwereld van jeugdigen en hun gezin: dichtbij, betrouwbaar en met oprechte aandacht, zodat zij weer grip krijgen op hun eigen toekomst.',
       },
       {
+        icon: 'IconTargetArrow',
         heading: 'Onze kernwaarden',
         body: 'Zorgzaamheid, eerlijkheid en presentie vormen de basis van ons handelen. We sluiten aan bij wat nodig is, werken passend en integraal, en willen daarin betrouwbaar, vernieuwend en een voorbeeld zijn.',
       },
@@ -136,6 +148,7 @@ const layout: Layout = [
   {
     blockType: 'contactPersons',
     header: {
+      icon: 'IconUsers',
       eyebrow: 'Kom in contact',
       title: 'Jouw contactpersonen',
       subtitle: 'Wij staan altijd voor u klaar.',
@@ -151,7 +164,7 @@ const layout: Layout = [
       eyebrow: 'Stap voor stap',
       title: 'Klachtenregeling',
       intro:
-        'Hieronder de klachtenprocedure Wkkgz in het kort... Op de achterzijde vindt u meer toelichting.',
+        'Hieronder de klachtenprocedure Wkkgz in het kort. Op de achterzijde vindt u meer toelichting.',
     },
     steps: [
       {
@@ -175,6 +188,8 @@ const layout: Layout = [
   {
     blockType: 'social',
     header: {
+      icon: 'IconBrandInstagram',
+      eyebrow: 'Social Media',
       title: 'Samen in verbinding, ook online',
       subtitle: 'We delen inzichten, verhalen en inspiratie uit onze dagelijkse praktijk.',
     },
@@ -187,8 +202,9 @@ const layout: Layout = [
   {
     blockType: 'vacancies',
     header: {
+      icon: 'IconBriefcase',
       title: 'Word onderdeel van ons team',
-      intro: 'Samen aan de missie en visie werken van Buro J.A.Z.Z.?',
+      intro: 'Samen aan de missie en visie van Buro J.A.Z.Z werken',
     },
     cards: [
       {
@@ -216,16 +232,75 @@ const layout: Layout = [
   },
 ]
 
-const headerData = {
+/** Minimal Lexical rich-text state: a single paragraph. */
+const smallPageContent = (text: string): NonNullable<Page['content']> => ({
+  root: {
+    type: 'root',
+    direction: 'ltr',
+    format: '',
+    indent: 0,
+    version: 1,
+    children: [
+      {
+        type: 'paragraph',
+        direction: 'ltr',
+        format: '',
+        indent: 0,
+        version: 1,
+        children: [
+          { type: 'text', detail: 0, format: 0, mode: 'normal', style: '', text, version: 1 },
+        ],
+      },
+    ],
+  },
+})
+
+// Small starter pages for every nav route, so the menu links to real pages.
+// Editors replace the placeholder copy (or add layout blocks) in the CMS.
+const SMALL_PAGES: { slug: string; title: string; text: string }[] = [
+  {
+    slug: 'hulpverleningsvormen',
+    title: 'Hulpverleningsvormen',
+    text: 'Wij bieden ambulante jeugdhulp en jeugdhulp met verblijf, gericht op behandeling en begeleiding. Meer informatie over onze hulpverleningsvormen volgt binnenkort.',
+  },
+  {
+    slug: 'over-ons',
+    title: 'Over ons',
+    text: 'Buro J.A.Z.Z. staat voor Jeugdhulp en Ambulante Zorg met Zorgzaamheid. Meer over ons team en onze werkwijze volgt binnenkort.',
+  },
+  {
+    slug: 'klachtregeling',
+    title: 'Klachtregeling',
+    text: 'Heeft u een klacht over onze zorg of dienstverlening? Neem contact met ons op. De volledige klachtregeling volgt binnenkort.',
+  },
+  {
+    slug: 'vacatures',
+    title: 'Vacatures',
+    text: 'Wij zijn regelmatig op zoek naar nieuwe collega’s. Onze openstaande vacatures verschijnen binnenkort op deze pagina.',
+  },
+  {
+    slug: 'contact',
+    title: 'Contact',
+    text: 'Neem contact met ons op via contact@burojazz.nl of +31 6 55202233. Bezoekadres: Vlasakker 24, 3417 XT Montfoort.',
+  },
+]
+
+// Every menu item references a real Pages document, so links follow a page
+// when its slug changes.
+const headerData = (ids: Map<string, Page['id']>) => ({
   navItems: [
-    { label: 'Home', url: '/' },
-    { label: 'Hulpverleningsvormen', url: '/hulpverleningsvormen' },
-    { label: 'Over ons', url: '/over-ons' },
-    { label: 'Klachtregeling', url: '/klachtregeling' },
-    { label: 'Vacatures', url: '/vacatures' },
+    { label: 'Home', type: 'internal' as const, page: ids.get('home') },
+    {
+      label: 'Hulpverleningsvormen',
+      type: 'internal' as const,
+      page: ids.get('hulpverleningsvormen'),
+    },
+    { label: 'Over ons', type: 'internal' as const, page: ids.get('over-ons') },
+    { label: 'Klachtregeling', type: 'internal' as const, page: ids.get('klachtregeling') },
+    { label: 'Vacatures', type: 'internal' as const, page: ids.get('vacatures') },
   ],
-  cta: { label: 'Contact', url: '/contact' },
-}
+  cta: { label: 'Contact', type: 'internal' as const, page: ids.get('contact') },
+})
 
 const footerData = {
   tagline: 'J.A.Z.Z. – Jeugdhulp en Ambulante Zorg met Zorgzaamheid.',
@@ -322,8 +397,50 @@ async function run() {
     throw err
   }
 
-  // --- e. Seed the header & footer globals ---
-  await payload.updateGlobal({ slug: 'header', data: headerData, user })
+  // --- e. Upsert + publish a small page for every nav route ---
+  const pageIdBySlug = new Map<string, Page['id']>([['home', home.id]])
+  for (const def of SMALL_PAGES) {
+    const found = await payload.find({
+      collection: 'pages',
+      where: { slug: { equals: def.slug } },
+      draft: true,
+      limit: 1,
+      depth: 0,
+    })
+    let doc = found.docs[0] as Page | undefined
+    if (!doc) {
+      doc = (await payload.create({
+        collection: 'pages',
+        draft: true,
+        data: {
+          title: def.title,
+          slug: def.slug,
+          workflowStatus: 'draft',
+          content: smallPageContent(def.text),
+        },
+        user,
+      })) as Page
+      console.log(`Created ${def.slug} page (id ${doc.id})`)
+    }
+    await payload.update({
+      collection: 'pages',
+      id: doc.id,
+      draft: true,
+      data: { title: def.title, content: smallPageContent(def.text), workflowStatus: 'ready' },
+      user,
+    })
+    await payload.update({
+      collection: 'pages',
+      id: doc.id,
+      data: { _status: 'published' },
+      user,
+    })
+    pageIdBySlug.set(def.slug, doc.id)
+    console.log(`Published /${def.slug}`)
+  }
+
+  // --- f. Seed the header & footer globals ---
+  await payload.updateGlobal({ slug: 'header', data: headerData(pageIdBySlug), user })
   console.log('Header global seeded')
   await payload.updateGlobal({ slug: 'footer', data: footerData, user })
   console.log('Footer global seeded')

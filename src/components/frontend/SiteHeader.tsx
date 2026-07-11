@@ -4,40 +4,42 @@ import { useState } from 'react'
 import Link from 'next/link'
 
 import { ArrowIcon } from '@/components/frontend/ui/ArrowIcon'
+import { hrefFor, type LinkFields } from '@/components/frontend/ui/CMSLink'
 import type { Header } from '@/payload-types'
 
 type SiteHeaderProps = {
-  /** The `header` global data; falls back to the design's default nav when null. */
+  /** The `header` global data; nav is empty until items are added in the CMS. */
   header?: Pick<Header, 'navItems' | 'cta'> | null
 }
 
-const FALLBACK_NAV = [
-  { label: 'Home', url: '/' },
-  { label: 'Hulpverleningsvormen', url: '/hulpverleningsvormen' },
-  { label: 'Over ons', url: '/over-ons' },
-  { label: 'Klachtregeling', url: '/klachtregeling' },
-  { label: 'Vacatures', url: '/vacatures' },
-]
+type NavItem = {
+  key: string
+  label: string
+  href: string
+  newTab: boolean
+}
+
+function toNavItem(link: LinkFields, key: string): NavItem | null {
+  if (!link.label) return null
+  return { key, label: link.label, href: hrefFor(link), newTab: link.newTab ?? false }
+}
 
 /**
  * Floating pill navigation bar rendered over the hero. White rounded-[70px]
- * bar with the logo left, nav items center and a teal Contact pill right.
- * Client component only for the mobile hamburger toggle.
+ * bar with the logo left, CMS-managed nav items center and a teal CTA pill
+ * right. Client component only for the mobile hamburger toggle.
  */
 export function SiteHeader({ header }: SiteHeaderProps) {
   const [open, setOpen] = useState(false)
 
-  const navItems =
-    header?.navItems && header.navItems.length > 0
-      ? header.navItems.map((item, i) => ({
-          key: item.id ?? String(i),
-          label: item.label ?? FALLBACK_NAV[i]?.label ?? '',
-          url: item.url ?? FALLBACK_NAV[i]?.url ?? '/',
-        }))
-      : FALLBACK_NAV.map((item, i) => ({ key: String(i), ...item }))
+  const navItems = (header?.navItems ?? [])
+    .map((item, i) => toNavItem(item, item.id ?? String(i)))
+    .filter((item): item is NavItem => item !== null)
 
-  const ctaLabel = header?.cta?.label ?? 'Contact'
-  const ctaUrl = header?.cta?.url ?? '/contact'
+  const cta = header?.cta ? toNavItem(header.cta, 'cta') : null
+
+  const linkTarget = (item: NavItem) =>
+    item.newTab ? { target: '_blank', rel: 'noopener noreferrer' } : {}
 
   return (
     <header className="absolute inset-x-0 top-0 z-40">
@@ -57,7 +59,8 @@ export function SiteHeader({ header }: SiteHeaderProps) {
               {navItems.map((item) => (
                 <Link
                   key={item.key}
-                  href={item.url}
+                  href={item.href}
+                  {...linkTarget(item)}
                   className="rounded-[46px] px-3 py-2 text-sm font-medium text-ink transition-colors hover:text-brand"
                 >
                   {item.label}
@@ -65,15 +68,18 @@ export function SiteHeader({ header }: SiteHeaderProps) {
               ))}
             </nav>
 
-            <div className="hidden self-stretch lg:flex">
-              <Link
-                href={ctaUrl}
-                className="inline-flex h-full items-center gap-2.5 rounded-pill bg-brand px-7 py-3.5 text-sm font-medium text-white transition-colors hover:bg-[#3fadb7]"
-              >
-                {ctaLabel}
-                <ArrowIcon />
-              </Link>
-            </div>
+            {cta && (
+              <div className="hidden self-stretch lg:flex">
+                <Link
+                  href={cta.href}
+                  {...linkTarget(cta)}
+                  className="inline-flex h-full items-center gap-2.5 rounded-pill bg-brand px-7 py-3.5 text-sm font-medium text-white transition-colors hover:bg-[#3fadb7]"
+                >
+                  {cta.label}
+                  <ArrowIcon />
+                </Link>
+              </div>
+            )}
 
             <button
               type="button"
@@ -114,21 +120,25 @@ export function SiteHeader({ header }: SiteHeaderProps) {
               {navItems.map((item) => (
                 <Link
                   key={item.key}
-                  href={item.url}
+                  href={item.href}
+                  {...linkTarget(item)}
                   className="rounded-[46px] px-3 py-2.5 text-sm font-medium text-ink transition-colors hover:text-brand"
                   onClick={() => setOpen(false)}
                 >
                   {item.label}
                 </Link>
               ))}
-              <Link
-                href={ctaUrl}
-                className="mt-2 inline-flex items-center gap-2.5 self-start rounded-pill bg-brand px-7 py-3.5 text-sm font-medium text-white transition-colors hover:bg-[#3fadb7]"
-                onClick={() => setOpen(false)}
-              >
-                {ctaLabel}
-                <ArrowIcon />
-              </Link>
+              {cta && (
+                <Link
+                  href={cta.href}
+                  {...linkTarget(cta)}
+                  className="mt-2 inline-flex items-center gap-2.5 self-start rounded-pill bg-brand px-7 py-3.5 text-sm font-medium text-white transition-colors hover:bg-[#3fadb7]"
+                  onClick={() => setOpen(false)}
+                >
+                  {cta.label}
+                  <ArrowIcon />
+                </Link>
+              )}
             </nav>
           )}
         </div>

@@ -1114,16 +1114,28 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
  */
 export interface Header {
   id: number;
+  /**
+   * The navigation links shown in the header, in order.
+   */
   navItems?:
     | {
-        label?: string | null;
+        label: string;
+        type?: ('internal' | 'external') | null;
+        page?: (number | null) | Page;
         url?: string | null;
+        newTab?: boolean | null;
         id?: string | null;
       }[]
     | null;
+  /**
+   * The button on the right side of the header (teal pill). Leave the label empty to hide it.
+   */
   cta?: {
     label?: string | null;
+    type?: ('internal' | 'external') | null;
+    page?: (number | null) | Page;
     url?: string | null;
+    newTab?: boolean | null;
   };
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -1165,14 +1177,20 @@ export interface HeaderSelect<T extends boolean = true> {
     | T
     | {
         label?: T;
+        type?: T;
+        page?: T;
         url?: T;
+        newTab?: T;
         id?: T;
       };
   cta?:
     | T
     | {
         label?: T;
+        type?: T;
+        page?: T;
         url?: T;
+        newTab?: T;
       };
   updatedAt?: T;
   createdAt?: T;
