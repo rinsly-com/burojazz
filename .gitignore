@@ -24,7 +24,9 @@ cloudflare-env.d.ts
 
 # static production build
 /out/
+/.next-static/
 /.static-build-backup/
+/.static-content/
 
 # production
 /build

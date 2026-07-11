@@ -91,8 +91,14 @@ export interface Config {
     defaultIDType: number;
   };
   fallbackLocale: null;
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    header: Header;
+    footer: Footer;
+  };
+  globalsSelect: {
+    header: HeaderSelect<false> | HeaderSelect<true>;
+    footer: FooterSelect<false> | FooterSelect<true>;
+  };
   locale: null;
   widgets: {
     collections: CollectionsWidget;
@@ -176,6 +182,10 @@ export interface Media {
 export interface Page {
   id: number;
   title: string;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
   slug: string;
   /**
    * Advanced with the action button (Submit for review → Approve → Publish).
@@ -196,9 +206,356 @@ export interface Page {
     };
     [k: string]: unknown;
   } | null;
+  /**
+   * Page sections rendered on the site, in order.
+   */
+  layout?:
+    | (
+        | HeroBlock
+        | ServicesBlock
+        | AboutBlock
+        | CoreValuesBlock
+        | VisionMissionBlock
+        | ContactPersonsBlock
+        | ComplaintsBlock
+        | SocialBlock
+        | VacanciesBlock
+        | AccordionBlock
+        | ButtonRowBlock
+        | RichTextBlock
+      )[]
+    | null;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HeroBlock".
+ */
+export interface HeroBlock {
+  header?: {
+    eyebrow?: string | null;
+    title?: string | null;
+    subtitle?: string | null;
+    intro?: string | null;
+  };
+  buttons?:
+    | {
+        label: string;
+        variant?: ('primary' | 'secondary') | null;
+        type?: ('internal' | 'external') | null;
+        page?: (number | null) | Page;
+        url?: string | null;
+        newTab?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  cert: {
+    title?: string | null;
+    text?: string | null;
+    link: {
+      label: string;
+      variant?: ('primary' | 'secondary') | null;
+      type?: ('internal' | 'external') | null;
+      page?: (number | null) | Page;
+      url?: string | null;
+      newTab?: boolean | null;
+    };
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'hero';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ServicesBlock".
+ */
+export interface ServicesBlock {
+  header?: {
+    eyebrow?: string | null;
+    title?: string | null;
+    subtitle?: string | null;
+    intro?: string | null;
+  };
+  tabs?:
+    | {
+        label?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  cards?:
+    | {
+        number?: string | null;
+        title?: string | null;
+        description?: string | null;
+        link: {
+          label: string;
+          variant?: ('primary' | 'secondary') | null;
+          type?: ('internal' | 'external') | null;
+          page?: (number | null) | Page;
+          url?: string | null;
+          newTab?: boolean | null;
+        };
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'services';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "AboutBlock".
+ */
+export interface AboutBlock {
+  header?: {
+    eyebrow?: string | null;
+    title?: string | null;
+    subtitle?: string | null;
+    intro?: string | null;
+  };
+  body?: string | null;
+  email?: string | null;
+  buttons?:
+    | {
+        label: string;
+        variant?: ('primary' | 'secondary') | null;
+        type?: ('internal' | 'external') | null;
+        page?: (number | null) | Page;
+        url?: string | null;
+        newTab?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'about';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CoreValuesBlock".
+ */
+export interface CoreValuesBlock {
+  header?: {
+    eyebrow?: string | null;
+    title?: string | null;
+    subtitle?: string | null;
+    intro?: string | null;
+  };
+  values?:
+    | {
+        label?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'coreValues';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "VisionMissionBlock".
+ */
+export interface VisionMissionBlock {
+  header?: {
+    eyebrow?: string | null;
+    title?: string | null;
+    subtitle?: string | null;
+    intro?: string | null;
+  };
+  items?:
+    | {
+        heading?: string | null;
+        body?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'visionMission';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ContactPersonsBlock".
+ */
+export interface ContactPersonsBlock {
+  header?: {
+    eyebrow?: string | null;
+    title?: string | null;
+    subtitle?: string | null;
+    intro?: string | null;
+  };
+  people?:
+    | {
+        name?: string | null;
+        role?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'contactPersons';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ComplaintsBlock".
+ */
+export interface ComplaintsBlock {
+  header?: {
+    eyebrow?: string | null;
+    title?: string | null;
+    subtitle?: string | null;
+    intro?: string | null;
+  };
+  steps?:
+    | {
+        title?: string | null;
+        text?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'complaints';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "SocialBlock".
+ */
+export interface SocialBlock {
+  header?: {
+    eyebrow?: string | null;
+    title?: string | null;
+    subtitle?: string | null;
+    intro?: string | null;
+  };
+  handle?: string | null;
+  link: {
+    label: string;
+    variant?: ('primary' | 'secondary') | null;
+    type?: ('internal' | 'external') | null;
+    page?: (number | null) | Page;
+    url?: string | null;
+    newTab?: boolean | null;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'social';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "VacanciesBlock".
+ */
+export interface VacanciesBlock {
+  header?: {
+    eyebrow?: string | null;
+    title?: string | null;
+    subtitle?: string | null;
+    intro?: string | null;
+  };
+  cards?:
+    | {
+        title?: string | null;
+        location?: string | null;
+        hours?: string | null;
+        text?: string | null;
+        link: {
+          label: string;
+          variant?: ('primary' | 'secondary') | null;
+          type?: ('internal' | 'external') | null;
+          page?: (number | null) | Page;
+          url?: string | null;
+          newTab?: boolean | null;
+        };
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'vacancies';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "AccordionBlock".
+ */
+export interface AccordionBlock {
+  header?: {
+    eyebrow?: string | null;
+    title?: string | null;
+    subtitle?: string | null;
+    intro?: string | null;
+  };
+  items?:
+    | {
+        title: string;
+        body?: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        } | null;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'accordion';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ButtonRowBlock".
+ */
+export interface ButtonRowBlock {
+  buttons?:
+    | {
+        label: string;
+        variant?: ('primary' | 'secondary') | null;
+        type?: ('internal' | 'external') | null;
+        page?: (number | null) | Page;
+        url?: string | null;
+        newTab?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  alignment?: ('left' | 'center' | 'right') | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'buttonRow';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "RichTextBlock".
+ */
+export interface RichTextBlock {
+  content?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  width?: ('narrow' | 'wide') | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'richText';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -354,12 +711,347 @@ export interface MediaSelect<T extends boolean = true> {
  */
 export interface PagesSelect<T extends boolean = true> {
   title?: T;
+  generateSlug?: T;
   slug?: T;
   workflowStatus?: T;
   content?: T;
+  layout?:
+    | T
+    | {
+        hero?: T | HeroBlockSelect<T>;
+        services?: T | ServicesBlockSelect<T>;
+        about?: T | AboutBlockSelect<T>;
+        coreValues?: T | CoreValuesBlockSelect<T>;
+        visionMission?: T | VisionMissionBlockSelect<T>;
+        contactPersons?: T | ContactPersonsBlockSelect<T>;
+        complaints?: T | ComplaintsBlockSelect<T>;
+        social?: T | SocialBlockSelect<T>;
+        vacancies?: T | VacanciesBlockSelect<T>;
+        accordion?: T | AccordionBlockSelect<T>;
+        buttonRow?: T | ButtonRowBlockSelect<T>;
+        richText?: T | RichTextBlockSelect<T>;
+      };
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HeroBlock_select".
+ */
+export interface HeroBlockSelect<T extends boolean = true> {
+  header?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        subtitle?: T;
+        intro?: T;
+      };
+  buttons?:
+    | T
+    | {
+        label?: T;
+        variant?: T;
+        type?: T;
+        page?: T;
+        url?: T;
+        newTab?: T;
+        id?: T;
+      };
+  cert?:
+    | T
+    | {
+        title?: T;
+        text?: T;
+        link?:
+          | T
+          | {
+              label?: T;
+              variant?: T;
+              type?: T;
+              page?: T;
+              url?: T;
+              newTab?: T;
+            };
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ServicesBlock_select".
+ */
+export interface ServicesBlockSelect<T extends boolean = true> {
+  header?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        subtitle?: T;
+        intro?: T;
+      };
+  tabs?:
+    | T
+    | {
+        label?: T;
+        id?: T;
+      };
+  cards?:
+    | T
+    | {
+        number?: T;
+        title?: T;
+        description?: T;
+        link?:
+          | T
+          | {
+              label?: T;
+              variant?: T;
+              type?: T;
+              page?: T;
+              url?: T;
+              newTab?: T;
+            };
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "AboutBlock_select".
+ */
+export interface AboutBlockSelect<T extends boolean = true> {
+  header?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        subtitle?: T;
+        intro?: T;
+      };
+  body?: T;
+  email?: T;
+  buttons?:
+    | T
+    | {
+        label?: T;
+        variant?: T;
+        type?: T;
+        page?: T;
+        url?: T;
+        newTab?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CoreValuesBlock_select".
+ */
+export interface CoreValuesBlockSelect<T extends boolean = true> {
+  header?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        subtitle?: T;
+        intro?: T;
+      };
+  values?:
+    | T
+    | {
+        label?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "VisionMissionBlock_select".
+ */
+export interface VisionMissionBlockSelect<T extends boolean = true> {
+  header?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        subtitle?: T;
+        intro?: T;
+      };
+  items?:
+    | T
+    | {
+        heading?: T;
+        body?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ContactPersonsBlock_select".
+ */
+export interface ContactPersonsBlockSelect<T extends boolean = true> {
+  header?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        subtitle?: T;
+        intro?: T;
+      };
+  people?:
+    | T
+    | {
+        name?: T;
+        role?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ComplaintsBlock_select".
+ */
+export interface ComplaintsBlockSelect<T extends boolean = true> {
+  header?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        subtitle?: T;
+        intro?: T;
+      };
+  steps?:
+    | T
+    | {
+        title?: T;
+        text?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "SocialBlock_select".
+ */
+export interface SocialBlockSelect<T extends boolean = true> {
+  header?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        subtitle?: T;
+        intro?: T;
+      };
+  handle?: T;
+  link?:
+    | T
+    | {
+        label?: T;
+        variant?: T;
+        type?: T;
+        page?: T;
+        url?: T;
+        newTab?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "VacanciesBlock_select".
+ */
+export interface VacanciesBlockSelect<T extends boolean = true> {
+  header?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        subtitle?: T;
+        intro?: T;
+      };
+  cards?:
+    | T
+    | {
+        title?: T;
+        location?: T;
+        hours?: T;
+        text?: T;
+        link?:
+          | T
+          | {
+              label?: T;
+              variant?: T;
+              type?: T;
+              page?: T;
+              url?: T;
+              newTab?: T;
+            };
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "AccordionBlock_select".
+ */
+export interface AccordionBlockSelect<T extends boolean = true> {
+  header?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        subtitle?: T;
+        intro?: T;
+      };
+  items?:
+    | T
+    | {
+        title?: T;
+        body?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ButtonRowBlock_select".
+ */
+export interface ButtonRowBlockSelect<T extends boolean = true> {
+  buttons?:
+    | T
+    | {
+        label?: T;
+        variant?: T;
+        type?: T;
+        page?: T;
+        url?: T;
+        newTab?: T;
+        id?: T;
+      };
+  alignment?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "RichTextBlock_select".
+ */
+export interface RichTextBlockSelect<T extends boolean = true> {
+  content?: T;
+  width?: T;
+  id?: T;
+  blockName?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -415,6 +1107,104 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "header".
+ */
+export interface Header {
+  id: number;
+  navItems?:
+    | {
+        label?: string | null;
+        url?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  cta?: {
+    label?: string | null;
+    url?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "footer".
+ */
+export interface Footer {
+  id: number;
+  tagline?: string | null;
+  email?: string | null;
+  phone?: string | null;
+  address?: string | null;
+  menuItems?:
+    | {
+        label?: string | null;
+        url?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  infoLinks?:
+    | {
+        label?: string | null;
+        url?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  copyright?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "header_select".
+ */
+export interface HeaderSelect<T extends boolean = true> {
+  navItems?:
+    | T
+    | {
+        label?: T;
+        url?: T;
+        id?: T;
+      };
+  cta?:
+    | T
+    | {
+        label?: T;
+        url?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "footer_select".
+ */
+export interface FooterSelect<T extends boolean = true> {
+  tagline?: T;
+  email?: T;
+  phone?: T;
+  address?: T;
+  menuItems?:
+    | T
+    | {
+        label?: T;
+        url?: T;
+        id?: T;
+      };
+  infoLinks?:
+    | T
+    | {
+        label?: T;
+        url?: T;
+        id?: T;
+      };
+  copyright?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

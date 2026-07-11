@@ -1,12 +1,21 @@
 import React from 'react'
 
-import { getPublishedPages } from '@/lib/pages'
+import { RenderBlocks } from '@/components/frontend/RenderBlocks'
+import { getRenderablePageBySlug, getRenderablePages } from '@/lib/pages'
 import './styles.css'
 
-// Statically rendered: content is fetched at build time from the accp Payload
-// API and baked into the exported HTML.
+/**
+ * Home route: renders the "home" page's block layout when it exists;
+ * otherwise falls back to the starter list of renderable pages.
+ */
 export default async function HomePage() {
-  const pages = await getPublishedPages()
+  const page = await getRenderablePageBySlug('home')
+
+  if (page?.layout?.length) {
+    return <RenderBlocks layout={page.layout} />
+  }
+
+  const pages = await getRenderablePages()
 
   return (
     <div className="home">
@@ -16,9 +25,9 @@ export default async function HomePage() {
           <p>No published pages yet.</p>
         ) : (
           <ul className="links">
-            {pages.map((page) => (
-              <li key={page.id}>
-                <a href={`/${page.slug}`}>{page.title}</a>
+            {pages.map((p) => (
+              <li key={p.id}>
+                <a href={`/${p.slug}`}>{p.title}</a>
               </li>
             ))}
           </ul>

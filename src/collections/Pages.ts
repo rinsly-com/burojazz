@@ -1,6 +1,8 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionConfig, Where } from 'payload'
+import { slugField } from 'payload'
 
 import { authenticated, reviewerOnly, isReviewer } from '../access/roles'
+import { pageBlocks } from '../blocks'
 import { enforceWorkflow } from '../hooks/enforceWorkflow'
 import {
   triggerStaticDeployAfterChange,
@@ -31,10 +33,16 @@ export const Pages: CollectionConfig = {
     },
   },
   access: {
-    // Public reads see published only; the static build fetches unauthenticated.
+    // Unauthenticated reads see published pages AND pages approved for release
+    // (Ready), so accp/dev can preview approved content rendered. The production
+    // static build explicitly queries published only, so Ready pages are
+    // previewable but never end up in prod.
     read: ({ req: { user } }) => {
       if (user) return true
-      return { _status: { equals: 'published' } }
+      const where: Where = {
+        or: [{ _status: { equals: 'published' } }, { workflowStatus: { equals: 'ready' } }],
+      }
+      return where
     },
     create: authenticated,
     update: authenticated,
@@ -69,14 +77,9 @@ export const Pages: CollectionConfig = {
       type: 'text',
       required: true,
     },
-    {
-      name: 'slug',
-      type: 'text',
-      required: true,
-      unique: true,
-      index: true,
-      admin: { position: 'sidebar' },
-    },
+    // Auto-generates a sanitized slug from the title (with a lock toggle to
+    // override). Unique + required by default.
+    slugField({ position: 'sidebar' }),
     {
       name: 'workflowStatus',
       label: 'Stage',
@@ -102,6 +105,15 @@ export const Pages: CollectionConfig = {
     {
       name: 'content',
       type: 'richText',
+    },
+    {
+      name: 'layout',
+      type: 'blocks',
+      blocks: pageBlocks,
+      admin: {
+        initCollapsed: true,
+        description: 'Page sections rendered on the site, in order.',
+      },
     },
     {
       // PR-style review comments for this page (see CommentsPanel).
