@@ -1,0 +1,10 @@
+# Machine-specific absolute paths — regenerated on each machine
+.graphify_python
+.graphify_root
+
+# Regenerable extraction cache (keyed on file hashes, can be large)
+cache/
+
+# Transient pipeline temp files
+.graphify_*.json
+.needs_update
