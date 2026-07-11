@@ -4,31 +4,10 @@ import type { Page } from '@/payload-types'
 import { ArrowIcon } from '@/components/frontend/ui/ArrowIcon'
 import { hrefFor } from '@/components/frontend/ui/CMSLink'
 import { Eyebrow } from '@/components/frontend/ui/Eyebrow'
+import { Icon } from '@/components/frontend/ui/Icon'
 import { Section } from '@/components/frontend/ui/Section'
 
 type Props = Extract<NonNullable<Page['layout']>[number], { blockType: 'social' }>
-
-/** Small phone glyph used in the eyebrow pill (stroke follows currentColor). */
-function PhoneIcon() {
-  return (
-    <svg
-      width="14"
-      height="14"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-    >
-      <path
-        d="M8.4 3.2c.5 0 .95.3 1.13.77l1.1 2.87a1.2 1.2 0 0 1-.3 1.3L8.9 9.5a11.6 11.6 0 0 0 5.6 5.6l1.36-1.43a1.2 1.2 0 0 1 1.3-.3l2.87 1.1c.46.18.77.63.77 1.13v2.6a2.2 2.2 0 0 1-2.4 2.2C10.55 19.55 4.45 13.45 3.6 5.6a2.2 2.2 0 0 1 2.2-2.4h2.6Z"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  )
-}
 
 /**
  * "Samen in verbinding, ook online" — Instagram/social section.
@@ -64,8 +43,8 @@ export function Social(props: Props) {
         {/* Intro */}
         <div className="relative z-10 mx-auto flex max-w-[700px] flex-col items-center gap-6 text-center">
           <div className="inline-flex items-center gap-2.5 rounded-pill bg-brand/5 px-3 py-2.5 text-brand">
-            <PhoneIcon />
-            <Eyebrow className="leading-none">Social Media</Eyebrow>
+            <Icon name={props.header?.icon} fallback="IconBrandInstagram" size={14} />
+            <Eyebrow className="leading-none">{props.header?.eyebrow ?? 'Social Media'}</Eyebrow>
           </div>
           <h2 className="font-semibold text-[28px] leading-[1.2] tracking-[0.02em] text-black md:text-[40px]">
             {title}

@@ -1,6 +1,7 @@
 import type { Page } from '@/payload-types'
 
 import { Eyebrow } from '@/components/frontend/ui/Eyebrow'
+import { Icon } from '@/components/frontend/ui/Icon'
 import { Section } from '@/components/frontend/ui/Section'
 
 type Props = Extract<NonNullable<Page['layout']>[number], { blockType: 'complaints' }>
@@ -74,9 +75,10 @@ export function Complaints(props: Props) {
       <div className="flex flex-col gap-12 lg:flex-row lg:gap-8">
         {/* Intro column */}
         <div className="flex flex-col items-start gap-6 lg:w-[360px] lg:shrink-0 xl:w-[420px]">
-          <Eyebrow className="inline-flex items-center gap-2.5 rounded-pill bg-brand/5 px-3 py-2.5">
-            {eyebrow}
-          </Eyebrow>
+          <span className="inline-flex items-center gap-2.5 rounded-pill bg-brand/5 px-3 py-2.5 text-brand">
+            <Icon name={props.header?.icon} size={14} />
+            <Eyebrow>{eyebrow}</Eyebrow>
+          </span>
           <h2 className="font-sans text-3xl font-semibold leading-[1.2] tracking-[0.02em] text-black md:text-[40px]">
             {title}
           </h2>

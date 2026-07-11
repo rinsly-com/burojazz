@@ -4,6 +4,7 @@ import type { Page } from '@/payload-types'
 import { ArrowIcon } from '@/components/frontend/ui/ArrowIcon'
 import { hrefFor, type LinkFields } from '@/components/frontend/ui/CMSLink'
 import { Eyebrow } from '@/components/frontend/ui/Eyebrow'
+import { Icon } from '@/components/frontend/ui/Icon'
 import { Section } from '@/components/frontend/ui/Section'
 
 type Props = Extract<NonNullable<Page['layout']>[number], { blockType: 'services' }>
@@ -110,9 +111,8 @@ export function Services(props: Props) {
   return (
     <Section py="py-16 md:py-[120px]" className="flex flex-col items-center gap-12 md:gap-20">
       <div className="flex max-w-[700px] flex-col items-center gap-6">
-        <div className="inline-flex items-center gap-2.5 rounded-pill bg-brand/5 px-3 py-2.5">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/images/services/diamond.svg" alt="" aria-hidden="true" width={14} height={14} />
+        <div className="inline-flex items-center gap-2.5 rounded-pill bg-brand/5 px-3 py-2.5 text-brand">
+          <Icon name={props.header?.icon} fallback="IconDiamond" size={14} />
           <Eyebrow>{eyebrow}</Eyebrow>
         </div>
         <h2 className="text-center text-[28px] font-semibold leading-[1.2] tracking-[0.02em] text-black md:text-[40px]">

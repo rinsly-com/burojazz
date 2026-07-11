@@ -235,6 +235,10 @@ export interface Page {
  */
 export interface HeroBlock {
   header?: {
+    /**
+     * Icoon in het label boven de titel. Laat leeg voor het standaardicoon.
+     */
+    icon?: string | null;
     eyebrow?: string | null;
     title?: string | null;
     subtitle?: string | null;
@@ -273,6 +277,10 @@ export interface HeroBlock {
  */
 export interface ServicesBlock {
   header?: {
+    /**
+     * Icoon in het label boven de titel. Laat leeg voor het standaardicoon.
+     */
+    icon?: string | null;
     eyebrow?: string | null;
     title?: string | null;
     subtitle?: string | null;
@@ -310,6 +318,10 @@ export interface ServicesBlock {
  */
 export interface AboutBlock {
   header?: {
+    /**
+     * Icoon in het label boven de titel. Laat leeg voor het standaardicoon.
+     */
+    icon?: string | null;
     eyebrow?: string | null;
     title?: string | null;
     subtitle?: string | null;
@@ -338,6 +350,10 @@ export interface AboutBlock {
  */
 export interface CoreValuesBlock {
   header?: {
+    /**
+     * Icoon in het label boven de titel. Laat leeg voor het standaardicoon.
+     */
+    icon?: string | null;
     eyebrow?: string | null;
     title?: string | null;
     subtitle?: string | null;
@@ -359,6 +375,10 @@ export interface CoreValuesBlock {
  */
 export interface VisionMissionBlock {
   header?: {
+    /**
+     * Icoon in het label boven de titel. Laat leeg voor het standaardicoon.
+     */
+    icon?: string | null;
     eyebrow?: string | null;
     title?: string | null;
     subtitle?: string | null;
@@ -366,6 +386,10 @@ export interface VisionMissionBlock {
   };
   items?:
     | {
+        /**
+         * Icoon in het ronde label. Laat leeg voor het standaardicoon.
+         */
+        icon?: string | null;
         heading?: string | null;
         body?: string | null;
         id?: string | null;
@@ -381,6 +405,10 @@ export interface VisionMissionBlock {
  */
 export interface ContactPersonsBlock {
   header?: {
+    /**
+     * Icoon in het label boven de titel. Laat leeg voor het standaardicoon.
+     */
+    icon?: string | null;
     eyebrow?: string | null;
     title?: string | null;
     subtitle?: string | null;
@@ -403,6 +431,10 @@ export interface ContactPersonsBlock {
  */
 export interface ComplaintsBlock {
   header?: {
+    /**
+     * Icoon in het label boven de titel. Laat leeg voor het standaardicoon.
+     */
+    icon?: string | null;
     eyebrow?: string | null;
     title?: string | null;
     subtitle?: string | null;
@@ -425,6 +457,10 @@ export interface ComplaintsBlock {
  */
 export interface SocialBlock {
   header?: {
+    /**
+     * Icoon in het label boven de titel. Laat leeg voor het standaardicoon.
+     */
+    icon?: string | null;
     eyebrow?: string | null;
     title?: string | null;
     subtitle?: string | null;
@@ -449,6 +485,10 @@ export interface SocialBlock {
  */
 export interface VacanciesBlock {
   header?: {
+    /**
+     * Icoon in het label boven de titel. Laat leeg voor het standaardicoon.
+     */
+    icon?: string | null;
     eyebrow?: string | null;
     title?: string | null;
     subtitle?: string | null;
@@ -481,6 +521,10 @@ export interface VacanciesBlock {
  */
 export interface AccordionBlock {
   header?: {
+    /**
+     * Icoon in het label boven de titel. Laat leeg voor het standaardicoon.
+     */
+    icon?: string | null;
     eyebrow?: string | null;
     title?: string | null;
     subtitle?: string | null;
@@ -743,6 +787,7 @@ export interface HeroBlockSelect<T extends boolean = true> {
   header?:
     | T
     | {
+        icon?: T;
         eyebrow?: T;
         title?: T;
         subtitle?: T;
@@ -786,6 +831,7 @@ export interface ServicesBlockSelect<T extends boolean = true> {
   header?:
     | T
     | {
+        icon?: T;
         eyebrow?: T;
         title?: T;
         subtitle?: T;
@@ -826,6 +872,7 @@ export interface AboutBlockSelect<T extends boolean = true> {
   header?:
     | T
     | {
+        icon?: T;
         eyebrow?: T;
         title?: T;
         subtitle?: T;
@@ -855,6 +902,7 @@ export interface CoreValuesBlockSelect<T extends boolean = true> {
   header?:
     | T
     | {
+        icon?: T;
         eyebrow?: T;
         title?: T;
         subtitle?: T;
@@ -877,6 +925,7 @@ export interface VisionMissionBlockSelect<T extends boolean = true> {
   header?:
     | T
     | {
+        icon?: T;
         eyebrow?: T;
         title?: T;
         subtitle?: T;
@@ -885,6 +934,7 @@ export interface VisionMissionBlockSelect<T extends boolean = true> {
   items?:
     | T
     | {
+        icon?: T;
         heading?: T;
         body?: T;
         id?: T;
@@ -900,6 +950,7 @@ export interface ContactPersonsBlockSelect<T extends boolean = true> {
   header?:
     | T
     | {
+        icon?: T;
         eyebrow?: T;
         title?: T;
         subtitle?: T;
@@ -923,6 +974,7 @@ export interface ComplaintsBlockSelect<T extends boolean = true> {
   header?:
     | T
     | {
+        icon?: T;
         eyebrow?: T;
         title?: T;
         subtitle?: T;
@@ -946,6 +998,7 @@ export interface SocialBlockSelect<T extends boolean = true> {
   header?:
     | T
     | {
+        icon?: T;
         eyebrow?: T;
         title?: T;
         subtitle?: T;
@@ -973,6 +1026,7 @@ export interface VacanciesBlockSelect<T extends boolean = true> {
   header?:
     | T
     | {
+        icon?: T;
         eyebrow?: T;
         title?: T;
         subtitle?: T;
@@ -1008,6 +1062,7 @@ export interface AccordionBlockSelect<T extends boolean = true> {
   header?:
     | T
     | {
+        icon?: T;
         eyebrow?: T;
         title?: T;
         subtitle?: T;

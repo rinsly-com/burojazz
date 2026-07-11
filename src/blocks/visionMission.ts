@@ -1,5 +1,6 @@
 import type { Block } from 'payload'
 
+import { iconField } from '../fields/icon'
 import { sectionHeader } from '../fields/sectionHeader'
 
 export const visionMissionBlock: Block = {
@@ -15,6 +16,7 @@ export const visionMissionBlock: Block = {
       type: 'array',
       admin: { initCollapsed: true },
       fields: [
+        iconField({ description: 'Icoon in het ronde label. Laat leeg voor het standaardicoon.' }),
         { name: 'heading', type: 'text' },
         { name: 'body', type: 'textarea' },
       ],

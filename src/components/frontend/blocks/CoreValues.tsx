@@ -1,5 +1,6 @@
 import type { Page } from '@/payload-types'
 import { Eyebrow } from '@/components/frontend/ui/Eyebrow'
+import { Icon } from '@/components/frontend/ui/Icon'
 import { Section } from '@/components/frontend/ui/Section'
 
 type Props = Extract<NonNullable<Page['layout']>[number], { blockType: 'coreValues' }>
@@ -165,8 +166,8 @@ export function CoreValues(props: Props) {
       <Section py="py-16 md:py-24 xl:py-[120px]" className="relative">
         {/* Heading */}
         <div className="flex flex-col items-center gap-6 text-center">
-          <div className="inline-flex items-center gap-2.5 rounded-pill bg-brand/5 px-3 py-2.5">
-            <img src="/images/core-values/heart.svg" alt="" aria-hidden="true" className="size-3.5" />
+          <div className="inline-flex items-center gap-2.5 rounded-pill bg-brand/5 px-3 py-2.5 text-brand">
+            <Icon name={props.header?.icon} fallback="IconHeart" size={14} />
             <Eyebrow>{props.header?.eyebrow ?? 'Over ons'}</Eyebrow>
           </div>
           <h2 className="font-sans text-3xl font-semibold tracking-[-0.8px] text-ink md:text-[40px] md:leading-[1.2]">

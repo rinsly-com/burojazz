@@ -1,6 +1,7 @@
 import type { Page } from '@/payload-types'
 
 import { Eyebrow } from '@/components/frontend/ui/Eyebrow'
+import { Icon } from '@/components/frontend/ui/Icon'
 import { Section } from '@/components/frontend/ui/Section'
 
 type Props = Extract<NonNullable<Page['layout']>[number], { blockType: 'contactPersons' }>
@@ -13,61 +14,6 @@ const DEFAULT_PEOPLE = [
 
 /** Static portrait assets matched to card position (v1: images not in CMS). */
 const PHOTOS = ['/images/contact-persons/egbert.png', '/images/contact-persons/andres.png']
-
-function UserIcon() {
-  return (
-    <svg
-      width="14"
-      height="14"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      aria-hidden="true"
-      className="shrink-0"
-    >
-      <circle cx="12" cy="6" r="4" />
-      <path d="M20 17.5c0 2.485 0 4.5-8 4.5s-8-2.015-8-4.5S7.582 13 12 13s8 2.015 8 4.5Z" />
-    </svg>
-  )
-}
-
-function PhoneIcon() {
-  return (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-    </svg>
-  )
-}
-
-function MailIcon() {
-  return (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <rect x="3" y="5" width="18" height="14" rx="2" />
-      <path d="m3 7 9 6 9-6" />
-    </svg>
-  )
-}
 
 function PersonCard({
   name,
@@ -112,10 +58,10 @@ function PersonCard({
       {/* Contact icons (decorative in v1: the block has no phone/email fields) */}
       <div className="absolute bottom-6 left-1/2 z-10 flex -translate-x-1/2 gap-6">
         <span className="flex size-16 items-center justify-center rounded-full bg-white text-brand">
-          <PhoneIcon />
+          <Icon fallback="IconPhone" size={24} />
         </span>
         <span className="flex size-16 items-center justify-center rounded-full bg-white text-brand">
-          <MailIcon />
+          <Icon fallback="IconMail" size={24} />
         </span>
       </div>
     </div>
@@ -137,7 +83,7 @@ export function ContactPersons(props: Props) {
       <div className="flex flex-col items-center gap-12 md:gap-20">
         <div className="flex flex-col items-center gap-6 text-center">
           <span className="inline-flex items-center gap-2.5 rounded-pill bg-brand/5 px-3 py-2.5 text-brand">
-            <UserIcon />
+            <Icon name={props.header?.icon} fallback="IconUsers" size={14} className="shrink-0" />
             <Eyebrow className="leading-none">{eyebrow}</Eyebrow>
           </span>
           <h2 className="max-w-[700px] text-[28px] font-semibold leading-[1.2] tracking-[0.02em] text-black md:text-[40px]">

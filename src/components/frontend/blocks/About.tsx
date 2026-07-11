@@ -3,6 +3,7 @@ import type { Page } from '@/payload-types'
 import { Button } from '@/components/frontend/ui/Button'
 import { Buttons } from '@/components/frontend/ui/CMSLink'
 import { Eyebrow } from '@/components/frontend/ui/Eyebrow'
+import { Icon } from '@/components/frontend/ui/Icon'
 import { Section } from '@/components/frontend/ui/Section'
 
 type Props = Extract<NonNullable<Page['layout']>[number], { blockType: 'about' }>
@@ -13,53 +14,6 @@ const DEFAULT_BODY_HIGHLIGHT = 'Jeugdhulp en Ambulante Zorg met Zorgzaamheid'
 
 const DEFAULT_BODY_P2 =
   'De raad van toezicht bewaakt daarbij de koers: zij houdt onafhankelijk toezicht, adviseert het bestuur en fungeert als kritische sparringpartner. Samen met de inspraak van cliënten en medewerkers vormt dit de basis voor de goede zorg die wij elke dag willen blijven leveren.'
-
-/** Small "people" glyph shown inside the eyebrow pill. */
-function PeopleIcon() {
-  return (
-    <svg
-      width="14"
-      height="14"
-      viewBox="0 0 16 16"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-      className="text-brand"
-    >
-      <circle cx="5.5" cy="5" r="2" stroke="currentColor" strokeWidth="1.1" />
-      <circle cx="10.5" cy="5" r="2" stroke="currentColor" strokeWidth="1.1" />
-      <path
-        d="M2 12.5c0-1.933 1.567-3.5 3.5-3.5h5c1.933 0 3.5 1.567 3.5 3.5"
-        stroke="currentColor"
-        strokeWidth="1.1"
-        strokeLinecap="round"
-      />
-    </svg>
-  )
-}
-
-/** Envelope glyph inside the teal circle of the e-mail card. */
-function MailIcon() {
-  return (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-    >
-      <rect x="3" y="5" width="18" height="14" rx="2" stroke="white" strokeWidth="1.5" />
-      <path
-        d="M3 7l9 6 9-6"
-        stroke="white"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  )
-}
 
 /**
  * "Wie wij zijn" section: photo left (with overlapping e-mail contact card),
@@ -88,8 +42,8 @@ export function About(props: Props) {
             href={`mailto:${email}`}
             className="absolute -bottom-14 left-4 flex items-center gap-6 rounded-3xl border border-ink/5 bg-white px-7 py-6 shadow-[0px_3px_16px_0px_rgba(0,0,0,0.08)] sm:left-10"
           >
-            <span className="flex size-[65px] shrink-0 items-center justify-center rounded-full bg-brand">
-              <MailIcon />
+            <span className="flex size-[65px] shrink-0 items-center justify-center rounded-full bg-brand text-white">
+              <Icon fallback="IconMail" size={24} stroke={1.5} />
             </span>
             <span className="flex flex-col gap-2">
               <span className="text-lg font-bold tracking-[-0.03em] text-[#091b38] sm:text-xl">
@@ -103,8 +57,8 @@ export function About(props: Props) {
         {/* Text column */}
         <div className="flex flex-col items-start gap-10 lg:gap-12">
           <div className="flex flex-col items-start gap-6">
-            <div className="inline-flex items-center gap-2.5 rounded-pill bg-brand/5 px-3 py-2.5">
-              <PeopleIcon />
+            <div className="inline-flex items-center gap-2.5 rounded-pill bg-brand/5 px-3 py-2.5 text-brand">
+              <Icon name={props.header?.icon} fallback="IconUsers" size={14} />
               <Eyebrow>{eyebrow}</Eyebrow>
             </div>
             <h2 className="max-w-[568px] font-sans text-[28px] leading-[1.2] font-semibold tracking-[0.02em] text-black sm:text-[32px] lg:text-[40px]">

@@ -4,6 +4,7 @@ import type { Page } from '@/payload-types'
 import { ArrowIcon } from '@/components/frontend/ui/ArrowIcon'
 import { hrefFor, type LinkFields } from '@/components/frontend/ui/CMSLink'
 import { Eyebrow } from '@/components/frontend/ui/Eyebrow'
+import { Icon } from '@/components/frontend/ui/Icon'
 import { Section } from '@/components/frontend/ui/Section'
 
 type Props = Extract<NonNullable<Page['layout']>[number], { blockType: 'vacancies' }>
@@ -41,94 +42,6 @@ const CARD_IMAGES = [
   '/images/vacancies/card-3.jpg',
 ]
 
-function LocationIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      width="16"
-      height="16"
-      viewBox="0 0 16 16"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-      className={className}
-    >
-      <path
-        d="M8 8.67a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"
-        stroke="currentColor"
-        strokeWidth="1.25"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M8 14.67c2.67-2.67 5.33-5.06 5.33-8A5.33 5.33 0 0 0 2.67 6.67c0 2.94 2.66 5.33 5.33 8Z"
-        stroke="currentColor"
-        strokeWidth="1.25"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  )
-}
-
-function ClockIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      width="16"
-      height="16"
-      viewBox="0 0 16 16"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-      className={className}
-    >
-      <circle cx="8" cy="8" r="6.67" stroke="currentColor" strokeWidth="1.25" />
-      <path
-        d="M8 4.67V8l2 2"
-        stroke="currentColor"
-        strokeWidth="1.25"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  )
-}
-
-function BriefcaseIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      width="14"
-      height="14"
-      viewBox="0 0 14 14"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-      className={className}
-    >
-      <rect
-        x="1.17"
-        y="4.08"
-        width="11.67"
-        height="8.17"
-        rx="2"
-        stroke="currentColor"
-        strokeWidth="1.1"
-      />
-      <path
-        d="M4.67 4.08V2.92A1.75 1.75 0 0 1 6.42 1.17h1.16a1.75 1.75 0 0 1 1.75 1.75v1.16"
-        stroke="currentColor"
-        strokeWidth="1.1"
-        strokeLinecap="round"
-      />
-      <path
-        d="M1.17 7h11.66"
-        stroke="currentColor"
-        strokeWidth="1.1"
-        strokeLinecap="round"
-      />
-    </svg>
-  )
-}
-
 function Tag({
   icon,
   label,
@@ -138,15 +51,17 @@ function Tag({
   label: string
   featured: boolean
 }) {
-  const classes = featured
-    ? 'bg-white/15 text-white'
-    : 'bg-brand/5 text-brand'
-  const Icon = icon === 'location' ? LocationIcon : ClockIcon
+  const classes = featured ? 'bg-white/15 text-white' : 'bg-brand/5 text-brand'
   return (
     <span
       className={`inline-flex items-center gap-2 rounded-pill px-3 py-2 text-xs font-bold ${classes}`}
     >
-      <Icon className="shrink-0" />
+      <Icon
+        fallback={icon === 'location' ? 'IconMapPin' : 'IconClock'}
+        size={16}
+        stroke={1.25}
+        className="shrink-0"
+      />
       {label}
     </span>
   )
@@ -166,8 +81,8 @@ export function Vacancies(props: Props) {
       {/* Header */}
       <div className="flex flex-col items-center gap-6 text-center">
         <span className="inline-flex items-center gap-2.5 rounded-pill bg-brand/5 px-3 py-2.5 text-brand">
-          <BriefcaseIcon className="shrink-0" />
-          <Eyebrow>Vacatures</Eyebrow>
+          <Icon name={props.header?.icon} fallback="IconBriefcase" size={14} className="shrink-0" />
+          <Eyebrow>{props.header?.eyebrow ?? 'Vacatures'}</Eyebrow>
         </span>
         <h2 className="max-w-[700px] text-3xl font-semibold leading-[1.2] tracking-[0.02em] text-black md:text-[40px]">
           {title}
