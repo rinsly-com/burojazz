@@ -71,6 +71,7 @@ export interface Config {
     media: Media;
     pages: Page;
     comments: Comment;
+    aanmeldingen: Aanmeldingen;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -82,6 +83,7 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     pages: PagesSelect<false> | PagesSelect<true>;
     comments: CommentsSelect<false> | CommentsSelect<true>;
+    aanmeldingen: AanmeldingenSelect<false> | AanmeldingenSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -91,8 +93,14 @@ export interface Config {
     defaultIDType: number;
   };
   fallbackLocale: null;
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    header: Header;
+    footer: Footer;
+  };
+  globalsSelect: {
+    header: HeaderSelect<false> | HeaderSelect<true>;
+    footer: FooterSelect<false> | FooterSelect<true>;
+  };
   locale: null;
   widgets: {
     collections: CollectionsWidget;
@@ -176,11 +184,520 @@ export interface Media {
 export interface Page {
   id: number;
   title: string;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
   slug: string;
   /**
    * Advanced with the action button (Submit for review → Approve → Publish).
    */
   workflowStatus: 'draft' | 'review' | 'ready';
+  /**
+   * Page sections rendered on the site, in order.
+   */
+  layout?:
+    | (
+        | HeroBlock
+        | ServicesBlock
+        | AboutBlock
+        | CoreValuesBlock
+        | VisionMissionBlock
+        | ContactPersonsBlock
+        | ComplaintsBlock
+        | SocialBlock
+        | VacanciesBlock
+        | AccordionBlock
+        | ButtonRowBlock
+        | RichTextBlock
+      )[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HeroBlock".
+ */
+export interface HeroBlock {
+  header?: {
+    title?: string | null;
+    subtitle?: string | null;
+    intro?: string | null;
+  };
+  /**
+   * Grote afbeelding die het rechtervlak van de hero vult.
+   */
+  image?: (number | null) | Media;
+  buttons?:
+    | {
+        label: string;
+        variant?: ('primary' | 'secondary') | null;
+        type?: ('internal' | 'external') | null;
+        page?: (number | null) | Page;
+        url?: string | null;
+        /**
+         * Optional. Scroll to a section on the selected page. Give the target section an Anchor ID for a readable link.
+         */
+        anchor?: string | null;
+        newTab?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Optional. Gives this section an id so a menu item can scroll to it (e.g. “over-ons”). Use lowercase letters, numbers and dashes.
+   */
+  anchor?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'hero';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ServicesBlock".
+ */
+export interface ServicesBlock {
+  header?: {
+    /**
+     * Icoon in het label boven de titel. Laat leeg voor het standaardicoon.
+     */
+    icon?: string | null;
+    eyebrow?: string | null;
+    title?: string | null;
+  };
+  /**
+   * Each tab shows its own set of service cards on the site.
+   */
+  tabs?:
+    | {
+        label?: string | null;
+        cards?:
+          | {
+              number?: string | null;
+              title?: string | null;
+              description?: string | null;
+              link: {
+                label: string;
+                type?: ('internal' | 'external') | null;
+                page?: (number | null) | Page;
+                url?: string | null;
+                /**
+                 * Optional. Scroll to a section on the selected page. Give the target section an Anchor ID for a readable link.
+                 */
+                anchor?: string | null;
+                newTab?: boolean | null;
+              };
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Optional. Gives this section an id so a menu item can scroll to it (e.g. “over-ons”). Use lowercase letters, numbers and dashes.
+   */
+  anchor?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'services';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "AboutBlock".
+ */
+export interface AboutBlock {
+  header?: {
+    /**
+     * Icoon in het label boven de titel. Laat leeg voor het standaardicoon.
+     */
+    icon?: string | null;
+    eyebrow?: string | null;
+    title?: string | null;
+  };
+  image?: (number | null) | Media;
+  body?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  email?: string | null;
+  buttons?:
+    | {
+        label: string;
+        variant?: ('primary' | 'secondary') | null;
+        type?: ('internal' | 'external') | null;
+        page?: (number | null) | Page;
+        url?: string | null;
+        /**
+         * Optional. Scroll to a section on the selected page. Give the target section an Anchor ID for a readable link.
+         */
+        anchor?: string | null;
+        newTab?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Optional. Gives this section an id so a menu item can scroll to it (e.g. “over-ons”). Use lowercase letters, numbers and dashes.
+   */
+  anchor?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'about';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CoreValuesBlock".
+ */
+export interface CoreValuesBlock {
+  header?: {
+    /**
+     * Icoon in het label boven de titel. Laat leeg voor het standaardicoon.
+     */
+    icon?: string | null;
+    eyebrow?: string | null;
+    title?: string | null;
+  };
+  logo?: (number | null) | Media;
+  values?:
+    | {
+        label?: string | null;
+        /**
+         * Shown when the card is hovered.
+         */
+        description?: string | null;
+        /**
+         * Line-art icon shown in the value’s circle.
+         */
+        image?: (number | null) | Media;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Optional. Gives this section an id so a menu item can scroll to it (e.g. “over-ons”). Use lowercase letters, numbers and dashes.
+   */
+  anchor?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'coreValues';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "VisionMissionBlock".
+ */
+export interface VisionMissionBlock {
+  header?: {
+    /**
+     * Icoon in het label boven de titel. Laat leeg voor het standaardicoon.
+     */
+    icon?: string | null;
+    eyebrow?: string | null;
+    title?: string | null;
+  };
+  image?: (number | null) | Media;
+  items?:
+    | {
+        /**
+         * Icoon in het ronde label. Laat leeg voor het standaardicoon.
+         */
+        icon?: string | null;
+        heading?: string | null;
+        body?: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        } | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Optional. Gives this section an id so a menu item can scroll to it (e.g. “over-ons”). Use lowercase letters, numbers and dashes.
+   */
+  anchor?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'visionMission';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ContactPersonsBlock".
+ */
+export interface ContactPersonsBlock {
+  header?: {
+    /**
+     * Icoon in het label boven de titel. Laat leeg voor het standaardicoon.
+     */
+    icon?: string | null;
+    eyebrow?: string | null;
+    title?: string | null;
+    subtitle?: string | null;
+  };
+  people?:
+    | {
+        name?: string | null;
+        role?: string | null;
+        /**
+         * Portretfoto, uitgelijnd op de onderkant van de kaart.
+         */
+        photo?: (number | null) | Media;
+        phone?: string | null;
+        email?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Optional. Gives this section an id so a menu item can scroll to it (e.g. “over-ons”). Use lowercase letters, numbers and dashes.
+   */
+  anchor?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'contactPersons';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ComplaintsBlock".
+ */
+export interface ComplaintsBlock {
+  header?: {
+    /**
+     * Icoon in het label boven de titel. Laat leeg voor het standaardicoon.
+     */
+    icon?: string | null;
+    eyebrow?: string | null;
+    title?: string | null;
+    intro?: string | null;
+  };
+  steps?:
+    | {
+        title?: string | null;
+        text?: string | null;
+        /**
+         * Rounded callouts inside the step card (icon + text).
+         */
+        infoPills?:
+          | {
+              /**
+               * Icoon in de ronde badge. Laat leeg voor het standaardicoon.
+               */
+              icon?: string | null;
+              /**
+               * Colour of the badge and text.
+               */
+              tone?: ('brand' | 'danger') | null;
+              text?: string | null;
+              /**
+               * Optional arrow line shown below the callout text.
+               */
+              note?: string | null;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Optional "Nog vragen?" card shown below the steps.
+   */
+  contact?: {
+    /**
+     * Leave empty to hide the card.
+     */
+    title?: string | null;
+    subtitle?: string | null;
+    photo?: (number | null) | Media;
+    phone?: string | null;
+    email?: string | null;
+  };
+  /**
+   * Optional. Gives this section an id so a menu item can scroll to it (e.g. “over-ons”). Use lowercase letters, numbers and dashes.
+   */
+  anchor?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'complaints';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "SocialBlock".
+ */
+export interface SocialBlock {
+  header?: {
+    /**
+     * Icoon in het label boven de titel. Laat leeg voor het standaardicoon.
+     */
+    icon?: string | null;
+    eyebrow?: string | null;
+    title?: string | null;
+    subtitle?: string | null;
+  };
+  handle?: string | null;
+  link: {
+    label: string;
+    type?: ('internal' | 'external') | null;
+    page?: (number | null) | Page;
+    url?: string | null;
+    /**
+     * Optional. Scroll to a section on the selected page. Give the target section an Anchor ID for a readable link.
+     */
+    anchor?: string | null;
+    newTab?: boolean | null;
+  };
+  /**
+   * De sfeerfoto’s in de collage. Laat leeg voor de standaardfoto.
+   */
+  photos?: {
+    toys?: (number | null) | Media;
+    gym?: (number | null) | Media;
+    boxing?: (number | null) | Media;
+    figures?: (number | null) | Media;
+    phone?: (number | null) | Media;
+    arrow?: (number | null) | Media;
+    instagram?: (number | null) | Media;
+  };
+  /**
+   * Optional. Gives this section an id so a menu item can scroll to it (e.g. “over-ons”). Use lowercase letters, numbers and dashes.
+   */
+  anchor?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'social';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "VacanciesBlock".
+ */
+export interface VacanciesBlock {
+  header?: {
+    /**
+     * Icoon in het label boven de titel. Laat leeg voor het standaardicoon.
+     */
+    icon?: string | null;
+    eyebrow?: string | null;
+    title?: string | null;
+    intro?: string | null;
+  };
+  cards?:
+    | {
+        title?: string | null;
+        location?: string | null;
+        hours?: string | null;
+        text?: string | null;
+        link: {
+          label: string;
+          type?: ('internal' | 'external') | null;
+          page?: (number | null) | Page;
+          url?: string | null;
+          /**
+           * Optional. Scroll to a section on the selected page. Give the target section an Anchor ID for a readable link.
+           */
+          anchor?: string | null;
+          newTab?: boolean | null;
+        };
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Optional. Gives this section an id so a menu item can scroll to it (e.g. “over-ons”). Use lowercase letters, numbers and dashes.
+   */
+  anchor?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'vacancies';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "AccordionBlock".
+ */
+export interface AccordionBlock {
+  header?: {
+    eyebrow?: string | null;
+    title?: string | null;
+    subtitle?: string | null;
+    intro?: string | null;
+  };
+  items?:
+    | {
+        title: string;
+        body?: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        } | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Optional. Gives this section an id so a menu item can scroll to it (e.g. “over-ons”). Use lowercase letters, numbers and dashes.
+   */
+  anchor?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'accordion';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ButtonRowBlock".
+ */
+export interface ButtonRowBlock {
+  buttons?:
+    | {
+        label: string;
+        variant?: ('primary' | 'secondary') | null;
+        type?: ('internal' | 'external') | null;
+        page?: (number | null) | Page;
+        url?: string | null;
+        /**
+         * Optional. Scroll to a section on the selected page. Give the target section an Anchor ID for a readable link.
+         */
+        anchor?: string | null;
+        newTab?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  alignment?: ('left' | 'center' | 'right') | null;
+  /**
+   * Optional. Gives this section an id so a menu item can scroll to it (e.g. “over-ons”). Use lowercase letters, numbers and dashes.
+   */
+  anchor?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'buttonRow';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "RichTextBlock".
+ */
+export interface RichTextBlock {
   content?: {
     root: {
       type: string;
@@ -196,9 +713,14 @@ export interface Page {
     };
     [k: string]: unknown;
   } | null;
-  updatedAt: string;
-  createdAt: string;
-  _status?: ('draft' | 'published') | null;
+  width?: ('narrow' | 'wide') | null;
+  /**
+   * Optional. Gives this section an id so a menu item can scroll to it (e.g. “over-ons”). Use lowercase letters, numbers and dashes.
+   */
+  anchor?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'richText';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -222,6 +744,61 @@ export interface Comment {
    * Set to reply within a thread.
    */
   parent?: (number | null) | Comment;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "aanmeldingen".
+ */
+export interface Aanmeldingen {
+  id: number;
+  status?: ('nieuw' | 'in-behandeling' | 'afgehandeld') | null;
+  clientNaam: string;
+  clientGeboortedatum: string;
+  clientAdres: string;
+  verwijzerNaam: string;
+  verwijzerOrganisatie: string;
+  verwijzerEmail: string;
+  verwijzerTelefoon: string;
+  moederNaam: string;
+  moederAdres: string;
+  moederEmail: string;
+  moederTelefoon: string;
+  vaderNaam: string;
+  vaderAdres?: string | null;
+  vaderEmail?: string | null;
+  vaderTelefoon?: string | null;
+  siblings?:
+    | {
+        leeftijd?: string | null;
+        type?: ('broer' | 'zus' | 'nvt') | null;
+        id?: string | null;
+      }[]
+    | null;
+  redenAanmelden: string;
+  hulpverleningsgeschiedenis?: string | null;
+  problematiek?:
+    | (
+        | 'adhd'
+        | 'ass'
+        | 'verstandelijke-beperking'
+        | 'hoogbegaafdheid'
+        | 'emoties'
+        | 'lichamelijke-klachten'
+        | 'somberheid'
+        | 'angst'
+        | 'trauma'
+        | 'drugsgebruik'
+        | 'negatief-zelfbeeld'
+        | 'vastlopen'
+      )[]
+    | null;
+  problematiekOverig?: string | null;
+  dsmDiagnoseBekend?: ('ja' | 'nee') | null;
+  vormVanHulp?:
+    ('begeleiding' | 'pmt' | 'basis-ggz' | 'ash' | 'wmo' | 'begeleiding-op-school' | 'diagnostiek')[] | null;
+  privacyAkkoord: boolean;
   updatedAt: string;
   createdAt: string;
 }
@@ -264,6 +841,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'comments';
         value: number | Comment;
+      } | null)
+    | ({
+        relationTo: 'aanmeldingen';
+        value: number | Aanmeldingen;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -354,12 +935,379 @@ export interface MediaSelect<T extends boolean = true> {
  */
 export interface PagesSelect<T extends boolean = true> {
   title?: T;
+  generateSlug?: T;
   slug?: T;
   workflowStatus?: T;
-  content?: T;
+  layout?:
+    | T
+    | {
+        hero?: T | HeroBlockSelect<T>;
+        services?: T | ServicesBlockSelect<T>;
+        about?: T | AboutBlockSelect<T>;
+        coreValues?: T | CoreValuesBlockSelect<T>;
+        visionMission?: T | VisionMissionBlockSelect<T>;
+        contactPersons?: T | ContactPersonsBlockSelect<T>;
+        complaints?: T | ComplaintsBlockSelect<T>;
+        social?: T | SocialBlockSelect<T>;
+        vacancies?: T | VacanciesBlockSelect<T>;
+        accordion?: T | AccordionBlockSelect<T>;
+        buttonRow?: T | ButtonRowBlockSelect<T>;
+        richText?: T | RichTextBlockSelect<T>;
+      };
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HeroBlock_select".
+ */
+export interface HeroBlockSelect<T extends boolean = true> {
+  header?:
+    | T
+    | {
+        title?: T;
+        subtitle?: T;
+        intro?: T;
+      };
+  image?: T;
+  buttons?:
+    | T
+    | {
+        label?: T;
+        variant?: T;
+        type?: T;
+        page?: T;
+        url?: T;
+        anchor?: T;
+        newTab?: T;
+        id?: T;
+      };
+  anchor?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ServicesBlock_select".
+ */
+export interface ServicesBlockSelect<T extends boolean = true> {
+  header?:
+    | T
+    | {
+        icon?: T;
+        eyebrow?: T;
+        title?: T;
+      };
+  tabs?:
+    | T
+    | {
+        label?: T;
+        cards?:
+          | T
+          | {
+              number?: T;
+              title?: T;
+              description?: T;
+              link?:
+                | T
+                | {
+                    label?: T;
+                    type?: T;
+                    page?: T;
+                    url?: T;
+                    anchor?: T;
+                    newTab?: T;
+                  };
+              id?: T;
+            };
+        id?: T;
+      };
+  anchor?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "AboutBlock_select".
+ */
+export interface AboutBlockSelect<T extends boolean = true> {
+  header?:
+    | T
+    | {
+        icon?: T;
+        eyebrow?: T;
+        title?: T;
+      };
+  image?: T;
+  body?: T;
+  email?: T;
+  buttons?:
+    | T
+    | {
+        label?: T;
+        variant?: T;
+        type?: T;
+        page?: T;
+        url?: T;
+        anchor?: T;
+        newTab?: T;
+        id?: T;
+      };
+  anchor?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CoreValuesBlock_select".
+ */
+export interface CoreValuesBlockSelect<T extends boolean = true> {
+  header?:
+    | T
+    | {
+        icon?: T;
+        eyebrow?: T;
+        title?: T;
+      };
+  logo?: T;
+  values?:
+    | T
+    | {
+        label?: T;
+        description?: T;
+        image?: T;
+        id?: T;
+      };
+  anchor?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "VisionMissionBlock_select".
+ */
+export interface VisionMissionBlockSelect<T extends boolean = true> {
+  header?:
+    | T
+    | {
+        icon?: T;
+        eyebrow?: T;
+        title?: T;
+      };
+  image?: T;
+  items?:
+    | T
+    | {
+        icon?: T;
+        heading?: T;
+        body?: T;
+        id?: T;
+      };
+  anchor?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ContactPersonsBlock_select".
+ */
+export interface ContactPersonsBlockSelect<T extends boolean = true> {
+  header?:
+    | T
+    | {
+        icon?: T;
+        eyebrow?: T;
+        title?: T;
+        subtitle?: T;
+      };
+  people?:
+    | T
+    | {
+        name?: T;
+        role?: T;
+        photo?: T;
+        phone?: T;
+        email?: T;
+        id?: T;
+      };
+  anchor?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ComplaintsBlock_select".
+ */
+export interface ComplaintsBlockSelect<T extends boolean = true> {
+  header?:
+    | T
+    | {
+        icon?: T;
+        eyebrow?: T;
+        title?: T;
+        intro?: T;
+      };
+  steps?:
+    | T
+    | {
+        title?: T;
+        text?: T;
+        infoPills?:
+          | T
+          | {
+              icon?: T;
+              tone?: T;
+              text?: T;
+              note?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  contact?:
+    | T
+    | {
+        title?: T;
+        subtitle?: T;
+        photo?: T;
+        phone?: T;
+        email?: T;
+      };
+  anchor?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "SocialBlock_select".
+ */
+export interface SocialBlockSelect<T extends boolean = true> {
+  header?:
+    | T
+    | {
+        icon?: T;
+        eyebrow?: T;
+        title?: T;
+        subtitle?: T;
+      };
+  handle?: T;
+  link?:
+    | T
+    | {
+        label?: T;
+        type?: T;
+        page?: T;
+        url?: T;
+        anchor?: T;
+        newTab?: T;
+      };
+  photos?:
+    | T
+    | {
+        toys?: T;
+        gym?: T;
+        boxing?: T;
+        figures?: T;
+        phone?: T;
+        arrow?: T;
+        instagram?: T;
+      };
+  anchor?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "VacanciesBlock_select".
+ */
+export interface VacanciesBlockSelect<T extends boolean = true> {
+  header?:
+    | T
+    | {
+        icon?: T;
+        eyebrow?: T;
+        title?: T;
+        intro?: T;
+      };
+  cards?:
+    | T
+    | {
+        title?: T;
+        location?: T;
+        hours?: T;
+        text?: T;
+        link?:
+          | T
+          | {
+              label?: T;
+              type?: T;
+              page?: T;
+              url?: T;
+              anchor?: T;
+              newTab?: T;
+            };
+        id?: T;
+      };
+  anchor?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "AccordionBlock_select".
+ */
+export interface AccordionBlockSelect<T extends boolean = true> {
+  header?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        subtitle?: T;
+        intro?: T;
+      };
+  items?:
+    | T
+    | {
+        title?: T;
+        body?: T;
+        id?: T;
+      };
+  anchor?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ButtonRowBlock_select".
+ */
+export interface ButtonRowBlockSelect<T extends boolean = true> {
+  buttons?:
+    | T
+    | {
+        label?: T;
+        variant?: T;
+        type?: T;
+        page?: T;
+        url?: T;
+        anchor?: T;
+        newTab?: T;
+        id?: T;
+      };
+  alignment?: T;
+  anchor?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "RichTextBlock_select".
+ */
+export interface RichTextBlockSelect<T extends boolean = true> {
+  content?: T;
+  width?: T;
+  anchor?: T;
+  id?: T;
+  blockName?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -373,6 +1321,44 @@ export interface CommentsSelect<T extends boolean = true> {
   author?: T;
   resolved?: T;
   parent?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "aanmeldingen_select".
+ */
+export interface AanmeldingenSelect<T extends boolean = true> {
+  status?: T;
+  clientNaam?: T;
+  clientGeboortedatum?: T;
+  clientAdres?: T;
+  verwijzerNaam?: T;
+  verwijzerOrganisatie?: T;
+  verwijzerEmail?: T;
+  verwijzerTelefoon?: T;
+  moederNaam?: T;
+  moederAdres?: T;
+  moederEmail?: T;
+  moederTelefoon?: T;
+  vaderNaam?: T;
+  vaderAdres?: T;
+  vaderEmail?: T;
+  vaderTelefoon?: T;
+  siblings?:
+    | T
+    | {
+        leeftijd?: T;
+        type?: T;
+        id?: T;
+      };
+  redenAanmelden?: T;
+  hulpverleningsgeschiedenis?: T;
+  problematiek?: T;
+  problematiekOverig?: T;
+  dsmDiagnoseBekend?: T;
+  vormVanHulp?: T;
+  privacyAkkoord?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -415,6 +1401,138 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "header".
+ */
+export interface Header {
+  id: number;
+  logo?: (number | null) | Media;
+  /**
+   * The navigation links shown in the header, in order.
+   */
+  navItems?:
+    | {
+        label: string;
+        type?: ('internal' | 'external') | null;
+        page?: (number | null) | Page;
+        url?: string | null;
+        /**
+         * Optional. Scroll to a section on the selected page. Give the target section an Anchor ID for a readable link.
+         */
+        anchor?: string | null;
+        newTab?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * The button on the right side of the header (teal pill). Leave the label empty to hide it.
+   */
+  cta?: {
+    label?: string | null;
+    type?: ('internal' | 'external') | null;
+    page?: (number | null) | Page;
+    url?: string | null;
+    /**
+     * Optional. Scroll to a section on the selected page. Give the target section an Anchor ID for a readable link.
+     */
+    anchor?: string | null;
+    newTab?: boolean | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "footer".
+ */
+export interface Footer {
+  id: number;
+  logo?: (number | null) | Media;
+  certImage?: (number | null) | Media;
+  tagline?: string | null;
+  email?: string | null;
+  phone?: string | null;
+  address?: string | null;
+  menuItems?:
+    | {
+        label?: string | null;
+        url?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  infoLinks?:
+    | {
+        label?: string | null;
+        url?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  copyright?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "header_select".
+ */
+export interface HeaderSelect<T extends boolean = true> {
+  logo?: T;
+  navItems?:
+    | T
+    | {
+        label?: T;
+        type?: T;
+        page?: T;
+        url?: T;
+        anchor?: T;
+        newTab?: T;
+        id?: T;
+      };
+  cta?:
+    | T
+    | {
+        label?: T;
+        type?: T;
+        page?: T;
+        url?: T;
+        anchor?: T;
+        newTab?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "footer_select".
+ */
+export interface FooterSelect<T extends boolean = true> {
+  logo?: T;
+  certImage?: T;
+  tagline?: T;
+  email?: T;
+  phone?: T;
+  address?: T;
+  menuItems?:
+    | T
+    | {
+        label?: T;
+        url?: T;
+        id?: T;
+      };
+  infoLinks?:
+    | T
+    | {
+        label?: T;
+        url?: T;
+        id?: T;
+      };
+  copyright?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

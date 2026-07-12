@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand: #51c2cc;
+  --color-ink: #291f09;
+  --radius-pill: 40px;
+  --radius-photo: 80px;
+  --font-sans: var(--font-montserrat), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-mona-sans), var(--font-montserrat), sans-serif;
+}
+
+/* Smoothly scroll to in-page section anchors (onepager menu navigation). */
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}

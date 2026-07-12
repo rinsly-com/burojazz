@@ -25,7 +25,9 @@ const nextConfig: NextConfig = {
   // Packages with Cloudflare Workers (workerd) specific code.
   // https://opennext.js.org/cloudflare/howtos/workerd
   serverExternalPackages: ['jose', 'pg-cloudflare'],
-  ...(isStatic ? { output: 'export' as const } : {}),
+  // The static build uses its own dist dir so it can run while the dev server
+  // (which owns .next and serves the content API it fetches from) stays up.
+  ...(isStatic ? { output: 'export' as const, distDir: '.next-static' } : {}),
   webpack: (webpackConfig) => {
     webpackConfig.resolve.extensionAlias = {
       '.cjs': ['.cts', '.cjs'],

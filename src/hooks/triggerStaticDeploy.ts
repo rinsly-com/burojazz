@@ -1,4 +1,9 @@
-import type { CollectionAfterChangeHook, CollectionAfterDeleteHook, Payload } from 'payload'
+import type {
+  CollectionAfterChangeHook,
+  CollectionAfterDeleteHook,
+  GlobalAfterChangeHook,
+  Payload,
+} from 'payload'
 
 /**
  * POST the Cloudflare Deploy Hook that rebuilds + redeploys the static
@@ -38,6 +43,19 @@ export const triggerStaticDeployAfterChange: CollectionAfterChangeHook = async (
   if (isPublished || wasPublished) {
     await triggerDeploy(req.payload, `${collection.slug} ${doc?.id} published-change`)
   }
+  return doc
+}
+
+/**
+ * Rebuild production when a global (e.g. header) changes — globals have no
+ * draft stage, so every change is immediately part of the published site.
+ */
+export const triggerStaticDeployAfterGlobalChange: GlobalAfterChangeHook = async ({
+  doc,
+  global,
+  req,
+}) => {
+  await triggerDeploy(req.payload, `global ${global.slug} changed`)
   return doc
 }
 

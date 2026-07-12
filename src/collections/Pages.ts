@@ -1,6 +1,8 @@
 import type { CollectionConfig } from 'payload'
+import { slugField } from 'payload'
 
 import { authenticated, reviewerOnly, isReviewer } from '../access/roles'
+import { pageBlocks } from '../blocks'
 import { enforceWorkflow } from '../hooks/enforceWorkflow'
 import {
   triggerStaticDeployAfterChange,
@@ -31,11 +33,12 @@ export const Pages: CollectionConfig = {
     },
   },
   access: {
-    // Public reads see published only; the static build fetches unauthenticated.
-    read: ({ req: { user } }) => {
-      if (user) return true
-      return { _status: { equals: 'published' } }
-    },
+    // Preview environments (dev/accp) render every page's latest edit regardless
+    // of workflow status, so editors always see their changes. Workflow status
+    // only governs what ships to production: the production static build queries
+    // published pages explicitly (see lib/pages.ts + BUILD_STATIC), so unpublished
+    // drafts are previewable but never end up in prod.
+    read: () => true,
     create: authenticated,
     update: authenticated,
     delete: reviewerOnly,
@@ -69,14 +72,9 @@ export const Pages: CollectionConfig = {
       type: 'text',
       required: true,
     },
-    {
-      name: 'slug',
-      type: 'text',
-      required: true,
-      unique: true,
-      index: true,
-      admin: { position: 'sidebar' },
-    },
+    // Auto-generates a sanitized slug from the title (with a lock toggle to
+    // override). Unique + required by default.
+    slugField({ position: 'sidebar' }),
     {
       name: 'workflowStatus',
       label: 'Stage',
@@ -100,8 +98,13 @@ export const Pages: CollectionConfig = {
       },
     },
     {
-      name: 'content',
-      type: 'richText',
+      name: 'layout',
+      type: 'blocks',
+      blocks: pageBlocks,
+      admin: {
+        initCollapsed: true,
+        description: 'Page sections rendered on the site, in order.',
+      },
     },
     {
       // PR-style review comments for this page (see CommentsPanel).
