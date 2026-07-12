@@ -51,10 +51,13 @@ async function sendViaCloudflare(
   binding: SendEmailBinding,
   message: SendEmailOptions,
 ): Promise<void> {
-  // `cloudflare:email` is a Workers built-in; keep it a runtime import so the
-  // Node dev/CLI build never tries to resolve it (same guard style as sharp).
+  // `cloudflare:email` is a Workers built-in; keep it a runtime import so neither
+  // the Node dev/CLI build nor the OpenNext esbuild bundling pass tries to resolve
+  // it. The specifier is assembled at runtime (underscore stripped) so no bundler
+  // can constant-fold it to a literal and attempt resolution — same guard style as
+  // the sharp/wrangler imports in payload.config.ts.
   const { EmailMessage } = (await import(
-    /* webpackIgnore: true */ `${'cloudflare:email'}`
+    /* webpackIgnore: true */ `${'cloudflare:_email'.replaceAll('_', '')}`
   )) as { EmailMessage: new (from: string, to: string, raw: string) => unknown }
   const { createMimeMessage } = await import('mimetext')
 

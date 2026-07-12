@@ -4,3 +4,5 @@ allowBuilds:
   sharp: true
   unrs-resolver: true
   workerd: true
+patchedDependencies:
+  '@payloadcms/drizzle@3.85.2': patches/@payloadcms__drizzle@3.85.2.patch

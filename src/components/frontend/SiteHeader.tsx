@@ -42,6 +42,36 @@ export function SiteHeader({ header }: SiteHeaderProps) {
   const linkTarget = (item: NavItem) =>
     item.newTab ? { target: '_blank', rel: 'noopener noreferrer' } : {}
 
+  /**
+   * Animate the jump to an on-page section instead of letting Next's router
+   * scroll instantly (it force-sets `scroll-behavior: auto` during navigation,
+   * which defeats the CSS smooth-scroll). Only handles anchors on the current
+   * page; cross-page/external links fall through to normal navigation. The
+   * section's top lands flush against the top of the viewport (no offset).
+   */
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    const hashIndex = href.indexOf('#')
+    if (hashIndex === -1) return
+    const pathPart = href.slice(0, hashIndex)
+    const id = href.slice(hashIndex + 1)
+    if (!id) return
+
+    const onCurrentPage =
+      pathPart === '' ||
+      pathPart === window.location.pathname ||
+      (pathPart === '/' && window.location.pathname === '/')
+    if (!onCurrentPage) return
+
+    const target = document.getElementById(decodeURIComponent(id))
+    if (!target) return
+
+    e.preventDefault()
+    setOpen(false)
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    target.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth', block: 'start' })
+    window.history.pushState(null, '', `#${id}`)
+  }
+
   return (
     <header className="absolute inset-x-0 top-0 z-40">
       <div className="mx-auto w-full max-w-[1512px] px-4 py-4 md:px-20 md:py-[21px]">
@@ -64,6 +94,7 @@ export function SiteHeader({ header }: SiteHeaderProps) {
                   href={item.href}
                   {...linkTarget(item)}
                   className="rounded-[46px] px-3 py-2 text-sm font-medium text-ink transition-colors hover:text-brand"
+                  onClick={(e) => handleNavClick(e, item.href)}
                 >
                   {item.label}
                 </Link>
@@ -76,6 +107,7 @@ export function SiteHeader({ header }: SiteHeaderProps) {
                   href={cta.href}
                   {...linkTarget(cta)}
                   className="inline-flex h-full items-center gap-2.5 rounded-pill bg-brand px-7 py-3.5 text-sm font-medium text-white transition-colors hover:bg-[#3fadb7]"
+                  onClick={(e) => handleNavClick(e, cta.href)}
                 >
                   {cta.label}
                   <ArrowIcon />
@@ -125,7 +157,10 @@ export function SiteHeader({ header }: SiteHeaderProps) {
                   href={item.href}
                   {...linkTarget(item)}
                   className="rounded-[46px] px-3 py-2.5 text-sm font-medium text-ink transition-colors hover:text-brand"
-                  onClick={() => setOpen(false)}
+                  onClick={(e) => {
+                    setOpen(false)
+                    handleNavClick(e, item.href)
+                  }}
                 >
                   {item.label}
                 </Link>
@@ -135,7 +170,10 @@ export function SiteHeader({ header }: SiteHeaderProps) {
                   href={cta.href}
                   {...linkTarget(cta)}
                   className="mt-2 inline-flex items-center gap-2.5 self-start rounded-pill bg-brand px-7 py-3.5 text-sm font-medium text-white transition-colors hover:bg-[#3fadb7]"
-                  onClick={() => setOpen(false)}
+                  onClick={(e) => {
+                    setOpen(false)
+                    handleNavClick(e, cta.href)
+                  }}
                 >
                   {cta.label}
                   <ArrowIcon />

@@ -61,12 +61,12 @@ export function RenderBlocks({ layout }: { layout: Page['layout'] }) {
         const key = block.id ?? `${block.blockType}-${index}`
         // Every block is a potential scroll target: prefer its readable Anchor
         // ID, fall back to the stable block id (what SectionSelect stores when
-        // no Anchor ID is set). The wrapper carries the id and a header-clearing
-        // scroll offset so onepager menu links land below the floating header.
+        // no Anchor ID is set). No scroll offset — onepager menu links land with
+        // the section's top flush against the top of the viewport.
         const id = block.anchor?.trim().replace(/^#+/, '') || block.id || undefined
         if (!id) return <RenderBlock key={key} block={block} />
         return (
-          <div key={key} id={id} className="scroll-mt-28 md:scroll-mt-32">
+          <div key={key} id={id}>
             <RenderBlock block={block} />
           </div>
         )

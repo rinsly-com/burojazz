@@ -5,11 +5,11 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "build": "cross-env NODE_OPTIONS=\"--no-deprecation --max-old-space-size=8000\" next build",
+    "build": "pnpm run generate:types:cloudflare && cross-env NODE_OPTIONS=\"--no-deprecation --max-old-space-size=8000\" next build",
     "build:static": "node scripts/build-static.mjs",
     "deploy": "pnpm run deploy:database && pnpm run deploy:app",
-    "deploy:app": "opennextjs-cloudflare build --env=$CLOUDFLARE_ENV && opennextjs-cloudflare deploy --env=$CLOUDFLARE_ENV",
-    "deploy:database": "pnpm run lint:migrations && cross-env NODE_ENV=production PAYLOAD_SECRET=ignore payload migrate && wrangler d1 execute D1 --command 'PRAGMA optimize' --env=$CLOUDFLARE_ENV --remote",
+    "deploy:app": "opennextjs-cloudflare build ${CLOUDFLARE_ENV:+--env=$CLOUDFLARE_ENV} && opennextjs-cloudflare deploy ${CLOUDFLARE_ENV:+--env=$CLOUDFLARE_ENV}",
+    "deploy:database": "pnpm run lint:migrations && cross-env NODE_ENV=production PAYLOAD_SECRET=ignore payload migrate && wrangler d1 execute D1 --command 'PRAGMA optimize' ${CLOUDFLARE_ENV:+--env=$CLOUDFLARE_ENV} --remote",
     "deploy:static": "pnpm run build:static && wrangler deploy --config wrangler.static.jsonc",
     "preview:static": "pnpm run build:static && wrangler dev --config wrangler.static.jsonc",
     "dev": "cross-env NODE_OPTIONS=--no-deprecation next dev",
@@ -21,7 +21,7 @@
     "lint": "cross-env NODE_OPTIONS=--no-deprecation eslint .",
     "lint:migrations": "node scripts/lint-migrations.mjs",
     "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
-    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview --env=$CLOUDFLARE_ENV",
+    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview ${CLOUDFLARE_ENV:+--env=$CLOUDFLARE_ENV}",
     "start": "cross-env NODE_OPTIONS=--no-deprecation next start",
     "test": "pnpm run test:int && pnpm run test:e2e",
     "test:e2e": "cross-env NODE_OPTIONS=\"--no-deprecation --import=tsx/esm\" playwright test --config=playwright.config.ts",
@@ -70,12 +70,5 @@
     "node": "^18.20.2 || >=20.9.0",
     "pnpm": "^9 || ^10 || ^11"
   },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "sharp",
-      "esbuild",
-      "unrs-resolver",
-      "workerd"
-    ]
-  }
+  "packageManager": "pnpm@11.11.0"
 }

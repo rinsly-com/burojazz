@@ -9,7 +9,7 @@
 // fetches from mid-build. The data layer reads the snapshot during the build
 // via the CONTENT_SNAPSHOT env var (see src/lib/contentSnapshot.ts).
 import { execFileSync } from 'node:child_process'
-import { existsSync, mkdirSync, renameSync, rmSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, readFileSync, renameSync, rmSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 
 const root = process.cwd()
@@ -37,6 +37,32 @@ const restore = () => {
     if (existsSync(from)) renameSync(from, path.join(root, live))
   }
   rmSync(backupDir, { recursive: true, force: true })
+}
+
+// The (frontend) routes are `force-dynamic` so the accp worker renders live
+// content on demand. `output: export` forbids dynamic routes, so for the static
+// build only we strip that export and pin `dynamicParams = false` (only the
+// snapshotted published slugs are prerendered). Originals are restored after.
+const DYNAMIC_ROUTES = [
+  'src/app/(frontend)/page.tsx',
+  'src/app/(frontend)/[slug]/page.tsx',
+]
+const savedRouteSrc = new Map()
+const staticizeRoutes = () => {
+  for (const rel of DYNAMIC_ROUTES) {
+    const file = path.join(root, rel)
+    if (!existsSync(file)) continue
+    const src = readFileSync(file, 'utf8')
+    savedRouteSrc.set(file, src)
+    const patched = src
+      .replace(/^export const dynamic = ['"]force-dynamic['"].*\n?/m, '')
+      .replace(/^export const dynamicParams = true\b.*$/m, 'export const dynamicParams = false')
+    writeFileSync(file, patched)
+  }
+}
+const restoreRoutes = () => {
+  for (const [file, src] of savedRouteSrc) writeFileSync(file, src)
+  savedRouteSrc.clear()
 }
 
 const fetchJson = async (url) => {
@@ -94,6 +120,7 @@ try {
 
 try {
   stash()
+  staticizeRoutes()
   execFileSync('pnpm', ['exec', 'next', 'build'], {
     stdio: 'inherit',
     env: {
@@ -104,6 +131,7 @@ try {
     },
   })
 } finally {
+  restoreRoutes()
   restore()
   rmSync(snapshotDir, { recursive: true, force: true })
 }

@@ -4,6 +4,9 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  '@payloadcms/drizzle@3.85.2': 66ff4bff61151b133d207ec0dc5287ee40904edd6f4f6864de5fe38332c99aa5
+
 importers:
 
   .:
@@ -7542,7 +7545,7 @@ snapshots:
 
   '@payloadcms/db-d1-sqlite@3.85.2(payload@3.85.2(graphql@16.14.2)(typescript@5.7.3))':
     dependencies:
-      '@payloadcms/drizzle': 3.85.2(payload@3.85.2(graphql@16.14.2)(typescript@5.7.3))
+      '@payloadcms/drizzle': 3.85.2(patch_hash=66ff4bff61151b133d207ec0dc5287ee40904edd6f4f6864de5fe38332c99aa5)(payload@3.85.2(graphql@16.14.2)(typescript@5.7.3))
       console-table-printer: 2.12.1
       drizzle-kit: 0.31.7
       drizzle-orm: 0.45.2
@@ -7582,7 +7585,7 @@ snapshots:
       - sqlite3
       - supports-color
 
-  '@payloadcms/drizzle@3.85.2(payload@3.85.2(graphql@16.14.2)(typescript@5.7.3))':
+  '@payloadcms/drizzle@3.85.2(patch_hash=66ff4bff61151b133d207ec0dc5287ee40904edd6f4f6864de5fe38332c99aa5)(payload@3.85.2(graphql@16.14.2)(typescript@5.7.3))':
     dependencies:
       console-table-printer: 2.12.1
       dequal: 2.0.3

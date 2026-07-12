@@ -4,6 +4,10 @@ import { RenderBlocks } from '@/components/frontend/RenderBlocks'
 import { getRenderablePageBySlug, getRenderablePages } from '@/lib/pages'
 import './styles.css'
 
+// accp worker: render on demand so the homepage always reflects live content.
+// The static production export (build-static.mjs) strips this so it can prerender.
+export const dynamic = 'force-dynamic'
+
 /**
  * Home route: renders the "home" page's block layout when it exists;
  * otherwise falls back to the starter list of renderable pages.

@@ -5,25 +5,41 @@ import type {
   Payload,
 } from 'payload'
 
+/** Outcome of a deploy-hook call, surfaced to the admin Deploy view. */
+export type DeployResult =
+  | { status: 'triggered'; httpStatus: number; message: string }
+  | { status: 'skipped'; message: string }
+  | { status: 'failed'; message: string }
+
 /**
  * POST the Cloudflare Deploy Hook that rebuilds + redeploys the static
- * production site. Fire-and-forget with error handling so a webhook failure
- * never breaks the editor's save.
+ * production site. Never throws — a webhook failure must not break the editor's
+ * save (the collection/global hooks await this and ignore the result), while
+ * the manual /api/deploy endpoint reports the returned status to the admin UI.
  *
  * The hook URL is provided via the CLOUDFLARE_DEPLOY_HOOK_URL env var / Worker
- * secret. When it is not set (e.g. local dev), the call is skipped.
+ * secret. When it is not set (e.g. local dev, or before the static site's
+ * deploy hook exists) the call is skipped.
  */
-const triggerDeploy = async (payload: Payload, reason: string): Promise<void> => {
+export const triggerDeploy = async (payload: Payload, reason: string): Promise<DeployResult> => {
   const url = process.env.CLOUDFLARE_DEPLOY_HOOK_URL
   if (!url) {
+    const message = 'Deploy skipped — CLOUDFLARE_DEPLOY_HOOK_URL is not configured.'
     payload.logger.info(`[static-deploy] skipped (${reason}) — CLOUDFLARE_DEPLOY_HOOK_URL not set`)
-    return
+    return { status: 'skipped', message }
   }
   try {
     const res = await fetch(url, { method: 'POST' })
     payload.logger.info(`[static-deploy] triggered (${reason}) — HTTP ${res.status}`)
+    return {
+      status: 'triggered',
+      httpStatus: res.status,
+      message: `Production rebuild triggered (deploy hook responded HTTP ${res.status}).`,
+    }
   } catch (err) {
-    payload.logger.error(`[static-deploy] failed (${reason}): ${(err as Error).message}`)
+    const message = (err as Error).message
+    payload.logger.error(`[static-deploy] failed (${reason}): ${message}`)
+    return { status: 'failed', message: `Deploy hook request failed: ${message}` }
   }
 }
 

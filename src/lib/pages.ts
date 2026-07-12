@@ -1,3 +1,5 @@
+import { headers } from 'next/headers'
+
 import type { Page } from '@/payload-types'
 
 import { readSnapshot } from './contentSnapshot'
@@ -15,12 +17,42 @@ import { readSnapshot } from './contentSnapshot'
  *
  * Configure the API origin with PAYLOAD_API_URL (defaults to local dev).
  */
-const API_URL = process.env.PAYLOAD_API_URL || 'http://localhost:3000'
 const PRODUCTION_BUILD = process.env.BUILD_STATIC === 'true'
 
+/**
+ * The Payload API origin to fetch from.
+ *
+ * - If PAYLOAD_API_URL is set, always use it (the production static build points
+ *   this at the accp API).
+ * - Otherwise, on the running accp worker (preview mode) derive the origin from
+ *   the incoming request so the frontend fetches its OWN API same-origin — no
+ *   PAYLOAD_API_URL needed, and content is always live. Reading headers() also
+ *   opts the route into dynamic rendering, which is what we want for a live
+ *   editor preview. (The worker has `global_fetch_strictly_public`, so a
+ *   same-host self-fetch is allowed.)
+ * - Falls back to local dev.
+ */
+async function apiOrigin(): Promise<string> {
+  if (process.env.PAYLOAD_API_URL) return process.env.PAYLOAD_API_URL
+  if (!PRODUCTION_BUILD) {
+    // Read headers() UNCAUGHT: besides giving us the same-origin host, the
+    // dynamic-server bailout it raises during build is exactly how Next marks
+    // this route for on-demand rendering on the accp worker. Catching it would
+    // (wrongly) let the route prerender statically against no API.
+    const h = await headers()
+    const host = h.get('host')
+    if (host) return `${h.get('x-forwarded-proto') ?? 'https'}://${host}`
+  }
+  return 'http://localhost:3000'
+}
+
 async function fetchPages(query: string): Promise<Page[]> {
+  // Resolve the origin BEFORE the try: apiOrigin() reads headers() on the worker,
+  // and the dynamic-server bailout that triggers must propagate (not be swallowed
+  // by the catch below) for Next to render this route dynamically.
+  const base = await apiOrigin()
   try {
-    const res = await fetch(`${API_URL}/api/pages?${query}`, {
+    const res = await fetch(`${base}/api/pages?${query}`, {
       headers: { accept: 'application/json' },
     })
     if (!res.ok) return []

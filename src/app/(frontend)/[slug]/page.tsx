@@ -6,13 +6,21 @@ import { RenderBlocks } from '@/components/frontend/RenderBlocks'
 import { getRenderablePageBySlug, getRenderablePages } from '@/lib/pages'
 import '../styles.css'
 
-// Only pre-generated slugs render (required for the static export). The set is
-// mode-aware: production build → published only; preview (dev/accp) build →
-// published + Ready pages, so approved content is previewable but never ships
-// to the production static build.
-export const dynamicParams = false
+// On the accp worker, pages.ts reads request headers to self-fetch its API,
+// which makes this route render dynamically — any published slug renders on
+// demand, no rebuild. `dynamicParams = true` allows slugs beyond the prebuilt
+// set. For the static production export, generateStaticParams prerenders the
+// published slugs (headers() is never read in that mode, so it stays static).
+// accp worker: render every slug on demand (live preview). The static production
+// export (build-static.mjs) strips `dynamic` so it can prerender published slugs.
+export const dynamic = 'force-dynamic'
+export const dynamicParams = true
 
 export async function generateStaticParams() {
+  // Worker (preview): render every slug on demand — nothing to prebuild, and we
+  // must not call the headers()-based fetch here (generateStaticParams runs at
+  // build with no request). Static export: prerender the published slugs.
+  if (process.env.BUILD_STATIC !== 'true') return []
   const pages = await getRenderablePages()
   return pages.map((page) => ({ slug: page.slug }))
 }
