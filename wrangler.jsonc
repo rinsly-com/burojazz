@@ -12,7 +12,7 @@
   // is only touched by the production build/runtime.
   // ===========================================================================
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "accp-burojazz",
+  "name": "burojazz-accp",
   "main": ".open-next/worker.js",
   "compatibility_date": "2025-08-15",
   "compatibility_flags": [
