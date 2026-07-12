@@ -1,16 +1,16 @@
 # Graph Report - burojazz  (2026-07-12)
 
 ## Corpus Check
-- 124 files · ~438,635 words
+- 124 files · ~439,131 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1594 nodes · 2042 edges · 57 communities (51 shown, 6 thin omitted)
+- 1594 nodes · 2042 edges · 55 communities (49 shown, 6 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 22 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `25d15a77`
+- Built from commit: `d60ed66a`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -47,13 +47,11 @@
 - [[_COMMUNITY_Community 29|Community 29]]
 - [[_COMMUNITY_Community 30|Community 30]]
 - [[_COMMUNITY_Community 31|Community 31]]
-- [[_COMMUNITY_Community 32|Community 32]]
-- [[_COMMUNITY_Community 33|Community 33]]
+- [[_COMMUNITY_Community 46|Community 46]]
+- [[_COMMUNITY_Community 47|Community 47]]
 - [[_COMMUNITY_Community 48|Community 48]]
 - [[_COMMUNITY_Community 49|Community 49]]
-- [[_COMMUNITY_Community 50|Community 50]]
-- [[_COMMUNITY_Community 51|Community 51]]
-- [[_COMMUNITY_Community 56|Community 56]]
+- [[_COMMUNITY_Community 54|Community 54]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `Page` - 19 edges
@@ -87,7 +85,7 @@
 - **Role-based access shared across hooks and UI** — roles_isreviewer, enforceworkflow_enforceworkflow, workflowaction_workflowaction, reviewpanel_reviewpanel [INFERRED 0.85]
 - **Publish event triggers static production rebuild** — enforceworkflow_enforceworkflow, triggerstaticdeploy_triggerstaticdeployafterchange, deployment_deploy_hook_flow [INFERRED 0.80]
 
-## Communities (57 total, 6 thin omitted)
+## Communities (55 total, 6 thin omitted)
 
 ### Community 0 - "Access Control & Collections"
 Cohesion: 0.0
@@ -115,35 +113,35 @@ Nodes (19): importMap, Comment, CommentsPanel(), Ref, IconModule, IconSelector()
 
 ### Community 6 - "E2E Auth & Fixtures"
 Cohesion: 0.12
-Nodes (27): Props, Hero(), Props, uploadUrl(), CardData, DEFAULT_CARDS, DEFAULT_TABS, Props (+19 more)
+Nodes (25): Hero(), Props, uploadUrl(), CardData, DEFAULT_CARDS, DEFAULT_TABS, Props, ServiceCard() (+17 more)
 
 ### Community 7 - "Payload REST Catch-all Route"
+Cohesion: 0.07
+Nodes (16): adminFieldOnly(), Media, Pages, Users, Footer, GET, OPTIONS, POST (+8 more)
+
+### Community 8 - "Static Deploy Architecture"
+Cohesion: 0.12
+Nodes (20): About(), Props, Accordion(), Props, ALIGN, ButtonRow(), Props, Props (+12 more)
+
+### Community 9 - "Static Build Script"
 Cohesion: 0.12
 Nodes (26): Admin Panel e2e test suite, API integration test suite, Comments collection, Frontend e2e test suite, RootLayout (frontend), login helper, Media collection, OpenNext Cloudflare config (+18 more)
 
-### Community 8 - "Static Deploy Architecture"
-Cohesion: 0.09
-Nodes (13): Media, Footer, GET, OPTIONS, POST, cloudflareLogger, corsOrigins, dirname (+5 more)
-
-### Community 9 - "Static Build Script"
+### Community 10 - "Published Pages Rendering"
 Cohesion: 0.15
 Nodes (20): critical, dirname, Finding, findings, result, schema, applyStatement(), diffSchemas() (+12 more)
 
-### Community 10 - "Published Pages Rendering"
+### Community 11 - "Database Migrations"
+Cohesion: 0.18
+Nodes (17): adminOnly(), authenticated(), hasRole(), isAdmin(), isAuthenticated(), isReviewer(), reviewerOnly(), Role (+9 more)
+
+### Community 12 - "Next.js Config"
 Cohesion: 0.09
 Nodes (21): 1. Authenticate wrangler (interactive — run yourself), 2. Create the accp D1 database, 3. Create migrations, 4. Cloudflare Workers Build — accp (code deploy), 5. Create the production Deploy Hook + static build, 6. Wire the deploy hook into accp, code:block1 (push to main ───► Workers Build ───► deploy accp (Payload + ), code:bash (pnpm wrangler login) (+13 more)
 
-### Community 11 - "Database Migrations"
+### Community 13 - "Static Export Mode"
 Cohesion: 0.16
 Nodes (15): ContactPersons(), DEFAULT_PEOPLE, OBJECT_POSITION, PersonCard(), PHOTOS, Props, Props, Social() (+7 more)
-
-### Community 12 - "Next.js Config"
-Cohesion: 0.16
-Nodes (12): About(), Accordion(), Props, ALIGN, ButtonRow(), Props, CoreValues(), Props (+4 more)
-
-### Community 13 - "Static Export Mode"
-Cohesion: 0.2
-Nodes (10): isReviewer(), pageBlocks, canPublishPages(), Pages, LABELS, ReviewPanel(), WorkflowAction(), enforceWorkflow() (+2 more)
 
 ### Community 14 - "Frontend Root Layout"
 Cohesion: 0.15
@@ -158,66 +156,58 @@ Cohesion: 0.13
 Nodes (12): adapterRequire, assertAfter, dangling, db, dirname, { drizzle }, migrationsDir, notNull (+4 more)
 
 ### Community 17 - "Authenticated Access"
-Cohesion: 0.18
-Nodes (11): DEFAULT_ITEM_ICONS, DEFAULT_ITEMS, Props, VisionMission(), AccordionItem, VisionMissionAccordion(), Icon(), IconProps (+3 more)
+Cohesion: 0.16
+Nodes (11): CoreValues(), FALLBACK_VALUES, ICONS, IconSpec, isHighlight(), normalize(), Props, SLOTS (+3 more)
 
 ### Community 18 - "Vitest Setup"
-Cohesion: 0.18
-Nodes (10): FALLBACK_VALUES, ICONS, IconSpec, isHighlight(), normalize(), Props, SLOTS, ValueChip() (+2 more)
-
-### Community 19 - "Next Env Types"
-Cohesion: 0.24
-Nodes (10): adminFieldOnly(), adminOnly(), authenticated(), hasRole(), isAdmin(), isAuthenticated(), reviewerOnly(), Role (+2 more)
-
-### Community 20 - "Playwright Config"
 Cohesion: 0.19
 Nodes (13): CommentsPanel, Role model (author/reviewer/admin), Editorial state machine (Draft/Review/Ready/Published), enforceWorkflow, ReviewPanel, adminFieldOnly access helper, adminOnly access helper, hasRole (+5 more)
 
-### Community 21 - "OpenNext Config"
+### Community 19 - "Next Env Types"
+Cohesion: 0.2
+Nodes (9): CARD_IMAGES, FALLBACK_CARDS, Props, Vacancies(), Icon(), IconProps, icons, resolve() (+1 more)
+
+### Community 20 - "Playwright Config"
 Cohesion: 0.25
 Nodes (8): dashboardArtifact, editViewArtifact, listViewArtifact, login(), LoginOptions, cleanupTestUser(), seedTestUser(), testUser
 
-### Community 22 - "My-Route Handler"
+### Community 21 - "OpenNext Config"
 Cohesion: 0.18
 Nodes (10): Clone, Collections, Development, Docker, Docker (Optional), How it works, Payload Blank Template, Questions (+2 more)
 
-### Community 23 - "Community 23"
+### Community 22 - "My-Route Handler"
 Cohesion: 0.25
 Nodes (6): backupDir, EXCLUDED, fetchJson(), root, snapshotContent(), snapshotDir
 
-### Community 24 - "Community 24"
+### Community 23 - "Community 23"
 Cohesion: 0.22
 Nodes (7): code:sql (INSERT INTO `__new_header_nav_items`("_order", "_parent_id",), Expected, Local mitigation (this repo), Reproduction, Summary, Upstream bug report draft: `migrate:create` generates a data-corrupting copy statement (SQLite/D1), Why this is severe
 
-### Community 26 - "Community 26"
-Cohesion: 0.29
-Nodes (5): CARD_IMAGES, FALLBACK_CARDS, Props, Vacancies(), Eyebrow()
-
-### Community 27 - "Community 27"
+### Community 25 - "Community 25"
 Cohesion: 0.48
 Nodes (5): Header, triggerDeploy(), triggerStaticDeployAfterChange(), triggerStaticDeployAfterDelete(), triggerStaticDeployAfterGlobalChange()
 
-### Community 28 - "Community 28"
+### Community 26 - "Community 26"
 Cohesion: 0.29
 Nodes (6): DELETE, GET, OPTIONS, PATCH, POST, PUT
 
-### Community 29 - "Community 29"
+### Community 27 - "Community 27"
 Cohesion: 0.29
 Nodes (7): Publish-triggered Cloudflare Deploy Hook flow, Headless CMS to static site architecture, Three-environment topology (dev/accp/production), docker-compose MongoDB dev service, triggerDeploy, triggerStaticDeployAfterChange, triggerStaticDeployAfterDelete
 
-### Community 30 - "Community 30"
+### Community 28 - "Community 28"
 Cohesion: 0.5
 Nodes (3): dirname, __filename, nextConfig
 
-### Community 31 - "Community 31"
+### Community 29 - "Community 29"
 Cohesion: 0.5
 Nodes (3): Claude Code, Database migrations (D1/SQLite), graphify
 
-### Community 32 - "Community 32"
+### Community 30 - "Community 30"
 Cohesion: 0.5
 Nodes (3): Answer, Q: How does a publish event in the editorial workflow propagate to a rebuilt static production site?, Source Nodes
 
-### Community 33 - "Community 33"
+### Community 31 - "Community 31"
 Cohesion: 0.67
 Nodes (4): Stash-and-restore server routes for static export, Static site build script, BUILD_STATIC export mode, Next.js config
 
@@ -235,9 +225,9 @@ _Questions this graph is uniquely positioned to answer:_
 
 - **What is the exact relationship between `Three-environment topology (dev/accp/production)` and `docker-compose MongoDB dev service`?**
   _Edge tagged AMBIGUOUS (relation: references) - confidence is low._
-- **Why does `Page` connect `E2E Auth & Fixtures` to `Admin UI Components`, `Generated Payload Types`, `Database Migrations`, `Next.js Config`, `Static Export Mode`, `Frontend Root Layout`, `ESLint Config`, `Authenticated Access`, `Vitest Setup`, `Community 26`?**
+- **Why does `Page` connect `Static Deploy Architecture` to `Admin UI Components`, `Generated Payload Types`, `E2E Auth & Fixtures`, `Payload REST Catch-all Route`, `Static Export Mode`, `Frontend Root Layout`, `ESLint Config`, `Authenticated Access`, `Next Env Types`?**
   _High betweenness centrality (0.003) - this node is a cross-community bridge._
-- **Why does `Section()` connect `Next.js Config` to `Payload Config & Test Suites`, `E2E Auth & Fixtures`, `Database Migrations`, `Frontend Root Layout`, `Authenticated Access`, `Vitest Setup`, `Community 26`?**
+- **Why does `Section()` connect `Static Deploy Architecture` to `Payload Config & Test Suites`, `E2E Auth & Fixtures`, `Static Export Mode`, `Frontend Root Layout`, `Authenticated Access`, `Next Env Types`?**
   _High betweenness centrality (0.003) - this node is a cross-community bridge._
 - **What connects `config`, `__BaseEnv_CloudflareEnv`, `AccpEnv` to the rest of the system?**
   _1160 weakly-connected nodes found - possible documentation gaps or missing edges._

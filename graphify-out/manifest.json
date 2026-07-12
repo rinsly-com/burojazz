@@ -16,8 +16,8 @@
     "hash": "ad09c8b0b726ea71437f8e0cfdf5d128"
   },
   "/home/rinseyaron/projects/burojazz/cloudflare-env.d.ts": {
-    "mtime": 1783863768.464754,
-    "hash": "6ccdd60469d06eaf5d931437398029f8"
+    "mtime": 1783872440.0083168,
+    "hash": "6c414e4217d2206e3a580b9639139e42"
   },
   "/home/rinseyaron/projects/burojazz/next.config.ts": {
     "mtime": 1783777405.9497452,
@@ -352,16 +352,16 @@
     "hash": "8eca604e78d6327f9c78f0a4511d7c3e"
   },
   "/home/rinseyaron/projects/burojazz/src/components/frontend/SiteHeader.tsx": {
-    "mtime": 1783861293.1268787,
-    "hash": "0f8e1ce1b2637c051ab26397bc834f7d"
+    "mtime": 1783872738.7523017,
+    "hash": "74b06cf2b7f10ccabf6d3223c8186326"
   },
   "/home/rinseyaron/projects/burojazz/src/components/frontend/SiteFooter.tsx": {
     "mtime": 1783861320.3868775,
     "hash": "b01173d80793d9972632dd780e0d33a2"
   },
   "/home/rinseyaron/projects/burojazz/src/components/frontend/RenderBlocks.tsx": {
-    "mtime": 1783865117.035686,
-    "hash": "0096ce9bb9e41c8820a69efb468c1f45"
+    "mtime": 1783872731.700302,
+    "hash": "7f0cb157d6268a1cdf540f587bdb161d"
   },
   "/home/rinseyaron/projects/burojazz/src/components/frontend/PageView.tsx": {
     "mtime": 1783782431.639453,
@@ -484,7 +484,7 @@
     "hash": "50c3b8cd9985b209b653352e7e7ce8f4"
   },
   "/home/rinseyaron/projects/burojazz/pnpm-workspace.yaml": {
-    "mtime": 1783864323.807726,
+    "mtime": 1783870386.0874202,
     "hash": "87f5a33dbf7cc7c78d440d31e83d82ce"
   },
   "/home/rinseyaron/projects/burojazz/docker-compose.yml": {
@@ -730,6 +730,10 @@
   "/home/rinseyaron/projects/burojazz/media/zorgzaam.svg": {
     "mtime": 1783785270.8703096,
     "hash": "1fcf8dec2ba403a073435336790d2b3d"
+  },
+  "/home/rinseyaron/projects/burojazz/media/logo-burojazz.svg": {
+    "mtime": 1783870833.9373977,
+    "hash": "402f823cf73728bf7c8b9d5505c56627"
   },
   "/home/rinseyaron/projects/burojazz/media/presentie-1.svg": {
     "mtime": 1783859826.8689528,

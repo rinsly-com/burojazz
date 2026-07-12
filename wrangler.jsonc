@@ -40,9 +40,16 @@
   "send_email": [
     {
       "name": "AANMELDING_EMAIL",
-      "destination_address": "aanmeldingen@burojazz.com",
+      "destination_address": "rinseschaeffer@gmail.com",
     },
   ],
+  // Recipient of aanmelding notifications (must equal the verified Email Routing
+  // destination above) + the From address shown on the mail. Swap to a shared
+  // team mailbox once real @burojazz.com mailboxes exist.
+  "vars": {
+    "AANMELDING_NOTIFY_TO": "rinseschaeffer@gmail.com",
+    "EMAIL_FROM_ADDRESS": "aanmeldingen@burojazz.com",
+  },
   // R2 is prepared but not enabled (it costs money). Uncomment + create the
   // bucket to turn on media storage; payload.config.ts activates the R2 adapter
   // automatically once the binding exists.
@@ -69,9 +76,13 @@
       "send_email": [
         {
           "name": "AANMELDING_EMAIL",
-          "destination_address": "aanmeldingen@burojazz.com",
+          "destination_address": "rinseschaeffer@gmail.com",
         },
       ],
+      "vars": {
+        "AANMELDING_NOTIFY_TO": "rinseschaeffer@gmail.com",
+        "EMAIL_FROM_ADDRESS": "aanmeldingen@burojazz.com",
+      },
       // "r2_buckets": [
       //   { "binding": "R2", "bucket_name": "burojazz-accp" },
       // ],
