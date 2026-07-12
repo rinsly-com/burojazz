@@ -1,10 +1,18 @@
 {
   // ===========================================================================
-  // PAYLOAD CMS worker — runs on dev (local) and accp only.
-  // Production is NOT a Payload worker: it is a fully static site deployed via
+  // ACCP Payload CMS worker (admin + API + D1), served at accp.burojazz.com.
+  // Production is NOT this worker: it is a fully static site deployed via
   // wrangler.static.jsonc. See docs/DEPLOYMENT.md.
+  //
+  // Deployed by the git-connected Cloudflare Workers Build as worker
+  // "accp-burojazz" with CLOUDFLARE_ENV left UNSET (single default env — there is
+  // no accp sub-environment anymore). Local `pnpm dev` uses a local SQLite mock:
+  // remote bindings are only enabled in production builds (see
+  // getCloudflareContextFromWrangler in payload.config.ts), so the real D1 below
+  // is only touched by the production build/runtime.
   // ===========================================================================
   "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "accp-burojazz",
   "main": ".open-next/worker.js",
   "compatibility_date": "2025-08-15",
   "compatibility_flags": [
@@ -15,14 +23,14 @@
     // https://developers.cloudflare.com/workers/configuration/compatibility-flags/#global-fetch-strictly-public
     "global_fetch_strictly_public",
   ],
-  // ---------------------------------------------------------------------------
-  // Top-level config = the "burojazz" worker deployed by the git-connected
-  // Cloudflare Workers Build (CLOUDFLARE_ENV left unset). Local `pnpm dev` still
-  // uses a local SQLite mock — remote bindings are only enabled in production
-  // builds (see getCloudflareContextFromWrangler in payload.config.ts), so the
-  // real D1 below is only touched by the production build/runtime.
-  // ---------------------------------------------------------------------------
-  "name": "burojazz",
+  // Custom domain for the accp CMS. Cloudflare manages the DNS + cert for this
+  // hostname and routes it to this worker.
+  "routes": [
+    {
+      "pattern": "accp.burojazz.com",
+      "custom_domain": true,
+    },
+  ],
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS",
@@ -56,38 +64,6 @@
   // bucket to turn on media storage; payload.config.ts activates the R2 adapter
   // automatically once the binding exists.
   // "r2_buckets": [
-  //   { "binding": "R2", "bucket_name": "burojazz-dev" },
+  //   { "binding": "R2", "bucket_name": "burojazz-accp" },
   // ],
-  "env": {
-    // ACCP — the full Payload CMS (admin + API + D1). This is the editor
-    // environment and the "default preview". Deploy: CLOUDFLARE_ENV=accp pnpm run deploy
-    "accp": {
-      "name": "burojazz-accp",
-      "assets": {
-        "directory": ".open-next/assets",
-        "binding": "ASSETS",
-      },
-      "d1_databases": [
-        {
-          "binding": "D1",
-          "database_name": "burojazz-accp",
-          "database_id": "e1347ebb-09ec-483f-aa78-361e7ba9726f",
-          "remote": true,
-        },
-      ],
-      "send_email": [
-        {
-          "name": "AANMELDING_EMAIL",
-          "destination_address": "rinseschaeffer@gmail.com",
-        },
-      ],
-      "vars": {
-        "AANMELDING_NOTIFY_TO": "rinseschaeffer@gmail.com",
-        "EMAIL_FROM_ADDRESS": "aanmeldingen@burojazz.com",
-      },
-      // "r2_buckets": [
-      //   { "binding": "R2", "bucket_name": "burojazz-accp" },
-      // ],
-    },
-  },
 }
