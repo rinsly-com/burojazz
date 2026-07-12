@@ -60,10 +60,16 @@
     "AANMELDING_NOTIFY_TO": "rinseschaeffer@gmail.com",
     "EMAIL_FROM_ADDRESS": "aanmeldingen@burojazz.com",
   },
-  // R2 is prepared but not enabled (it costs money). Uncomment + create the
-  // bucket to turn on media storage; payload.config.ts activates the R2 adapter
-  // automatically once the binding exists.
-  // "r2_buckets": [
-  //   { "binding": "R2", "bucket_name": "burojazz-accp" },
-  // ],
+  // Media storage. Originals are stored in R2 and served by this worker at
+  // /api/media/file/<filename>; payload.config.ts activates the R2 storage
+  // adapter automatically once this binding exists. The static production site
+  // rewrites these URLs through Cloudflare Image Transformations (/cdn-cgi/image)
+  // for resizing + AVIF/WebP — see src/lib/image.ts.
+  //
+  // PREREQUISITES before deploying: (1) enable R2 on the account, (2) create the
+  // bucket: `wrangler r2 bucket create burojazz-accp`, (3) enable Image
+  // Transformations on the burojazz.com zone (Dashboard → Speed/Images → Enable).
+  "r2_buckets": [
+    { "binding": "R2", "bucket_name": "burojazz-accp" },
+  ],
 }

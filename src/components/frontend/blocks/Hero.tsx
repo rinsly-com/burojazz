@@ -21,7 +21,7 @@ export function Hero(props: Props) {
   const description =
     props.header?.intro ??
     'Wij bieden ambulante jeugdhulp en jeugdhulp met verblijf, gericht op behandeling en begeleiding.'
-  const imageUrl = mediaUrl(props.image) ?? DEFAULT_IMAGE
+  const imageUrl = mediaUrl(props.image, { width: 1600 }) ?? DEFAULT_IMAGE
 
   return (
     <section className="relative overflow-hidden bg-white">

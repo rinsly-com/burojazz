@@ -143,9 +143,26 @@ pnpm wrangler secret put CLOUDFLARE_DEPLOY_HOOK_URL --env accp
 | `AANMELDING_NOTIFY_TO`      | accp (optional)  | Team address that receives aanmelding emails (default `aanmeldingen@burojazz.com`) |
 | `EMAIL_FROM_ADDRESS`        | accp (optional)  | From address for outgoing mail (must be a burojazz.com address) |
 
-R2 media storage is prepared but disabled (it costs money). To enable: uncomment
-the `r2_buckets` block in `wrangler.jsonc`, create the bucket, and redeploy —
-`payload.config.ts` activates the R2 adapter automatically once the binding exists.
+### Media (R2 + Cloudflare Image Transformations)
+
+Media originals are stored in R2 and served by the accp worker at
+`/api/media/file/<filename>`. The static production site rewrites those URLs
+through Cloudflare Image Transformations (`/cdn-cgi/image/…`) so images are
+resized and re-encoded (AVIF/WebP) at the edge — no `sharp` on the Worker. The
+rewrite lives in `src/lib/image.ts` and is applied by the `<Media>` component
+and `mediaUrl()` helper; it is gated on `PAYLOAD_API_URL` being an `https`
+origin, so local dev and the worker's own preview serve plain same-origin URLs.
+
+One-time setup on Cloudflare (per account/zone):
+
+1. **Enable R2** on the Cloudflare account (Dashboard → R2 → Enable).
+2. **Create the bucket**: `wrangler r2 bucket create burojazz-accp`.
+   The `R2` binding in `wrangler.jsonc` is already wired; `payload.config.ts`
+   activates the R2 storage adapter automatically once the binding resolves.
+3. **Enable Image Transformations** on the `burojazz.com` zone
+   (Dashboard → Images → Transformations → *Enable for this zone*). Without
+   this, `/cdn-cgi/image/` URLs 404. Originals are same-zone, so "resize from
+   any origin" is not required.
 
 ---
 

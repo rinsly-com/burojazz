@@ -28,6 +28,9 @@ import { AlignFeatureClient as AlignFeatureClient_e70f5e05f09f93e00b997edb1ef0c8
 import { HeadingFeatureClient as HeadingFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { CommentsPanel as CommentsPanel_0986c40ca0ecde75f566c853213e7396 } from '../../../components/CommentsPanel'
 import { WorkflowAction as WorkflowAction_e8c4e60d7213efc5103de81a43b3895d } from '../../../components/WorkflowAction'
+import { DeployNavLink as DeployNavLink_49051cef4f4f73eec296efbbf5e2838c } from '../../../components/DeployNavLink'
+import { R2ClientUploadHandler as R2ClientUploadHandler_85cc02ed84006fcc91d3aff39dda669d } from '@payloadcms/storage-r2/client'
+import { DeployView as DeployView_703d11826258ff65bac24c5c38c83090 } from '../../../components/DeployView'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 
 /** @type import('payload').ImportMap */
@@ -62,5 +65,8 @@ export const importMap = {
   "@payloadcms/richtext-lexical/client#HeadingFeatureClient": HeadingFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "/components/CommentsPanel#CommentsPanel": CommentsPanel_0986c40ca0ecde75f566c853213e7396,
   "/components/WorkflowAction#WorkflowAction": WorkflowAction_e8c4e60d7213efc5103de81a43b3895d,
+  "/components/DeployNavLink#DeployNavLink": DeployNavLink_49051cef4f4f73eec296efbbf5e2838c,
+  "@payloadcms/storage-r2/client#R2ClientUploadHandler": R2ClientUploadHandler_85cc02ed84006fcc91d3aff39dda669d,
+  "/components/DeployView#DeployView": DeployView_703d11826258ff65bac24c5c38c83090,
   "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1
 }

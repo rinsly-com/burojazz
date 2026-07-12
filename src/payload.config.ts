@@ -16,6 +16,7 @@ import { Aanmeldingen } from './collections/Aanmeldingen'
 import { Header } from './globals/Header'
 import { Footer } from './globals/Footer'
 import { cloudflareEmailAdapter } from './lib/email'
+import { deployHandler } from './endpoints/deploy'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -96,9 +97,21 @@ export default buildConfig({
     importMap: {
       baseDir: path.resolve(dirname),
     },
+    components: {
+      // Sidebar link + custom view for the manual production deploy button.
+      afterNavLinks: ['/components/DeployNavLink#DeployNavLink'],
+      views: {
+        deploy: {
+          Component: '/components/DeployView#DeployView',
+          path: '/deploy',
+        },
+      },
+    },
   },
   collections: [Users, Media, Pages, Comments, Aanmeldingen],
   globals: [Header, Footer],
+  // POST /api/deploy — manual "rebuild production" trigger (see endpoints/deploy.ts).
+  endpoints: [{ path: '/deploy', method: 'post', handler: deployHandler }],
   cors: corsOrigins,
   csrf: corsOrigins,
   email: cloudflareEmailAdapter,
