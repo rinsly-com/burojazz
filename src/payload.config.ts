@@ -88,7 +88,14 @@ const frontendOrigins = (process.env.FRONTEND_URL || 'https://burojazz.com')
   .split(',')
   .map((o) => o.trim())
   .filter(Boolean)
-const corsOrigins = Array.from(new Set([...frontendOrigins, 'http://localhost:3000']))
+// The accp worker's OWN origin (where the admin panel is served) must be in the
+// csrf/cors lists too, or Payload rejects the auth cookie on writes and every
+// mutation fails with "You are not allowed to perform this action" (reads are
+// public so viewing still works). PAYLOAD_API_URL is set to this worker's origin.
+const selfOrigin = (process.env.PAYLOAD_API_URL || '').trim()
+const corsOrigins = Array.from(
+  new Set([...frontendOrigins, 'http://localhost:3000', ...(selfOrigin ? [selfOrigin] : [])]),
+)
 
 export default buildConfig({
   sharp: sharp as never,
