@@ -1,5 +1,6 @@
 import type { GlobalConfig } from 'payload'
 
+import { authenticated } from '../access/roles'
 import { navLinkFields } from '../fields/link'
 import { triggerStaticDeployAfterGlobalChange } from '../hooks/triggerStaticDeploy'
 
@@ -13,6 +14,9 @@ export const Header: GlobalConfig = {
   slug: 'header',
   access: {
     read: () => true,
+    // Any signed-in staff can edit site chrome (matches the collections). Public
+    // read is required so the static frontend can fetch it over HTTP.
+    update: authenticated,
   },
   hooks: {
     // Globals have no draft stage — every change is immediately part of the

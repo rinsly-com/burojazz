@@ -1,5 +1,7 @@
 import type { GlobalConfig } from 'payload'
 
+import { authenticated } from '../access/roles'
+
 /**
  * Footer — tagline, contact details, menu/info link lists, and copyright.
  * Publicly readable so the static frontend can fetch it over HTTP.
@@ -8,6 +10,9 @@ export const Footer: GlobalConfig = {
   slug: 'footer',
   access: {
     read: () => true,
+    // Any signed-in staff can edit site chrome (matches the collections). Public
+    // read is required so the static frontend can fetch it over HTTP.
+    update: authenticated,
   },
   fields: [
     { name: 'logo', label: 'Logo', type: 'upload', relationTo: 'media' },
