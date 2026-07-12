@@ -20,6 +20,7 @@ export const Header: GlobalConfig = {
     afterChange: [triggerStaticDeployAfterGlobalChange],
   },
   fields: [
+    { name: 'logo', label: 'Logo', type: 'upload', relationTo: 'media' },
     {
       name: 'navItems',
       label: 'Menu items',

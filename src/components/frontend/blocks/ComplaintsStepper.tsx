@@ -30,12 +30,47 @@ type Props = {
   title: string
   intro: string
   steps: Step[]
+  /** Optional "Nog vragen?" card, pre-rendered on the server. Added to the track
+   *  as the final snap slide so it snaps into place after the last step. */
+  contactCard?: ReactNode
 }
 
 /** Vertical fraction of the card viewport per scroll step (also the pin length). */
 const STEP_SCROLL = 0.85
 /** Card viewport height while pinned; leaves room for a peek of the next card. */
 const VIEWPORT_MAX = '78vh'
+
+/** Small curved teal arrow drawn between step cards, pointing to the next step. */
+function CurvedArrow({ flipped }: { flipped?: boolean }) {
+  return (
+    <svg
+      width="46"
+      height="48"
+      viewBox="0 0 46 48"
+      fill="none"
+      aria-hidden="true"
+      className={flipped ? '-scale-x-100' : undefined}
+    >
+      <path
+        d="M6 2C28 10 40 22 36 42"
+        stroke="#51c2cc"
+        strokeWidth="2"
+        strokeLinecap="round"
+        opacity="0.55"
+        fill="none"
+      />
+      <path
+        d="M29 37l7 9 7.5-7"
+        stroke="#51c2cc"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        opacity="0.55"
+        fill="none"
+      />
+    </svg>
+  )
+}
 
 /**
  * Interactive "Klachtenregeling" stepper.
@@ -48,13 +83,23 @@ const VIEWPORT_MAX = '78vh'
  * Mobile or `prefers-reduced-motion`: no pin, no snap — a plain stacked list with
  * the first card highlighted (the server-rendered default), fully accessible.
  */
-export function ComplaintsStepper({ eyebrowIcon, eyebrow, title, intro, steps }: Props) {
+export function ComplaintsStepper({
+  eyebrowIcon,
+  eyebrow,
+  title,
+  intro,
+  steps,
+  contactCard,
+}: Props) {
   const rootRef = useRef<HTMLDivElement>(null)
   const pinRef = useRef<HTMLDivElement>(null)
   const viewportRef = useRef<HTMLDivElement>(null)
   const trackRef = useRef<HTMLDivElement>(null)
   const cardRefs = useRef<(HTMLElement | null)[]>([])
   const stRef = useRef<ScrollTrigger | null>(null)
+  // Total snap slides = step cards + the optional contact card; lets a clicked
+  // step map onto the full slide range (kept in sync inside the matchMedia).
+  const slideCountRef = useRef(steps.length)
 
   // `active` = which card is teal; `stepper` = whether the pinned enhancement is
   // live (drives the dimming of inactive cards + the moving pill). Defaults match
@@ -75,34 +120,47 @@ export function ComplaintsStepper({ eyebrowIcon, eyebrow, title, intro, steps }:
         const viewport = viewportRef.current!
         const track = trackRef.current!
         const count = cards.length
+        slideCountRef.current = count
 
         // Enhanced (pinned) presentation — applied imperatively so the static
         // markup stays untouched for no-JS / reduced-motion.
         gsap.set(pin, { minHeight: '100vh' })
+        // The active card rests in the opaque centre band; past cards rise into
+        // the top fade, upcoming cards emerge from the bottom fade. A wide opaque
+        // band leaves room for the last step + contact card to share a slide.
+        const fade =
+          'linear-gradient(to bottom, transparent 0%, black 14%, black 86%, transparent 100%)'
         gsap.set(viewport, {
           maxHeight: VIEWPORT_MAX,
           overflow: 'hidden',
-          maskImage:
-            'linear-gradient(to bottom, transparent 0%, black 10%, black 82%, transparent 100%)',
+          maskImage: fade,
+          webkitMaskImage: fade,
         })
         setStepper(true)
 
-        // Offsets of each card top within the track (recomputed on refresh).
-        let rel: number[] = []
+        // Each card's centre offset within the track and the viewport half-height,
+        // recomputed before every refresh so the scrub tween re-reads correct
+        // values on resize / font load.
+        let center: number[] = []
+        let half = 0
         const measure = () => {
           const base = cards[0].offsetTop
-          rel = cards.map((c) => c.offsetTop - base)
+          center = cards.map((c) => c.offsetTop - base + c.offsetHeight / 2)
+          half = viewport.clientHeight / 2
         }
         measure()
 
-        const applyProgress = (progress: number) => {
-          const s = progress * (count - 1)
-          const lo = Math.floor(s)
-          const hi = Math.min(lo + 1, count - 1)
-          const f = s - lo
-          const y = -(rel[lo] + (rel[hi] - rel[lo]) * f)
-          gsap.set(track, { y })
-          const idx = Math.round(s)
+        // One equal-duration segment per gap: this maps each snap point
+        // k/(count-1) to card k centred in the viewport, regardless of the cards'
+        // differing heights. Function-based y values are re-read on refresh
+        // (invalidateOnRefresh) so the alignment survives layout changes.
+        const trackTl = gsap.timeline({ defaults: { ease: 'none', duration: 1 } })
+        for (let i = 1; i < count; i++) {
+          trackTl.fromTo(track, { y: () => half - center[i - 1] }, { y: () => half - center[i] })
+        }
+
+        const setActiveFromProgress = (progress: number) => {
+          const idx = Math.round(progress * (count - 1))
           if (idx !== activeRef.current) {
             activeRef.current = idx
             setActive(idx)
@@ -115,20 +173,27 @@ export function ComplaintsStepper({ eyebrowIcon, eyebrow, title, intro, steps }:
           end: () => '+=' + (count - 1) * window.innerHeight * STEP_SCROLL,
           pin,
           pinSpacing: true,
+          anticipatePin: 1,
+          // Scrub couples the slide to the scrollbar (smooth, no jitter); snap
+          // then eases the scrollbar to the nearest step once scrolling stops.
+          scrub: 0.6,
+          animation: trackTl,
           invalidateOnRefresh: true,
           snap: {
             snapTo: 1 / (count - 1),
-            duration: { min: 0.2, max: 0.5 },
-            ease: 'power1.inOut',
+            // Snap to the NEAREST slide (not projected by scroll velocity), so a
+            // slide holds until you deliberately scroll past its halfway point —
+            // a flick past the last step no longer flies straight to the contact.
+            directional: false,
+            duration: { min: 0.25, max: 0.5 },
+            delay: 0.08,
+            ease: 'power2.inOut',
           },
-          onRefresh: () => {
-            measure()
-            applyProgress(stRef.current?.progress ?? 0)
-          },
-          onUpdate: (self) => applyProgress(self.progress),
+          onRefreshInit: measure,
+          onUpdate: (self) => setActiveFromProgress(self.progress),
         })
         stRef.current = st
-        applyProgress(0)
+        setActiveFromProgress(0)
 
         return () => {
           stRef.current = null
@@ -146,8 +211,10 @@ export function ComplaintsStepper({ eyebrowIcon, eyebrow, title, intro, steps }:
 
   const goToStep = (i: number) => {
     const st = stRef.current
-    if (!st || steps.length < 2) return
-    const target = st.start + (i / (steps.length - 1)) * (st.end - st.start)
+    const n = slideCountRef.current
+    if (!st || n < 2) return
+    // Map the slide index (steps + contact card) onto the pinned scroll range.
+    const target = st.start + (i / (n - 1)) * (st.end - st.start)
     gsap.to(window, { scrollTo: target, duration: 0.6, ease: 'power2.inOut' })
   }
 
@@ -155,8 +222,9 @@ export function ComplaintsStepper({ eyebrowIcon, eyebrow, title, intro, steps }:
     <div ref={rootRef}>
       <div ref={pinRef} className="lg:flex lg:items-center">
         <div className="flex flex-col gap-12 lg:flex-row lg:gap-8">
-          {/* Intro column */}
-          <div className="flex flex-col items-start gap-6 lg:w-[360px] lg:shrink-0 xl:w-[420px]">
+          {/* Intro column — vertically centred so it lines up with the
+              centred active card and the "Stap N" pill. */}
+          <div className="flex flex-col items-start gap-6 lg:w-[360px] lg:shrink-0 lg:justify-center xl:w-[420px]">
             <span className="inline-flex items-center gap-2.5 rounded-pill bg-brand/5 px-3 py-2.5 text-brand">
               {eyebrowIcon}
               <span className="text-sm font-medium text-brand">{eyebrow}</span>
@@ -167,13 +235,14 @@ export function ComplaintsStepper({ eyebrowIcon, eyebrow, title, intro, steps }:
             <p className="whitespace-pre-line text-sm font-medium text-ink">{intro}</p>
           </div>
 
-          {/* Stepper rail (desktop only) */}
+          {/* Stepper rail (desktop only): pill centred to sit beside the
+              centred active card, line fading above it and below it. */}
           <div className="hidden shrink-0 flex-col items-center lg:flex" aria-hidden="true">
-            <div className="h-[82px] w-px bg-brand/30" />
+            <div className="w-px flex-1 bg-gradient-to-b from-transparent to-brand/30" />
             <div className="rounded-pill bg-[#e5f6f7] px-4 py-2 text-center text-xl font-bold text-brand">
-              Stap {active + 1}
+              {active >= steps.length ? 'Contact' : `Stap ${active + 1}`}
             </div>
-            <div className="w-px flex-1 bg-[#eae9e6]" />
+            <div className="w-px flex-1 bg-gradient-to-b from-[#eae9e6] to-transparent" />
           </div>
 
           {/* Step cards */}
@@ -257,9 +326,33 @@ export function ComplaintsStepper({ eyebrowIcon, eyebrow, title, intro, steps }:
                         </div>
                       ))}
                     </div>
+
+                    {/* Curved arrow pointing to the next step, alternating
+                        sides, sitting in the gap below the card (desktop). */}
+                    {i < steps.length - 1 && (
+                      <div
+                        className={`pointer-events-none absolute top-full z-10 hidden h-12 items-center lg:flex ${
+                          i % 2 === 0 ? 'right-16' : 'left-16'
+                        }`}
+                      >
+                        <CurvedArrow flipped={i % 2 === 1} />
+                      </div>
+                    )}
                   </article>
                 )
               })}
+
+              {/* Contact card: the final snap slide (labelled "Contact" on the
+                  rail), measured for centring like a step card. */}
+              {contactCard && (
+                <div
+                  ref={(el) => {
+                    cardRefs.current[steps.length] = el
+                  }}
+                >
+                  {contactCard}
+                </div>
+              )}
             </div>
           </div>
         </div>

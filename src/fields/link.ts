@@ -51,6 +51,30 @@ const destinationRow = (): RowField => ({
   ],
 })
 
+/**
+ * The link destination fields: the internal/external row plus an optional
+ * section to scroll to. Once an internal page is chosen, `SectionSelect`
+ * lists that page's blocks and stores the target (its Anchor ID when set,
+ * otherwise the block id). `hrefFor` appends it as `/slug#anchor` — this is
+ * what powers onepager menu scrolling (link to the current page + a section).
+ */
+const destinationFields = (): Field[] => [
+  destinationRow(),
+  {
+    name: 'anchor',
+    label: 'Section',
+    type: 'text',
+    admin: {
+      description:
+        'Optional. Scroll to a section on the selected page. Give the target section an Anchor ID for a readable link.',
+      condition: (_data, siblingData) => siblingData?.type === 'internal',
+      components: {
+        Field: '/components/SectionSelect#SectionSelect',
+      },
+    },
+  },
+]
+
 export const link = ({ name = 'link', label = 'Link', variant = true }: LinkArgs = {}): GroupField => ({
   name,
   label,
@@ -83,7 +107,7 @@ export const link = ({ name = 'link', label = 'Link', variant = true }: LinkArgs
           type: 'text',
           required: true,
         },
-    destinationRow(),
+    ...destinationFields(),
     {
       name: 'newTab',
       type: 'checkbox',
@@ -105,7 +129,7 @@ export const navLinkFields = ({ requiredLabel = true }: { requiredLabel?: boolea
     type: 'text',
     required: requiredLabel,
   },
-  destinationRow(),
+  ...destinationFields(),
   {
     name: 'newTab',
     type: 'checkbox',

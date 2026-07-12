@@ -10,6 +10,8 @@ export const Footer: GlobalConfig = {
     read: () => true,
   },
   fields: [
+    { name: 'logo', label: 'Logo', type: 'upload', relationTo: 'media' },
+    { name: 'certImage', label: 'Certificaat-logo', type: 'upload', relationTo: 'media' },
     { name: 'tagline', type: 'textarea' },
     { name: 'email', type: 'text' },
     { name: 'phone', type: 'text' },

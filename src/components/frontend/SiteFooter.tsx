@@ -1,5 +1,6 @@
 import Link from 'next/link'
 
+import { Media } from '@/components/frontend/ui/Media'
 import type { Footer } from '@/payload-types'
 
 type Props = {
@@ -81,11 +82,11 @@ export function SiteFooter({ footer }: Props) {
           <div className="flex flex-col gap-12 lg:flex-row lg:items-start lg:justify-between lg:gap-10">
             {/* About */}
             <div className="flex max-w-[275px] flex-col items-start gap-6">
-              <img
-                src="/images/footer/logo.svg"
+              <Media
+                resource={footer?.logo}
+                fallbackSrc="/images/footer/logo.svg"
                 alt="Buro J.A.Z.Z. logo"
-                width={71}
-                height={71}
+                fit="contain"
                 className="size-[71px]"
               />
               <p className="text-sm font-medium leading-[1.4] tracking-[-0.01em]">{tagline}</p>
@@ -150,11 +151,11 @@ export function SiteFooter({ footer }: Props) {
               <div className="flex flex-col gap-4">
                 <ColumnHeading>Certificaat</ColumnHeading>
                 <div className="flex size-[109px] items-center justify-center overflow-hidden rounded-xl border border-ink/10 bg-white">
-                  <img
-                    src="/images/footer/kiwa-iso9001.png"
+                  <Media
+                    resource={footer?.certImage}
+                    fallbackSrc="/images/footer/kiwa-iso9001.png"
                     alt="Kiwa Certified ISO 9001"
-                    width={80}
-                    height={90}
+                    fit="contain"
                     className="h-[90px] w-auto"
                   />
                 </div>

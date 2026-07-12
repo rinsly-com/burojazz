@@ -25,6 +25,12 @@ type MediaProps = {
   /** How the image fills its box. Defaults to "cover". */
   fit?: 'cover' | 'contain'
   style?: CSSProperties
+  /**
+   * Hardcoded image path used when `resource` is empty (e.g. a design default
+   * shipped in /public). Lets a block render its default until an editor
+   * uploads a replacement in the CMS.
+   */
+  fallbackSrc?: string
 }
 
 /**
@@ -38,20 +44,21 @@ type MediaProps = {
  * this component owns `object-fit`/`object-position`. Server component: the URL
  * and focal style are inlined into the static HTML, shipping no client JS.
  */
-export function Media({ resource, alt, className, fit = 'cover', style }: MediaProps) {
+export function Media({ resource, alt, className, fit = 'cover', style, fallbackSrc }: MediaProps) {
   const media = resolveMedia(resource)
-  if (!media?.url) return null
+  const src = media?.url ?? fallbackSrc
+  if (!src) return null
 
   // Payload stores the focal point as 0–100 percentages, which map directly to
-  // object-position; default to centre when unset.
-  const x = media.focalX ?? 50
-  const y = media.focalY ?? 50
+  // object-position; default to centre when unset (and for the fallback image).
+  const x = media?.focalX ?? 50
+  const y = media?.focalY ?? 50
 
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
-      src={media.url}
-      alt={alt ?? media.alt ?? ''}
+      src={src}
+      alt={alt ?? media?.alt ?? ''}
       className={className}
       style={{ objectFit: fit, objectPosition: `${x}% ${y}%`, ...style }}
     />

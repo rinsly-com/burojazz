@@ -1,5 +1,6 @@
 import type { Block } from 'payload'
 
+import { anchorField } from '../fields/anchor'
 import { basicEditor } from '../fields/basicEditor'
 import { sectionHeader } from '../fields/sectionHeader'
 
@@ -21,5 +22,6 @@ export const accordionBlock: Block = {
         { name: 'body', type: 'richText', editor: basicEditor },
       ],
     },
+    anchorField(),
   ],
 }

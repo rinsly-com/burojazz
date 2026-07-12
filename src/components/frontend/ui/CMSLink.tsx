@@ -12,16 +12,32 @@ export type LinkFields = {
   type?: 'internal' | 'external' | null
   page?: (number | Page) | null
   url?: string | null
+  anchor?: string | null
   newTab?: boolean | null
 }
 
-/** Resolve a CMS link to an href: internal page reference or external URL. */
+/** Normalize a CMS section target to a leading-`#` hash, or '' when empty. */
+function hashFor(anchor?: string | null): string {
+  const id = anchor?.trim().replace(/^#+/, '')
+  return id ? `#${id}` : ''
+}
+
+/**
+ * Resolve a CMS link to an href: an external URL, or an internal page
+ * (`/slug`), optionally scrolled to a section on that page (`/slug#anchor`).
+ * Linking to a section of the current page (`/#anchor`) is how onepager
+ * menu scrolling works.
+ */
 export function hrefFor(link: LinkFields | null | undefined): string {
   if (!link) return '#'
   if (link.type === 'external') return link.url || '#'
+  const hash = hashFor(link.anchor)
   const page = link.page
-  if (page && typeof page === 'object') return page.slug === 'home' ? '/' : `/${page.slug}`
-  return '#'
+  if (page && typeof page === 'object') {
+    const base = page.slug === 'home' ? '/' : `/${page.slug}`
+    return `${base}${hash}`
+  }
+  return hash || '#'
 }
 
 /** Render a single CMS-configured link as a brand button. */

@@ -6,6 +6,7 @@ import { Button } from '@/components/frontend/ui/Button'
 import { Buttons } from '@/components/frontend/ui/CMSLink'
 import { Eyebrow } from '@/components/frontend/ui/Eyebrow'
 import { Icon } from '@/components/frontend/ui/Icon'
+import { Media } from '@/components/frontend/ui/Media'
 import { Section } from '@/components/frontend/ui/Section'
 
 type Props = Extract<NonNullable<Page['layout']>[number], { blockType: 'about' }>
@@ -31,10 +32,11 @@ export function About(props: Props) {
       <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-[1fr_1.2fr] lg:gap-20">
         {/* Photo with overlapping e-mail card */}
         <div className="relative mb-20 lg:mb-0">
-          <img
-            src="/images/about/directors.jpg"
+          <Media
+            resource={props.image}
+            fallbackSrc="/images/about/directors.jpg"
             alt="Medewerker van Buro J.A.Z.Z. met een basketbal"
-            className="h-[420px] w-full rounded-photo object-cover shadow-[0px_3px_16px_0px_rgba(0,0,0,0.1)] sm:h-[520px] lg:h-[632px]"
+            className="h-[420px] w-full rounded-photo shadow-[0px_3px_16px_0px_rgba(0,0,0,0.1)] sm:h-[520px] lg:h-[632px]"
           />
           <a
             href={`mailto:${email}`}

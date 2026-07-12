@@ -1,5 +1,6 @@
 import type { Block } from 'payload'
 
+import { anchorField } from '../fields/anchor'
 import { linkGroup } from '../fields/link'
 import { sectionHeader } from '../fields/sectionHeader'
 
@@ -18,5 +19,6 @@ export const heroBlock: Block = {
       admin: { description: 'Grote afbeelding die het rechtervlak van de hero vult.' },
     },
     linkGroup(),
+    anchorField(),
   ],
 }

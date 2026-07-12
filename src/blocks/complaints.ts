@@ -1,5 +1,6 @@
 import type { Block } from 'payload'
 
+import { anchorField } from '../fields/anchor'
 import { iconField } from '../fields/icon'
 import { sectionHeader } from '../fields/sectionHeader'
 
@@ -72,5 +73,6 @@ export const complaintsBlock: Block = {
         { name: 'email', type: 'email' },
       ],
     },
+    anchorField(),
   ],
 }

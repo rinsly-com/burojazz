@@ -1,5 +1,6 @@
 import type { Block } from 'payload'
 
+import { anchorField } from '../fields/anchor'
 import { link } from '../fields/link'
 import { sectionHeader } from '../fields/sectionHeader'
 
@@ -23,5 +24,6 @@ export const vacanciesBlock: Block = {
         link({ variant: false }),
       ],
     },
+    anchorField(),
   ],
 }

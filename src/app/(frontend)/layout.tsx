@@ -1,6 +1,7 @@
 import React from 'react'
 import { Mona_Sans, Montserrat } from 'next/font/google'
 
+import { AanmeldenDialog } from '@/components/frontend/aanmelden/AanmeldenDialog'
 import { SiteFooter } from '@/components/frontend/SiteFooter'
 import { SiteHeader } from '@/components/frontend/SiteHeader'
 import { getFooter, getHeader } from '@/lib/globals'
@@ -36,6 +37,7 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
         <SiteHeader header={header} />
         <main>{children}</main>
         <SiteFooter footer={footer} />
+        <AanmeldenDialog />
       </body>
     </html>
   )

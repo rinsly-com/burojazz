@@ -50,14 +50,14 @@ const CONTACT_PEOPLE: {
   {
     name: 'Egbert de Boer',
     role: 'Bestuurder',
-    file: 'egbert.png',
+    file: 'egbert-de-boer-avatar.png',
     phone: '+31 6 55202233',
     email: 'contact@burojazz.nl',
   },
   {
     name: 'Andres van Eeten',
     role: 'Bestuurder',
-    file: 'andres.png',
+    file: 'andres-van-eeten-avatar.png',
     phone: '+31 6 55202233',
     email: 'contact@burojazz.nl',
   },
@@ -65,8 +65,14 @@ const CONTACT_PEOPLE: {
 
 /**
  * Upload a file from public/ to the Media collection, reusing the existing doc
- * on re-run (matched by filename) so seeding stays idempotent. `publicRelPath`
- * is relative to the project's public/ dir, e.g. `images/core-values/x.svg`.
+ * on re-run so seeding stays idempotent. `publicRelPath` is relative to the
+ * project's public/ dir, e.g. `images/core-values/x.svg`.
+ *
+ * Matching is on `alt` (a stable, unique label the seed controls), NOT filename:
+ * Payload renames a file on collision (`x.svg` -> `x-1.svg`), so a filename
+ * lookup never matched the stored name and every run created a fresh duplicate.
+ * Each distinct image has a distinct alt; where two callers share an alt it is
+ * deliberately the same image, so they correctly share one media doc.
  */
 async function upsertMedia(
   payload: PayloadInstance,
@@ -74,10 +80,9 @@ async function upsertMedia(
   publicRelPath: string,
   alt: string,
 ): Promise<number> {
-  const file = path.basename(publicRelPath)
   const existing = await payload.find({
     collection: 'media',
-    where: { filename: { equals: file } },
+    where: { alt: { equals: alt } },
     limit: 1,
     depth: 0,
   })
@@ -89,7 +94,7 @@ async function upsertMedia(
     filePath: path.join(seedDir, '../public', publicRelPath),
     user,
   })
-  console.log(`Uploaded media ${file} (id ${created.id})`)
+  console.log(`Uploaded media ${path.basename(publicRelPath)} (id ${created.id})`)
   return created.id as number
 }
 
@@ -529,7 +534,7 @@ async function run() {
         role,
         phone,
         email,
-        photo: await upsertMedia(payload, user, `images/contact-persons/${file}`, `Portret ${name}`),
+        photo: await upsertMedia(payload, user, `images/contact-persons/${file}`, `${name} - ${role}`),
       })),
     )
   }
@@ -551,10 +556,70 @@ async function run() {
     complaintsBlk.contact.photo = await upsertMedia(
       payload,
       user,
-      'images/contact-persons/egbert.png',
-      'Portret Egbert de Boer',
+      'images/contact-persons/egbert-de-boer-avatar.png',
+      'Egbert de Boer - Bestuurder',
     )
   }
+
+  // --- a6. Upload the remaining block images (photos + logos) ---
+  const aboutBlock = layout.find((b) => b.blockType === 'about')
+  if (aboutBlock && aboutBlock.blockType === 'about') {
+    aboutBlock.image = await upsertMedia(
+      payload,
+      user,
+      'images/about/directors.jpg',
+      'Directie van Buro J.A.Z.Z.',
+    )
+  }
+  const visionBlock = layout.find((b) => b.blockType === 'visionMission')
+  if (visionBlock && visionBlock.blockType === 'visionMission') {
+    visionBlock.image = await upsertMedia(
+      payload,
+      user,
+      'images/vision-mission/photo.png',
+      'Kind doet een handstand in de gymzaal',
+    )
+  }
+  if (coreValuesBlock && coreValuesBlock.blockType === 'coreValues') {
+    coreValuesBlock.logo = await upsertMedia(
+      payload,
+      user,
+      'images/core-values/logo.svg',
+      'J.A.Z.Z. logo (kernwaarden)',
+    )
+  }
+  const socialBlock = layout.find((b) => b.blockType === 'social')
+  if (socialBlock && socialBlock.blockType === 'social') {
+    socialBlock.photos = {
+      toys: await upsertMedia(payload, user, 'images/social/photo-toys.jpg', 'Sfeerfoto speelgoed'),
+      gym: await upsertMedia(payload, user, 'images/social/photo-gym.jpg', 'Sfeerfoto gymzaal'),
+      boxing: await upsertMedia(payload, user, 'images/social/photo-boxing.png', 'Sfeerfoto boksen'),
+      figures: await upsertMedia(payload, user, 'images/social/photo-figures.jpg', 'Sfeerfoto figuren'),
+      phone: await upsertMedia(payload, user, 'images/social/phone-hand.png', 'Telefoon met Instagram-feed'),
+      arrow: await upsertMedia(payload, user, 'images/social/arrow-doodle.svg', 'Pijl-doodle'),
+      instagram: await upsertMedia(payload, user, 'images/social/instagram.svg', 'Instagram-icoon'),
+    }
+  }
+
+  // --- a7. Upload the global logos + certificate ---
+  const headerLogoId = await upsertMedia(
+    payload,
+    user,
+    'images/header-hero/logo.svg',
+    'Buro J.A.Z.Z. logo (header)',
+  )
+  const footerLogoId = await upsertMedia(
+    payload,
+    user,
+    'images/footer/logo.svg',
+    'Buro J.A.Z.Z. logo (footer)',
+  )
+  const footerCertId = await upsertMedia(
+    payload,
+    user,
+    'images/footer/kiwa-iso9001.png',
+    'Kiwa ISO 9001 certificaat',
+  )
 
   // --- b. Upsert the 'home' page ---
   const existing = await payload.find({
@@ -642,9 +707,17 @@ async function run() {
   }
 
   // --- f. Seed the header & footer globals ---
-  await payload.updateGlobal({ slug: 'header', data: headerData(pageIdBySlug), user })
+  await payload.updateGlobal({
+    slug: 'header',
+    data: { ...headerData(pageIdBySlug), logo: headerLogoId },
+    user,
+  })
   console.log('Header global seeded')
-  await payload.updateGlobal({ slug: 'footer', data: footerData, user })
+  await payload.updateGlobal({
+    slug: 'footer',
+    data: { ...footerData, logo: footerLogoId, certImage: footerCertId },
+    user,
+  })
   console.log('Footer global seeded')
 
   console.log('Seed complete.')

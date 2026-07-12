@@ -5,11 +5,12 @@ import Link from 'next/link'
 
 import { ArrowIcon } from '@/components/frontend/ui/ArrowIcon'
 import { hrefFor, type LinkFields } from '@/components/frontend/ui/CMSLink'
+import { Media } from '@/components/frontend/ui/Media'
 import type { Header } from '@/payload-types'
 
 type SiteHeaderProps = {
   /** The `header` global data; nav is empty until items are added in the CMS. */
-  header?: Pick<Header, 'navItems' | 'cta'> | null
+  header?: Pick<Header, 'navItems' | 'cta' | 'logo'> | null
 }
 
 type NavItem = {
@@ -47,10 +48,11 @@ export function SiteHeader({ header }: SiteHeaderProps) {
         <div className="rounded-[70px] bg-white p-3 shadow-[0px_9px_26.9px_0px_rgba(0,0,0,0.08)] md:p-4">
           <div className="flex items-center justify-between">
             <Link href="/" aria-label="Buro J.A.Z.Z. home" className="shrink-0">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="/images/header-hero/logo.svg"
+              <Media
+                resource={header?.logo}
+                fallbackSrc="/images/header-hero/logo.svg"
                 alt="Buro J.A.Z.Z. logo"
+                fit="contain"
                 className="size-12 md:size-14"
               />
             </Link>

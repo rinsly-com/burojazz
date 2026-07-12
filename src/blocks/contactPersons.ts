@@ -1,5 +1,6 @@
 import type { Block } from 'payload'
 
+import { anchorField } from '../fields/anchor'
 import { sectionHeader } from '../fields/sectionHeader'
 
 export const contactPersonsBlock: Block = {
@@ -28,5 +29,6 @@ export const contactPersonsBlock: Block = {
         { name: 'email', type: 'email' },
       ],
     },
+    anchorField(),
   ],
 }

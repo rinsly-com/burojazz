@@ -8,6 +8,10 @@ import * as migration_20260711_160558_core_value_description from './20260711_16
 import * as migration_20260711_161451_contact_person_fields from './20260711_161451_contact_person_fields';
 import * as migration_20260711_181919_remove_hero_cert from './20260711_181919_remove_hero_cert';
 import * as migration_20260712_114843_complaints_pills_contact from './20260712_114843_complaints_pills_contact';
+import * as migration_20260712_130435_cms_managed_images from './20260712_130435_cms_managed_images';
+import * as migration_20260712_131205_social_arrow_instagram from './20260712_131205_social_arrow_instagram';
+import * as migration_20260712_133841_aanmeldingen from './20260712_133841_aanmeldingen';
+import * as migration_20260712_134346_anchor_links from './20260712_134346_anchor_links';
 
 export const migrations = [
   {
@@ -58,6 +62,26 @@ export const migrations = [
   {
     up: migration_20260712_114843_complaints_pills_contact.up,
     down: migration_20260712_114843_complaints_pills_contact.down,
-    name: '20260712_114843_complaints_pills_contact'
+    name: '20260712_114843_complaints_pills_contact',
+  },
+  {
+    up: migration_20260712_130435_cms_managed_images.up,
+    down: migration_20260712_130435_cms_managed_images.down,
+    name: '20260712_130435_cms_managed_images',
+  },
+  {
+    up: migration_20260712_131205_social_arrow_instagram.up,
+    down: migration_20260712_131205_social_arrow_instagram.down,
+    name: '20260712_131205_social_arrow_instagram',
+  },
+  {
+    up: migration_20260712_133841_aanmeldingen.up,
+    down: migration_20260712_133841_aanmeldingen.down,
+    name: '20260712_133841_aanmeldingen',
+  },
+  {
+    up: migration_20260712_134346_anchor_links.up,
+    down: migration_20260712_134346_anchor_links.down,
+    name: '20260712_134346_anchor_links'
   },
 ];

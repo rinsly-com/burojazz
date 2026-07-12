@@ -1,10 +1,12 @@
 import Link from 'next/link'
 
 import type { Page } from '@/payload-types'
+import { SocialParallax } from '@/components/frontend/blocks/SocialParallax'
 import { ArrowIcon } from '@/components/frontend/ui/ArrowIcon'
 import { hrefFor } from '@/components/frontend/ui/CMSLink'
 import { Eyebrow } from '@/components/frontend/ui/Eyebrow'
 import { Icon } from '@/components/frontend/ui/Icon'
+import { Media, mediaUrl } from '@/components/frontend/ui/Media'
 import { Section } from '@/components/frontend/ui/Section'
 
 type Props = Extract<NonNullable<Page['layout']>[number], { blockType: 'social' }>
@@ -54,46 +56,15 @@ export function Social(props: Props) {
 
         {/* Collage */}
         <div className="relative mt-10 md:mt-20">
-          {/* Left snapshots */}
-          <img
-            src="/images/social/photo-toys.jpg"
-            alt=""
-            className="absolute left-[-2%] top-[8%] z-20 hidden w-[9%] rotate-2 rounded-[24px] object-cover shadow-[0px_3px_16px_0px_rgba(0,0,0,0.1)] sm:block"
-          />
-          <img
-            src="/images/social/photo-gym.jpg"
-            alt=""
-            className="absolute left-[8%] top-[16%] z-20 hidden aspect-[3/4] w-[14%] -rotate-[15deg] rounded-[24px] object-cover shadow-[0px_3px_16px_0px_rgba(0,0,0,0.1)] sm:block"
-          />
-
-          {/* Right snapshots */}
-          <img
-            src="/images/social/photo-boxing.png"
-            alt=""
-            className="absolute right-[13%] top-[17%] z-20 hidden w-[19%] sm:block"
-          />
-          <img
-            src="/images/social/photo-figures.jpg"
-            alt=""
-            className="absolute right-[4%] top-[-4%] z-20 hidden aspect-[3/4] w-[12%] rotate-[15deg] rounded-[24px] object-cover shadow-[0px_3px_16px_0px_rgba(0,0,0,0.1)] sm:block"
-          />
-
-          {/* Hand-drawn arrow + "Kijk achter de schermen!" */}
-          <div className="absolute right-[-2%] top-[24%] z-20 hidden w-[14%] flex-col items-center lg:flex">
-            <img
-              src="/images/social/arrow-doodle.svg"
-              alt=""
-              className="h-auto w-[40%] -scale-y-100 -rotate-[34deg]"
-            />
-            <p className="mt-3 text-center text-[20px] font-semibold leading-[1.2] tracking-[0.02em] text-black">
-              Kijk <span className="text-brand">achter</span> de schermen!
-            </p>
-          </div>
+          {/* Snapshots floating around the phone (+ the "Kijk achter de schermen!"
+              callout), with scroll parallax */}
+          <SocialParallax photos={props.photos} />
 
           {/* Phone in hand (cropped like the design frame) */}
           <div className="relative mx-auto aspect-[762/694] w-full max-w-[560px] overflow-hidden md:max-w-[762px]">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/images/social/phone-hand.png"
+              src={mediaUrl(props.photos?.phone) ?? '/images/social/phone-hand.png'}
               alt={`Telefoon met de Instagram-feed van ${handle}`}
               className="absolute left-[-33.4%] top-[-34.15%] h-[146.41%] w-[166.8%] max-w-none"
             />
@@ -117,7 +88,13 @@ export function Social(props: Props) {
             }}
           >
             <span className="flex w-[281px] items-center gap-6">
-              <img src="/images/social/instagram.svg" alt="Instagram" className="size-[60px] shrink-0" />
+              <Media
+                resource={props.photos?.instagram}
+                fallbackSrc="/images/social/instagram.svg"
+                alt="Instagram"
+                fit="contain"
+                className="size-[60px] shrink-0"
+              />
               <span className="flex min-w-0 flex-1 flex-col gap-1.5">
                 <span className="text-[20px] font-bold leading-normal text-white">{handle}</span>
                 <span className="flex items-center gap-2.5 text-sm font-medium text-white">

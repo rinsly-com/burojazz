@@ -1,6 +1,7 @@
 import { ReviewPanel as ReviewPanel_176db3e0d68114a4f1814b2462895ab6 } from '../../../components/ReviewPanel'
 import { SlugField as SlugField_2b8867833a34864a02ddf429b0728a40 } from '@payloadcms/next/client'
 import { WorkflowStatusCell as WorkflowStatusCell_cdaec1b9f132f671a211d3c27f28abfa } from '../../../components/WorkflowStatusCell'
+import { SectionSelect as SectionSelect_5f64c19b5fc37aa6b07bd058f4036ca8 } from '../../../components/SectionSelect'
 import { IconSelector as IconSelector_0d40708c7ce43bde1d3e0df1b230c52c } from '../../../components/IconSelector'
 import { RscEntryLexicalCell as RscEntryLexicalCell_44fe37237e0ebf4470c9990d8cb7b07e } from '@payloadcms/richtext-lexical/rsc'
 import { RscEntryLexicalField as RscEntryLexicalField_44fe37237e0ebf4470c9990d8cb7b07e } from '@payloadcms/richtext-lexical/rsc'
@@ -34,6 +35,7 @@ export const importMap = {
   "/components/ReviewPanel#ReviewPanel": ReviewPanel_176db3e0d68114a4f1814b2462895ab6,
   "@payloadcms/next/client#SlugField": SlugField_2b8867833a34864a02ddf429b0728a40,
   "/components/WorkflowStatusCell#WorkflowStatusCell": WorkflowStatusCell_cdaec1b9f132f671a211d3c27f28abfa,
+  "/components/SectionSelect#SectionSelect": SectionSelect_5f64c19b5fc37aa6b07bd058f4036ca8,
   "/components/IconSelector#IconSelector": IconSelector_0d40708c7ce43bde1d3e0df1b230c52c,
   "@payloadcms/richtext-lexical/rsc#RscEntryLexicalCell": RscEntryLexicalCell_44fe37237e0ebf4470c9990d8cb7b07e,
   "@payloadcms/richtext-lexical/rsc#RscEntryLexicalField": RscEntryLexicalField_44fe37237e0ebf4470c9990d8cb7b07e,

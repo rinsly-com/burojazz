@@ -1,5 +1,6 @@
 import type { Block } from 'payload'
 
+import { anchorField } from '../fields/anchor'
 import { basicEditor } from '../fields/basicEditor'
 import { iconField } from '../fields/icon'
 import { sectionHeader } from '../fields/sectionHeader'
@@ -10,6 +11,7 @@ export const visionMissionBlock: Block = {
   labels: { singular: 'Vision & mission', plural: 'Vision & mission sections' },
   fields: [
     sectionHeader(['icon', 'eyebrow', 'title']),
+    { name: 'image', label: 'Foto', type: 'upload', relationTo: 'media' },
     {
       name: 'items',
       label: 'Items',
@@ -22,5 +24,6 @@ export const visionMissionBlock: Block = {
         { name: 'body', type: 'richText', editor: basicEditor },
       ],
     },
+    anchorField(),
   ],
 }

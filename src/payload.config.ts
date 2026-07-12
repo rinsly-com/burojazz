@@ -12,8 +12,10 @@ import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
 import { Comments } from './collections/Comments'
+import { Aanmeldingen } from './collections/Aanmeldingen'
 import { Header } from './globals/Header'
 import { Footer } from './globals/Footer'
+import { cloudflareEmailAdapter } from './lib/email'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -77,6 +79,16 @@ const sharp =
         .default
     : undefined
 
+// Origins allowed to call the API from a browser. The public production site is
+// a SEPARATE static deployment (burojazz-prod), so its origin must be allow-listed
+// for the "Direct aanmelden" form to POST cross-origin to this Payload worker.
+// Set FRONTEND_URL (comma-separated allowed) in the accp environment.
+const frontendOrigins = (process.env.FRONTEND_URL || 'https://burojazz.com')
+  .split(',')
+  .map((o) => o.trim())
+  .filter(Boolean)
+const corsOrigins = Array.from(new Set([...frontendOrigins, 'http://localhost:3000']))
+
 export default buildConfig({
   sharp: sharp as never,
   admin: {
@@ -85,8 +97,11 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Media, Pages, Comments],
+  collections: [Users, Media, Pages, Comments, Aanmeldingen],
   globals: [Header, Footer],
+  cors: corsOrigins,
+  csrf: corsOrigins,
+  email: cloudflareEmailAdapter,
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

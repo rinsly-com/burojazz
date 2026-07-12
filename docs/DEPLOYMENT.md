@@ -138,6 +138,10 @@ pnpm wrangler secret put CLOUDFLARE_DEPLOY_HOOK_URL --env accp
 | `CLOUDFLARE_ENV`            | accp build       | Selects the `accp` wrangler environment        |
 | `CLOUDFLARE_DEPLOY_HOOK_URL`| accp (secret)    | Publishing content triggers the prod rebuild   |
 | `PAYLOAD_API_URL`           | prod build       | accp API origin the static build fetches from  |
+| `NEXT_PUBLIC_PAYLOAD_API_URL`| prod build      | accp API origin the aanmelden form POSTs to (browser) |
+| `FRONTEND_URL`              | accp             | CORS/CSRF allow-list for the static site origin(s), comma-separated |
+| `AANMELDING_NOTIFY_TO`      | accp (optional)  | Team address that receives aanmelding emails (default `aanmeldingen@burojazz.com`) |
+| `EMAIL_FROM_ADDRESS`        | accp (optional)  | From address for outgoing mail (must be a burojazz.com address) |
 
 R2 media storage is prepared but disabled (it costs money). To enable: uncomment
 the `r2_buckets` block in `wrangler.jsonc`, create the bucket, and redeploy —
@@ -161,6 +165,29 @@ will error on an empty result.
 `scripts/build-static.mjs` temporarily removes the `(payload)` admin/API route
 group and `my-route` before exporting; add any other server-only routes to its
 `EXCLUDED` list.
+
+## "Direct aanmelden" intake form
+
+The homepage/header "Direct aanmelden" CTAs open a 4-step wizard dialog
+(`src/components/frontend/aanmelden/`). Because the prod site is static, the
+browser POSTs the submission cross-origin to the accp Payload API endpoint
+`POST /api/aanmeldingen/submit`, which stores it in the `aanmeldingen`
+collection and emails the team via an `afterChange` hook. `/aanmelden` is a
+no-JS fallback page. Requirements:
+
+1. **CORS** — set `FRONTEND_URL` on accp to the static site origin(s) (e.g.
+   `https://burojazz.com`) so the browser POST is allowed.
+2. **API origin** — set `NEXT_PUBLIC_PAYLOAD_API_URL` in the prod build to the
+   accp origin. (In dev it's same-origin, so leave it unset.)
+3. **Email delivery — Cloudflare Email Routing** (see `src/lib/email.ts`):
+   - Enable Email Routing on `burojazz.com`. ⚠ **This sets Cloudflare MX records
+     and takes over inbound mail** — only do this if the domain does not already
+     host mailboxes elsewhere, or use a subdomain.
+   - Verify the destination address (`AANMELDING_NOTIFY_TO`) as an Email Routing
+     destination.
+   - The `send_email` binding `AANMELDING_EMAIL` is declared in `wrangler.jsonc`
+     (dev + accp); keep its `destination_address` in sync with the verified
+     address. Outside the Worker (local dev/CLI) mail is logged, not sent.
 
 ## Manual commands
 

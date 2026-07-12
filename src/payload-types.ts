@@ -71,6 +71,7 @@ export interface Config {
     media: Media;
     pages: Page;
     comments: Comment;
+    aanmeldingen: Aanmeldingen;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -82,6 +83,7 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     pages: PagesSelect<false> | PagesSelect<true>;
     comments: CommentsSelect<false> | CommentsSelect<true>;
+    aanmeldingen: AanmeldingenSelect<false> | AanmeldingenSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -235,10 +237,18 @@ export interface HeroBlock {
         type?: ('internal' | 'external') | null;
         page?: (number | null) | Page;
         url?: string | null;
+        /**
+         * Optional. Scroll to a section on the selected page. Give the target section an Anchor ID for a readable link.
+         */
+        anchor?: string | null;
         newTab?: boolean | null;
         id?: string | null;
       }[]
     | null;
+  /**
+   * Optional. Gives this section an id so a menu item can scroll to it (e.g. “over-ons”). Use lowercase letters, numbers and dashes.
+   */
+  anchor?: string | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'hero';
@@ -272,6 +282,10 @@ export interface ServicesBlock {
                 type?: ('internal' | 'external') | null;
                 page?: (number | null) | Page;
                 url?: string | null;
+                /**
+                 * Optional. Scroll to a section on the selected page. Give the target section an Anchor ID for a readable link.
+                 */
+                anchor?: string | null;
                 newTab?: boolean | null;
               };
               id?: string | null;
@@ -280,6 +294,10 @@ export interface ServicesBlock {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Optional. Gives this section an id so a menu item can scroll to it (e.g. “over-ons”). Use lowercase letters, numbers and dashes.
+   */
+  anchor?: string | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'services';
@@ -297,6 +315,7 @@ export interface AboutBlock {
     eyebrow?: string | null;
     title?: string | null;
   };
+  image?: (number | null) | Media;
   body?: {
     root: {
       type: string;
@@ -320,10 +339,18 @@ export interface AboutBlock {
         type?: ('internal' | 'external') | null;
         page?: (number | null) | Page;
         url?: string | null;
+        /**
+         * Optional. Scroll to a section on the selected page. Give the target section an Anchor ID for a readable link.
+         */
+        anchor?: string | null;
         newTab?: boolean | null;
         id?: string | null;
       }[]
     | null;
+  /**
+   * Optional. Gives this section an id so a menu item can scroll to it (e.g. “over-ons”). Use lowercase letters, numbers and dashes.
+   */
+  anchor?: string | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'about';
@@ -341,6 +368,7 @@ export interface CoreValuesBlock {
     eyebrow?: string | null;
     title?: string | null;
   };
+  logo?: (number | null) | Media;
   values?:
     | {
         label?: string | null;
@@ -355,6 +383,10 @@ export interface CoreValuesBlock {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Optional. Gives this section an id so a menu item can scroll to it (e.g. “over-ons”). Use lowercase letters, numbers and dashes.
+   */
+  anchor?: string | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'coreValues';
@@ -372,6 +404,7 @@ export interface VisionMissionBlock {
     eyebrow?: string | null;
     title?: string | null;
   };
+  image?: (number | null) | Media;
   items?:
     | {
         /**
@@ -397,6 +430,10 @@ export interface VisionMissionBlock {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Optional. Gives this section an id so a menu item can scroll to it (e.g. “over-ons”). Use lowercase letters, numbers and dashes.
+   */
+  anchor?: string | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'visionMission';
@@ -428,6 +465,10 @@ export interface ContactPersonsBlock {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Optional. Gives this section an id so a menu item can scroll to it (e.g. “over-ons”). Use lowercase letters, numbers and dashes.
+   */
+  anchor?: string | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'contactPersons';
@@ -487,6 +528,10 @@ export interface ComplaintsBlock {
     phone?: string | null;
     email?: string | null;
   };
+  /**
+   * Optional. Gives this section an id so a menu item can scroll to it (e.g. “over-ons”). Use lowercase letters, numbers and dashes.
+   */
+  anchor?: string | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'complaints';
@@ -511,8 +556,28 @@ export interface SocialBlock {
     type?: ('internal' | 'external') | null;
     page?: (number | null) | Page;
     url?: string | null;
+    /**
+     * Optional. Scroll to a section on the selected page. Give the target section an Anchor ID for a readable link.
+     */
+    anchor?: string | null;
     newTab?: boolean | null;
   };
+  /**
+   * De sfeerfoto’s in de collage. Laat leeg voor de standaardfoto.
+   */
+  photos?: {
+    toys?: (number | null) | Media;
+    gym?: (number | null) | Media;
+    boxing?: (number | null) | Media;
+    figures?: (number | null) | Media;
+    phone?: (number | null) | Media;
+    arrow?: (number | null) | Media;
+    instagram?: (number | null) | Media;
+  };
+  /**
+   * Optional. Gives this section an id so a menu item can scroll to it (e.g. “over-ons”). Use lowercase letters, numbers and dashes.
+   */
+  anchor?: string | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'social';
@@ -542,11 +607,19 @@ export interface VacanciesBlock {
           type?: ('internal' | 'external') | null;
           page?: (number | null) | Page;
           url?: string | null;
+          /**
+           * Optional. Scroll to a section on the selected page. Give the target section an Anchor ID for a readable link.
+           */
+          anchor?: string | null;
           newTab?: boolean | null;
         };
         id?: string | null;
       }[]
     | null;
+  /**
+   * Optional. Gives this section an id so a menu item can scroll to it (e.g. “over-ons”). Use lowercase letters, numbers and dashes.
+   */
+  anchor?: string | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'vacancies';
@@ -583,6 +656,10 @@ export interface AccordionBlock {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Optional. Gives this section an id so a menu item can scroll to it (e.g. “over-ons”). Use lowercase letters, numbers and dashes.
+   */
+  anchor?: string | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'accordion';
@@ -599,11 +676,19 @@ export interface ButtonRowBlock {
         type?: ('internal' | 'external') | null;
         page?: (number | null) | Page;
         url?: string | null;
+        /**
+         * Optional. Scroll to a section on the selected page. Give the target section an Anchor ID for a readable link.
+         */
+        anchor?: string | null;
         newTab?: boolean | null;
         id?: string | null;
       }[]
     | null;
   alignment?: ('left' | 'center' | 'right') | null;
+  /**
+   * Optional. Gives this section an id so a menu item can scroll to it (e.g. “over-ons”). Use lowercase letters, numbers and dashes.
+   */
+  anchor?: string | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'buttonRow';
@@ -629,6 +714,10 @@ export interface RichTextBlock {
     [k: string]: unknown;
   } | null;
   width?: ('narrow' | 'wide') | null;
+  /**
+   * Optional. Gives this section an id so a menu item can scroll to it (e.g. “over-ons”). Use lowercase letters, numbers and dashes.
+   */
+  anchor?: string | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'richText';
@@ -655,6 +744,61 @@ export interface Comment {
    * Set to reply within a thread.
    */
   parent?: (number | null) | Comment;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "aanmeldingen".
+ */
+export interface Aanmeldingen {
+  id: number;
+  status?: ('nieuw' | 'in-behandeling' | 'afgehandeld') | null;
+  clientNaam: string;
+  clientGeboortedatum: string;
+  clientAdres: string;
+  verwijzerNaam: string;
+  verwijzerOrganisatie: string;
+  verwijzerEmail: string;
+  verwijzerTelefoon: string;
+  moederNaam: string;
+  moederAdres: string;
+  moederEmail: string;
+  moederTelefoon: string;
+  vaderNaam: string;
+  vaderAdres?: string | null;
+  vaderEmail?: string | null;
+  vaderTelefoon?: string | null;
+  siblings?:
+    | {
+        leeftijd?: string | null;
+        type?: ('broer' | 'zus' | 'nvt') | null;
+        id?: string | null;
+      }[]
+    | null;
+  redenAanmelden: string;
+  hulpverleningsgeschiedenis?: string | null;
+  problematiek?:
+    | (
+        | 'adhd'
+        | 'ass'
+        | 'verstandelijke-beperking'
+        | 'hoogbegaafdheid'
+        | 'emoties'
+        | 'lichamelijke-klachten'
+        | 'somberheid'
+        | 'angst'
+        | 'trauma'
+        | 'drugsgebruik'
+        | 'negatief-zelfbeeld'
+        | 'vastlopen'
+      )[]
+    | null;
+  problematiekOverig?: string | null;
+  dsmDiagnoseBekend?: ('ja' | 'nee') | null;
+  vormVanHulp?:
+    ('begeleiding' | 'pmt' | 'basis-ggz' | 'ash' | 'wmo' | 'begeleiding-op-school' | 'diagnostiek')[] | null;
+  privacyAkkoord: boolean;
   updatedAt: string;
   createdAt: string;
 }
@@ -697,6 +841,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'comments';
         value: number | Comment;
+      } | null)
+    | ({
+        relationTo: 'aanmeldingen';
+        value: number | Aanmeldingen;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -831,9 +979,11 @@ export interface HeroBlockSelect<T extends boolean = true> {
         type?: T;
         page?: T;
         url?: T;
+        anchor?: T;
         newTab?: T;
         id?: T;
       };
+  anchor?: T;
   id?: T;
   blockName?: T;
 }
@@ -866,12 +1016,14 @@ export interface ServicesBlockSelect<T extends boolean = true> {
                     type?: T;
                     page?: T;
                     url?: T;
+                    anchor?: T;
                     newTab?: T;
                   };
               id?: T;
             };
         id?: T;
       };
+  anchor?: T;
   id?: T;
   blockName?: T;
 }
@@ -887,6 +1039,7 @@ export interface AboutBlockSelect<T extends boolean = true> {
         eyebrow?: T;
         title?: T;
       };
+  image?: T;
   body?: T;
   email?: T;
   buttons?:
@@ -897,9 +1050,11 @@ export interface AboutBlockSelect<T extends boolean = true> {
         type?: T;
         page?: T;
         url?: T;
+        anchor?: T;
         newTab?: T;
         id?: T;
       };
+  anchor?: T;
   id?: T;
   blockName?: T;
 }
@@ -915,6 +1070,7 @@ export interface CoreValuesBlockSelect<T extends boolean = true> {
         eyebrow?: T;
         title?: T;
       };
+  logo?: T;
   values?:
     | T
     | {
@@ -923,6 +1079,7 @@ export interface CoreValuesBlockSelect<T extends boolean = true> {
         image?: T;
         id?: T;
       };
+  anchor?: T;
   id?: T;
   blockName?: T;
 }
@@ -938,6 +1095,7 @@ export interface VisionMissionBlockSelect<T extends boolean = true> {
         eyebrow?: T;
         title?: T;
       };
+  image?: T;
   items?:
     | T
     | {
@@ -946,6 +1104,7 @@ export interface VisionMissionBlockSelect<T extends boolean = true> {
         body?: T;
         id?: T;
       };
+  anchor?: T;
   id?: T;
   blockName?: T;
 }
@@ -972,6 +1131,7 @@ export interface ContactPersonsBlockSelect<T extends boolean = true> {
         email?: T;
         id?: T;
       };
+  anchor?: T;
   id?: T;
   blockName?: T;
 }
@@ -1013,6 +1173,7 @@ export interface ComplaintsBlockSelect<T extends boolean = true> {
         phone?: T;
         email?: T;
       };
+  anchor?: T;
   id?: T;
   blockName?: T;
 }
@@ -1037,8 +1198,21 @@ export interface SocialBlockSelect<T extends boolean = true> {
         type?: T;
         page?: T;
         url?: T;
+        anchor?: T;
         newTab?: T;
       };
+  photos?:
+    | T
+    | {
+        toys?: T;
+        gym?: T;
+        boxing?: T;
+        figures?: T;
+        phone?: T;
+        arrow?: T;
+        instagram?: T;
+      };
+  anchor?: T;
   id?: T;
   blockName?: T;
 }
@@ -1069,10 +1243,12 @@ export interface VacanciesBlockSelect<T extends boolean = true> {
               type?: T;
               page?: T;
               url?: T;
+              anchor?: T;
               newTab?: T;
             };
         id?: T;
       };
+  anchor?: T;
   id?: T;
   blockName?: T;
 }
@@ -1096,6 +1272,7 @@ export interface AccordionBlockSelect<T extends boolean = true> {
         body?: T;
         id?: T;
       };
+  anchor?: T;
   id?: T;
   blockName?: T;
 }
@@ -1112,10 +1289,12 @@ export interface ButtonRowBlockSelect<T extends boolean = true> {
         type?: T;
         page?: T;
         url?: T;
+        anchor?: T;
         newTab?: T;
         id?: T;
       };
   alignment?: T;
+  anchor?: T;
   id?: T;
   blockName?: T;
 }
@@ -1126,6 +1305,7 @@ export interface ButtonRowBlockSelect<T extends boolean = true> {
 export interface RichTextBlockSelect<T extends boolean = true> {
   content?: T;
   width?: T;
+  anchor?: T;
   id?: T;
   blockName?: T;
 }
@@ -1141,6 +1321,44 @@ export interface CommentsSelect<T extends boolean = true> {
   author?: T;
   resolved?: T;
   parent?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "aanmeldingen_select".
+ */
+export interface AanmeldingenSelect<T extends boolean = true> {
+  status?: T;
+  clientNaam?: T;
+  clientGeboortedatum?: T;
+  clientAdres?: T;
+  verwijzerNaam?: T;
+  verwijzerOrganisatie?: T;
+  verwijzerEmail?: T;
+  verwijzerTelefoon?: T;
+  moederNaam?: T;
+  moederAdres?: T;
+  moederEmail?: T;
+  moederTelefoon?: T;
+  vaderNaam?: T;
+  vaderAdres?: T;
+  vaderEmail?: T;
+  vaderTelefoon?: T;
+  siblings?:
+    | T
+    | {
+        leeftijd?: T;
+        type?: T;
+        id?: T;
+      };
+  redenAanmelden?: T;
+  hulpverleningsgeschiedenis?: T;
+  problematiek?: T;
+  problematiekOverig?: T;
+  dsmDiagnoseBekend?: T;
+  vormVanHulp?: T;
+  privacyAkkoord?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1190,6 +1408,7 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
  */
 export interface Header {
   id: number;
+  logo?: (number | null) | Media;
   /**
    * The navigation links shown in the header, in order.
    */
@@ -1199,6 +1418,10 @@ export interface Header {
         type?: ('internal' | 'external') | null;
         page?: (number | null) | Page;
         url?: string | null;
+        /**
+         * Optional. Scroll to a section on the selected page. Give the target section an Anchor ID for a readable link.
+         */
+        anchor?: string | null;
         newTab?: boolean | null;
         id?: string | null;
       }[]
@@ -1211,6 +1434,10 @@ export interface Header {
     type?: ('internal' | 'external') | null;
     page?: (number | null) | Page;
     url?: string | null;
+    /**
+     * Optional. Scroll to a section on the selected page. Give the target section an Anchor ID for a readable link.
+     */
+    anchor?: string | null;
     newTab?: boolean | null;
   };
   updatedAt?: string | null;
@@ -1222,6 +1449,8 @@ export interface Header {
  */
 export interface Footer {
   id: number;
+  logo?: (number | null) | Media;
+  certImage?: (number | null) | Media;
   tagline?: string | null;
   email?: string | null;
   phone?: string | null;
@@ -1249,6 +1478,7 @@ export interface Footer {
  * via the `definition` "header_select".
  */
 export interface HeaderSelect<T extends boolean = true> {
+  logo?: T;
   navItems?:
     | T
     | {
@@ -1256,6 +1486,7 @@ export interface HeaderSelect<T extends boolean = true> {
         type?: T;
         page?: T;
         url?: T;
+        anchor?: T;
         newTab?: T;
         id?: T;
       };
@@ -1266,6 +1497,7 @@ export interface HeaderSelect<T extends boolean = true> {
         type?: T;
         page?: T;
         url?: T;
+        anchor?: T;
         newTab?: T;
       };
   updatedAt?: T;
@@ -1277,6 +1509,8 @@ export interface HeaderSelect<T extends boolean = true> {
  * via the `definition` "footer_select".
  */
 export interface FooterSelect<T extends boolean = true> {
+  logo?: T;
+  certImage?: T;
   tagline?: T;
   email?: T;
   phone?: T;

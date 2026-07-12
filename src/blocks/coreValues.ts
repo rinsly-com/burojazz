@@ -1,5 +1,6 @@
 import type { Block } from 'payload'
 
+import { anchorField } from '../fields/anchor'
 import { sectionHeader } from '../fields/sectionHeader'
 
 export const coreValuesBlock: Block = {
@@ -8,6 +9,7 @@ export const coreValuesBlock: Block = {
   labels: { singular: 'Core values', plural: 'Core values sections' },
   fields: [
     sectionHeader(['icon', 'eyebrow', 'title']),
+    { name: 'logo', label: 'Logo (midden)', type: 'upload', relationTo: 'media' },
     {
       name: 'values',
       label: 'Values',
@@ -30,5 +32,6 @@ export const coreValuesBlock: Block = {
         },
       ],
     },
+    anchorField(),
   ],
 }

@@ -1,5 +1,7 @@
 import type { Block } from 'payload'
 
+import { anchorField } from '../fields/anchor'
+
 export const richTextBlock: Block = {
   slug: 'richText',
   interfaceName: 'RichTextBlock',
@@ -15,5 +17,6 @@ export const richTextBlock: Block = {
         { label: 'Wide', value: 'wide' },
       ],
     },
+    anchorField(),
   ],
 }

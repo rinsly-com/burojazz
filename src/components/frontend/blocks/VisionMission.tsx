@@ -5,6 +5,7 @@ import type { Page } from '@/payload-types'
 import { VisionMissionAccordion } from '@/components/frontend/blocks/VisionMissionAccordion'
 import { Eyebrow } from '@/components/frontend/ui/Eyebrow'
 import { Icon } from '@/components/frontend/ui/Icon'
+import { Media } from '@/components/frontend/ui/Media'
 import { Section } from '@/components/frontend/ui/Section'
 
 type Props = Extract<NonNullable<Page['layout']>[number], { blockType: 'visionMission' }>
@@ -74,10 +75,11 @@ export function VisionMission(props: Props) {
 
         {/* Photo column */}
         <div className="w-full min-w-0 lg:flex-1 lg:self-stretch">
-          <img
-            src="/images/vision-mission/photo.png"
+          <Media
+            resource={props.image}
+            fallbackSrc="/images/vision-mission/photo.png"
             alt="Kind doet een handstand op een dikke mat in een gymzaal"
-            className="aspect-[4/5] w-full rounded-[24px] object-cover shadow-[0px_3px_16px_0px_rgba(0,0,0,0.1)] sm:aspect-[4/3] lg:aspect-auto lg:h-[632px]"
+            className="aspect-[4/5] w-full rounded-[24px] shadow-[0px_3px_16px_0px_rgba(0,0,0,0.1)] sm:aspect-[4/3] lg:aspect-auto lg:h-[632px]"
           />
         </div>
       </div>

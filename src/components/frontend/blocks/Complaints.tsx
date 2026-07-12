@@ -89,12 +89,11 @@ function ContactCard({ contact }: { contact: NonNullable<Props['contact']> }) {
   const mailHref = contact.email ? `mailto:${contact.email}` : null
 
   return (
-    <div className="mt-12 flex w-full items-center gap-4 rounded-3xl border border-[#eae9e6] bg-white p-4 lg:ml-auto lg:max-w-[660px]">
+    <div className="flex w-full items-center gap-4 rounded-3xl border border-[#eae9e6] bg-white p-4">
       <Media
         resource={contact.photo}
         alt={contact.title ?? ''}
         className="size-14 shrink-0 rounded-2xl"
-        style={{ objectPosition: 'center top' }}
       />
       <div className="min-w-0 flex-1">
         <p className="text-lg font-bold text-black">{contact.title}</p>
@@ -148,8 +147,8 @@ export function Complaints(props: Props) {
         title={title}
         intro={intro}
         steps={steps}
+        contactCard={contact ? <ContactCard contact={contact} /> : undefined}
       />
-      {contact && <ContactCard contact={contact} />}
     </Section>
   )
 }

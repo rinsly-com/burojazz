@@ -1,7 +1,7 @@
 import type { Page } from '@/payload-types'
 import { Eyebrow } from '@/components/frontend/ui/Eyebrow'
 import { Icon } from '@/components/frontend/ui/Icon'
-import { mediaUrl } from '@/components/frontend/ui/Media'
+import { Media, mediaUrl } from '@/components/frontend/ui/Media'
 import { Section } from '@/components/frontend/ui/Section'
 
 type Props = Extract<NonNullable<Page['layout']>[number], { blockType: 'coreValues' }>
@@ -137,10 +137,12 @@ export function CoreValues(props: Props) {
 
         {/* Small screens: logo tile first, then wrapped chips */}
         <div className="mt-12 flex flex-wrap items-center justify-center gap-3 lg:hidden">
-          <img
-            src="/images/core-values/logo.svg"
+          <Media
+            resource={props.logo}
+            fallbackSrc="/images/core-values/logo.svg"
             alt="J.A.Z.Z. logo"
-            className="mb-2 w-32 basis-full object-contain sm:mb-0 sm:basis-auto"
+            fit="contain"
+            className="mb-2 w-32 basis-full sm:mb-0 sm:basis-auto"
           />
           {values.map((value, i) => (
             <ValueChip key={i} value={value} />
@@ -155,9 +157,11 @@ export function CoreValues(props: Props) {
         <div className="mt-[100px] hidden lg:block">
           <div className="mx-auto h-[804px] w-[864px] xl:h-[929px] xl:w-[998px]">
             <div className="relative h-[929px] w-[998px] origin-top-left scale-[0.865] xl:scale-100">
-              <img
-                src="/images/core-values/logo.svg"
+              <Media
+                resource={props.logo}
+                fallbackSrc="/images/core-values/logo.svg"
                 alt="J.A.Z.Z. logo"
+                fit="contain"
                 className="absolute left-[322px] top-[287px] size-[354px]"
               />
               {clustered.map((value, i) => {

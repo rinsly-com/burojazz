@@ -1,5 +1,6 @@
 import type { Block } from 'payload'
 
+import { anchorField } from '../fields/anchor'
 import { linkGroup } from '../fields/link'
 
 export const buttonRowBlock: Block = {
@@ -18,5 +19,6 @@ export const buttonRowBlock: Block = {
         { label: 'Right', value: 'right' },
       ],
     },
+    anchorField(),
   ],
 }
