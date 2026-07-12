@@ -16,9 +16,11 @@
     "global_fetch_strictly_public",
   ],
   // ---------------------------------------------------------------------------
-  // Top-level config = the "dev" environment used by `pnpm dev`. The D1 binding
-  // is served from a local SQLite mock under .wrangler/state. CLOUDFLARE_ENV is
-  // left unset for dev.
+  // Top-level config = the "burojazz" worker deployed by the git-connected
+  // Cloudflare Workers Build (CLOUDFLARE_ENV left unset). Local `pnpm dev` still
+  // uses a local SQLite mock — remote bindings are only enabled in production
+  // builds (see getCloudflareContextFromWrangler in payload.config.ts), so the
+  // real D1 below is only touched by the production build/runtime.
   // ---------------------------------------------------------------------------
   "name": "burojazz",
   "assets": {
@@ -28,8 +30,8 @@
   "d1_databases": [
     {
       "binding": "D1",
-      "database_name": "burojazz-dev",
-      "database_id": "PLACEHOLDER_DEV_DB_ID",
+      "database_name": "burojazz-accp",
+      "database_id": "e1347ebb-09ec-483f-aa78-361e7ba9726f",
       "remote": true,
     },
   ],
