@@ -3,6 +3,8 @@ import path from 'path'
 import { sqliteD1Adapter } from '@payloadcms/db-d1-sqlite'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { buildConfig, type Plugin } from 'payload'
+import { en } from '@payloadcms/translations/languages/en'
+import { nl } from '@payloadcms/translations/languages/nl'
 import { fileURLToPath } from 'url'
 import { type CloudflareContext, getCloudflareContext } from '@opennextjs/cloudflare'
 import type { GetPlatformProxyOptions } from 'wrangler'
@@ -88,7 +90,19 @@ const frontendOrigins = (process.env.FRONTEND_URL || 'https://burojazz.com')
   .split(',')
   .map((o) => o.trim())
   .filter(Boolean)
-const corsOrigins = Array.from(new Set([...frontendOrigins, 'http://localhost:3000']))
+// The accp worker's OWN origin (where the admin panel is served) must be in the
+// csrf/cors lists, or Payload rejects the auth cookie on writes and every
+// mutation fails with "You are not allowed to perform this action" (reads are
+// public so viewing still works). Hardcoded because it must be present at
+// RUNTIME: PAYLOAD_API_URL is only a build-time var and is undefined in the
+// deployed worker, so it can't be relied on here. PAYLOAD_API_URL is still
+// included for environments where it IS set at runtime.
+const adminOrigins = ['https://accp.burojazz.com', (process.env.PAYLOAD_API_URL || '').trim()].filter(
+  Boolean,
+)
+const corsOrigins = Array.from(
+  new Set([...frontendOrigins, 'http://localhost:3000', ...adminOrigins]),
+)
 
 export default buildConfig({
   sharp: sharp as never,
@@ -110,6 +124,14 @@ export default buildConfig({
   },
   collections: [Users, Media, Pages, Comments, Aanmeldingen],
   globals: [Header, Footer],
+  // The customer is Dutch: default the admin panel to Dutch, but keep English
+  // as a switchable secondary language. This translates Payload's built-in UI
+  // (buttons, nav, columns, login, etc.); custom field labels are localized
+  // in place via { en, nl } label objects on the collections/fields/blocks.
+  i18n: {
+    supportedLanguages: { nl, en },
+    fallbackLanguage: 'nl',
+  },
   // POST /api/deploy — manual "rebuild production" trigger (see endpoints/deploy.ts).
   endpoints: [{ path: '/deploy', method: 'post', handler: deployHandler }],
   cors: corsOrigins,

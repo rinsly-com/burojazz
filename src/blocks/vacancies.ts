@@ -7,20 +7,36 @@ import { sectionHeader } from '../fields/sectionHeader'
 export const vacanciesBlock: Block = {
   slug: 'vacancies',
   interfaceName: 'VacanciesBlock',
-  labels: { singular: 'Vacancies', plural: 'Vacancies sections' },
+  labels: {
+    singular: { en: 'Vacancies', nl: 'Vacatures' },
+    plural: { en: 'Vacancies sections', nl: 'Vacature-secties' },
+  },
   fields: [
     sectionHeader(['icon', 'eyebrow', 'title', 'intro']),
     {
       name: 'cards',
-      label: 'Vacancy cards',
-      labels: { singular: 'Card', plural: 'Cards' },
+      label: { en: 'Vacancy cards', nl: 'Vacaturekaarten' },
+      labels: {
+        singular: { en: 'Card', nl: 'Kaart' },
+        plural: { en: 'Cards', nl: 'Kaarten' },
+      },
       type: 'array',
       admin: { initCollapsed: true },
       fields: [
-        { name: 'title', type: 'text' },
-        { name: 'location', type: 'text' },
-        { name: 'hours', type: 'text' },
-        { name: 'text', type: 'textarea' },
+        { name: 'title', label: { en: 'Title', nl: 'Titel' }, type: 'text' },
+        { name: 'location', label: { en: 'Location', nl: 'Locatie' }, type: 'text' },
+        {
+          name: 'hours',
+          label: { en: 'Hours', nl: 'Uren' },
+          type: 'text',
+          admin: {
+            description: {
+              en: 'Working hours for the vacancy (e.g. 32–36 hours per week).',
+              nl: 'Werkuren voor de vacature (bijv. 32–36 uur per week).',
+            },
+          },
+        },
+        { name: 'text', label: { en: 'Text', nl: 'Tekst' }, type: 'textarea' },
         link({ variant: false }),
       ],
     },

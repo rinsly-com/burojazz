@@ -5,14 +5,14 @@
   // wrangler.static.jsonc. See docs/DEPLOYMENT.md.
   //
   // Deployed by the git-connected Cloudflare Workers Build as worker
-  // "accp-burojazz" with CLOUDFLARE_ENV left UNSET (single default env — there is
+  // "burojazz-accp" with CLOUDFLARE_ENV left UNSET (single default env — there is
   // no accp sub-environment anymore). Local `pnpm dev` uses a local SQLite mock:
   // remote bindings are only enabled in production builds (see
   // getCloudflareContextFromWrangler in payload.config.ts), so the real D1 below
   // is only touched by the production build/runtime.
   // ===========================================================================
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "accp-burojazz",
+  "name": "burojazz-accp",
   "main": ".open-next/worker.js",
   "compatibility_date": "2025-08-15",
   "compatibility_flags": [

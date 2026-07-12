@@ -3,8 +3,8 @@ import type { TextField } from 'payload'
 type IconFieldOptions = {
   /** Field name (defaults to `icon`). */
   name?: string
-  label?: string
-  description?: string
+  label?: TextField['label']
+  description?: NonNullable<TextField['admin']>['description']
 }
 
 /**
@@ -14,13 +14,20 @@ type IconFieldOptions = {
  *
  * Optional by design: leave it empty to fall back to the block's default icon.
  */
-export const iconField = ({ name = 'icon', label = 'Icon', description }: IconFieldOptions = {}): TextField => ({
+export const iconField = ({
+  name = 'icon',
+  label = { en: 'Icon', nl: 'Icoon' },
+  description,
+}: IconFieldOptions = {}): TextField => ({
   name,
   type: 'text',
   label,
   admin: {
     description:
-      description ?? 'Zoek en kies een Tabler-icoon. Laat leeg voor het standaardicoon.',
+      description ?? {
+        en: 'Search and pick a Tabler icon. Leave empty to use the block’s default icon.',
+        nl: 'Zoek en kies een Tabler-icoon. Laat leeg voor het standaardicoon van het blok.',
+      },
     components: {
       Field: '/components/IconSelector#IconSelector',
     },

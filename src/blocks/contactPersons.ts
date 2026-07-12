@@ -6,27 +6,38 @@ import { sectionHeader } from '../fields/sectionHeader'
 export const contactPersonsBlock: Block = {
   slug: 'contactPersons',
   interfaceName: 'ContactPersonsBlock',
-  labels: { singular: 'Contact persons', plural: 'Contact persons sections' },
+  labels: {
+    singular: { en: 'Contact persons', nl: 'Contactpersonen' },
+    plural: { en: 'Contact persons sections', nl: 'Contactpersoon-secties' },
+  },
   fields: [
     sectionHeader(['icon', 'eyebrow', 'title', 'subtitle']),
     {
       name: 'people',
-      label: 'People',
-      labels: { singular: 'Person', plural: 'People' },
+      label: { en: 'People', nl: 'Personen' },
+      labels: {
+        singular: { en: 'Person', nl: 'Persoon' },
+        plural: { en: 'People', nl: 'Personen' },
+      },
       type: 'array',
       admin: { initCollapsed: true },
       fields: [
-        { name: 'name', type: 'text' },
-        { name: 'role', type: 'text' },
+        { name: 'name', label: { en: 'Name', nl: 'Naam' }, type: 'text' },
+        { name: 'role', label: { en: 'Role', nl: 'Functie' }, type: 'text' },
         {
           name: 'photo',
-          label: 'Portret',
+          label: { en: 'Portrait', nl: 'Portret' },
           type: 'upload',
           relationTo: 'media',
-          admin: { description: 'Portretfoto, uitgelijnd op de onderkant van de kaart.' },
+          admin: {
+            description: {
+              en: 'Portrait photo, aligned to the bottom of the card.',
+              nl: 'Portretfoto, uitgelijnd op de onderkant van de kaart.',
+            },
+          },
         },
-        { name: 'phone', label: 'Telefoonnummer', type: 'text' },
-        { name: 'email', type: 'email' },
+        { name: 'phone', label: { en: 'Phone', nl: 'Telefoonnummer' }, type: 'text' },
+        { name: 'email', label: { en: 'Email', nl: 'E-mail' }, type: 'email' },
       ],
     },
     anchorField(),

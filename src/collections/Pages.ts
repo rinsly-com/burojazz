@@ -22,6 +22,10 @@ import type { User } from '@/payload-types'
  */
 export const Pages: CollectionConfig = {
   slug: 'pages',
+  labels: {
+    singular: { en: 'Page', nl: 'Pagina' },
+    plural: { en: 'Pages', nl: "Pagina's" },
+  },
   admin: {
     useAsTitle: 'title',
     defaultColumns: ['title', 'slug', 'workflowStatus', 'updatedAt'],
@@ -69,6 +73,7 @@ export const Pages: CollectionConfig = {
     },
     {
       name: 'title',
+      label: { en: 'Title', nl: 'Titel' },
       type: 'text',
       required: true,
     },
@@ -77,20 +82,23 @@ export const Pages: CollectionConfig = {
     slugField({ position: 'sidebar' }),
     {
       name: 'workflowStatus',
-      label: 'Stage',
+      label: { en: 'Stage', nl: 'Fase' },
       type: 'select',
       required: true,
       defaultValue: 'draft',
       options: [
-        { label: 'Draft', value: 'draft' },
-        { label: 'Review', value: 'review' },
-        { label: 'Ready', value: 'ready' },
+        { label: { en: 'Draft', nl: 'Concept' }, value: 'draft' },
+        { label: { en: 'Review', nl: 'Beoordeling' }, value: 'review' },
+        { label: { en: 'Ready', nl: 'Klaar' }, value: 'ready' },
       ],
       admin: {
         position: 'sidebar',
         // Driven by the stage-aware action button, not edited directly.
         readOnly: true,
-        description: 'Advanced with the action button (Submit for review → Approve → Publish).',
+        description: {
+          en: 'Advanced with the action button (Submit for review → Approve → Publish).',
+          nl: 'Wordt doorgezet met de actieknop (Indienen ter beoordeling → Goedkeuren → Publiceren).',
+        },
         components: {
           // Colored stage chip in the list/table view.
           Cell: '/components/WorkflowStatusCell#WorkflowStatusCell',
@@ -99,11 +107,15 @@ export const Pages: CollectionConfig = {
     },
     {
       name: 'layout',
+      label: { en: 'Layout', nl: 'Indeling' },
       type: 'blocks',
       blocks: pageBlocks,
       admin: {
         initCollapsed: true,
-        description: 'Page sections rendered on the site, in order.',
+        description: {
+          en: 'Page sections rendered on the site, in order.',
+          nl: 'Paginasecties die op de site worden getoond, in volgorde.',
+        },
       },
     },
     {

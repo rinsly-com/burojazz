@@ -5,16 +5,20 @@ import { anchorField } from '../fields/anchor'
 export const richTextBlock: Block = {
   slug: 'richText',
   interfaceName: 'RichTextBlock',
-  labels: { singular: 'Rich text', plural: 'Rich text sections' },
+  labels: {
+    singular: { en: 'Rich text', nl: 'Opgemaakte tekst' },
+    plural: { en: 'Rich text sections', nl: 'Secties opgemaakte tekst' },
+  },
   fields: [
-    { name: 'content', type: 'richText' },
+    { name: 'content', label: { en: 'Content', nl: 'Inhoud' }, type: 'richText' },
     {
       name: 'width',
+      label: { en: 'Width', nl: 'Breedte' },
       type: 'select',
       defaultValue: 'narrow',
       options: [
-        { label: 'Narrow (reading width)', value: 'narrow' },
-        { label: 'Wide', value: 'wide' },
+        { label: { en: 'Narrow (reading width)', nl: 'Smal (leesbreedte)' }, value: 'narrow' },
+        { label: { en: 'Wide', nl: 'Breed' }, value: 'wide' },
       ],
     },
     anchorField(),

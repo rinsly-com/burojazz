@@ -20,19 +20,46 @@ export const sectionHeader = (
     fields.push(
       iconField({
         name: 'icon',
-        label: 'Eyebrow icon',
-        description: 'Icoon in het label boven de titel. Laat leeg voor het standaardicoon.',
+        label: { en: 'Eyebrow icon', nl: 'Icoon boven de titel' },
+        description: {
+          en: 'Icon shown in the small label above the title. Leave empty for the default icon.',
+          nl: 'Icoon in het kleine label boven de titel. Laat leeg voor het standaardicoon.',
+        },
       }),
     )
   }
-  if (include.has('eyebrow')) fields.push({ name: 'eyebrow', type: 'text' })
-  if (include.has('title')) fields.push({ name: 'title', type: 'text' })
-  if (include.has('subtitle')) fields.push({ name: 'subtitle', type: 'text' })
-  if (include.has('intro')) fields.push({ name: 'intro', type: 'textarea' })
+  if (include.has('eyebrow'))
+    fields.push({
+      name: 'eyebrow',
+      label: { en: 'Eyebrow', nl: 'Bovenlabel' },
+      type: 'text',
+      admin: {
+        description: {
+          en: 'Small line of text shown above the title.',
+          nl: 'Kleine tekstregel die boven de titel wordt getoond.',
+        },
+      },
+    })
+  if (include.has('title'))
+    fields.push({ name: 'title', label: { en: 'Title', nl: 'Titel' }, type: 'text' })
+  if (include.has('subtitle'))
+    fields.push({ name: 'subtitle', label: { en: 'Subtitle', nl: 'Subtitel' }, type: 'text' })
+  if (include.has('intro'))
+    fields.push({
+      name: 'intro',
+      label: { en: 'Intro', nl: 'Intro' },
+      type: 'textarea',
+      admin: {
+        description: {
+          en: 'Introductory paragraph shown below the title.',
+          nl: 'Inleidende alinea die onder de titel wordt getoond.',
+        },
+      },
+    })
 
   return {
     name: 'header',
-    label: 'Section header',
+    label: { en: 'Section header', nl: 'Sectiekop' },
     type: 'group',
     fields,
   }

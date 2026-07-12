@@ -7,10 +7,12 @@ import type { Field } from 'payload'
  */
 export const anchorField = (): Field => ({
   name: 'anchor',
-  label: 'Anchor ID',
+  label: { en: 'Anchor ID', nl: 'Anker-ID' },
   type: 'text',
   admin: {
-    description:
-      'Optional. Gives this section an id so a menu item can scroll to it (e.g. “over-ons”). Use lowercase letters, numbers and dashes.',
+    description: {
+      en: 'Optional. Gives this section an id so a menu item can scroll to it (e.g. “over-ons”). Use lowercase letters, numbers and dashes.',
+      nl: 'Optioneel. Geeft deze sectie een id zodat een menu-item ernaartoe kan scrollen (bijv. “over-ons”). Gebruik kleine letters, cijfers en streepjes.',
+    },
   },
 })
