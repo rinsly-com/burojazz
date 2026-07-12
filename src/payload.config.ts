@@ -3,6 +3,8 @@ import path from 'path'
 import { sqliteD1Adapter } from '@payloadcms/db-d1-sqlite'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { buildConfig, type Plugin } from 'payload'
+import { en } from '@payloadcms/translations/languages/en'
+import { nl } from '@payloadcms/translations/languages/nl'
 import { fileURLToPath } from 'url'
 import { type CloudflareContext, getCloudflareContext } from '@opennextjs/cloudflare'
 import type { GetPlatformProxyOptions } from 'wrangler'
@@ -122,6 +124,14 @@ export default buildConfig({
   },
   collections: [Users, Media, Pages, Comments, Aanmeldingen],
   globals: [Header, Footer],
+  // The customer is Dutch: default the admin panel to Dutch, but keep English
+  // as a switchable secondary language. This translates Payload's built-in UI
+  // (buttons, nav, columns, login, etc.); custom field labels are localized
+  // in place via { en, nl } label objects on the collections/fields/blocks.
+  i18n: {
+    supportedLanguages: { nl, en },
+    fallbackLanguage: 'nl',
+  },
   // POST /api/deploy — manual "rebuild production" trigger (see endpoints/deploy.ts).
   endpoints: [{ path: '/deploy', method: 'post', handler: deployHandler }],
   cors: corsOrigins,

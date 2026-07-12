@@ -7,19 +7,25 @@ import { sectionHeader } from '../fields/sectionHeader'
 export const accordionBlock: Block = {
   slug: 'accordion',
   interfaceName: 'AccordionBlock',
-  labels: { singular: 'Accordion', plural: 'Accordions' },
+  labels: {
+    singular: { en: 'Accordion', nl: 'Accordeon' },
+    plural: { en: 'Accordions', nl: 'Accordeons' },
+  },
   fields: [
     // The accordion renders its eyebrow as plain text, without an icon pill.
     sectionHeader(['eyebrow', 'title', 'subtitle', 'intro']),
     {
       name: 'items',
-      label: 'Items',
-      labels: { singular: 'Item', plural: 'Items' },
+      label: { en: 'Items', nl: 'Items' },
+      labels: {
+        singular: { en: 'Item', nl: 'Item' },
+        plural: { en: 'Items', nl: 'Items' },
+      },
       type: 'array',
       admin: { initCollapsed: true },
       fields: [
-        { name: 'title', type: 'text', required: true },
-        { name: 'body', type: 'richText', editor: basicEditor },
+        { name: 'title', label: { en: 'Title', nl: 'Titel' }, type: 'text', required: true },
+        { name: 'body', label: { en: 'Body', nl: 'Tekst' }, type: 'richText', editor: basicEditor },
       ],
     },
     anchorField(),

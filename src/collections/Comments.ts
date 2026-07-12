@@ -10,10 +10,14 @@ import { authenticated, reviewerOnly } from '../access/roles'
  */
 export const Comments: CollectionConfig = {
   slug: 'comments',
+  labels: {
+    singular: { en: 'Comment', nl: 'Reactie' },
+    plural: { en: 'Comments', nl: 'Reacties' },
+  },
   admin: {
     useAsTitle: 'body',
     defaultColumns: ['body', 'page', 'author', 'resolved', 'createdAt'],
-    group: 'Workflow',
+    group: { en: 'Workflow', nl: 'Werkstroom' },
   },
   access: {
     read: authenticated,
@@ -24,6 +28,7 @@ export const Comments: CollectionConfig = {
   fields: [
     {
       name: 'page',
+      label: { en: 'Page', nl: 'Pagina' },
       type: 'relationship',
       relationTo: 'pages',
       required: true,
@@ -31,42 +36,59 @@ export const Comments: CollectionConfig = {
     },
     {
       name: 'versionId',
+      label: { en: 'Version ID', nl: 'Versie-ID' },
       type: 'text',
       index: true,
       admin: {
         readOnly: true,
-        description: 'The page version this comment was made against.',
+        description: {
+          en: 'The page version this comment was made against.',
+          nl: 'De paginaversie waarop deze reactie is gemaakt.',
+        },
       },
     },
     {
       name: 'fieldPath',
+      label: { en: 'Field path', nl: 'Veldpad' },
       type: 'text',
       admin: {
-        description: 'Optional dot-path of the field the comment targets (for inline comments).',
+        description: {
+          en: 'Optional dot-path of the field the comment targets (for inline comments).',
+          nl: 'Optioneel dot-pad van het veld waarop de reactie betrekking heeft (voor inline reacties).',
+        },
       },
     },
     {
       name: 'body',
+      label: { en: 'Comment', nl: 'Reactie' },
       type: 'textarea',
       required: true,
     },
     {
       name: 'author',
+      label: { en: 'Author', nl: 'Auteur' },
       type: 'relationship',
       relationTo: 'users',
       admin: { readOnly: true },
     },
     {
       name: 'resolved',
+      label: { en: 'Resolved', nl: 'Opgelost' },
       type: 'checkbox',
       defaultValue: false,
       index: true,
     },
     {
       name: 'parent',
+      label: { en: 'Parent', nl: 'Bovenliggende reactie' },
       type: 'relationship',
       relationTo: 'comments',
-      admin: { description: 'Set to reply within a thread.' },
+      admin: {
+        description: {
+          en: 'Set to reply within a thread.',
+          nl: 'Instellen om binnen een thread te reageren.',
+        },
+      },
     },
   ],
   hooks: {

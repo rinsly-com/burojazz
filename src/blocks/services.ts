@@ -7,30 +7,52 @@ import { sectionHeader } from '../fields/sectionHeader'
 export const servicesBlock: Block = {
   slug: 'services',
   interfaceName: 'ServicesBlock',
-  labels: { singular: 'Services', plural: 'Services' },
+  labels: {
+    singular: { en: 'Services', nl: 'Diensten' },
+    plural: { en: 'Services', nl: 'Diensten' },
+  },
   fields: [
     sectionHeader(['icon', 'eyebrow', 'title']),
     {
       name: 'tabs',
-      label: 'Tabs',
-      labels: { singular: 'Tab', plural: 'Tabs' },
+      label: { en: 'Tabs', nl: 'Tabbladen' },
+      labels: {
+        singular: { en: 'Tab', nl: 'Tabblad' },
+        plural: { en: 'Tabs', nl: 'Tabbladen' },
+      },
       type: 'array',
       admin: {
         initCollapsed: true,
-        description: 'Each tab shows its own set of service cards on the site.',
+        description: {
+          en: 'Each tab shows its own set of service cards on the site.',
+          nl: 'Elk tabblad toont zijn eigen set dienstkaarten op de site.',
+        },
       },
       fields: [
-        { name: 'label', type: 'text' },
+        { name: 'label', label: { en: 'Label', nl: 'Label' }, type: 'text' },
         {
           name: 'cards',
-          label: 'Service cards',
-          labels: { singular: 'Card', plural: 'Cards' },
+          label: { en: 'Service cards', nl: 'Dienstkaarten' },
+          labels: {
+            singular: { en: 'Card', nl: 'Kaart' },
+            plural: { en: 'Cards', nl: 'Kaarten' },
+          },
           type: 'array',
           admin: { initCollapsed: true },
           fields: [
-            { name: 'number', type: 'text' },
-            { name: 'title', type: 'text' },
-            { name: 'description', type: 'text' },
+            {
+              name: 'number',
+              label: { en: 'Number', nl: 'Nummer' },
+              type: 'text',
+              admin: {
+                description: {
+                  en: 'Small number shown on the card (e.g. 01).',
+                  nl: 'Klein nummer op de kaart (bijv. 01).',
+                },
+              },
+            },
+            { name: 'title', label: { en: 'Title', nl: 'Titel' }, type: 'text' },
+            { name: 'description', label: { en: 'Description', nl: 'Beschrijving' }, type: 'text' },
             link({ variant: false }),
           ],
         },

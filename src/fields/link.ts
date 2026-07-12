@@ -7,7 +7,7 @@ import type { ArrayField, Field, GroupField, RowField } from 'payload'
  */
 type LinkArgs = {
   name?: string
-  label?: string
+  label?: string | Record<string, string>
   /**
    * Include the visual variant select. Only links rendered through
    * `CMSLink`/`Buttons` use it; standalone links with fixed styling (service
@@ -23,16 +23,25 @@ const destinationRow = (): RowField => ({
   fields: [
     {
       name: 'type',
+      label: { en: 'Type', nl: 'Type' },
       type: 'radio',
       defaultValue: 'internal',
       options: [
-        { label: 'Internal page', value: 'internal' },
-        { label: 'External URL', value: 'external' },
+        { label: { en: 'Internal page', nl: 'Interne pagina' }, value: 'internal' },
+        { label: { en: 'External URL', nl: 'Externe URL' }, value: 'external' },
       ],
-      admin: { width: '40%', layout: 'horizontal' },
+      admin: {
+        width: '40%',
+        layout: 'horizontal',
+        description: {
+          en: 'Link to a page on this site (follows the page if its address changes) or to an external web address.',
+          nl: 'Link naar een pagina op deze site (volgt de pagina als het adres verandert) of naar een extern webadres.',
+        },
+      },
     },
     {
       name: 'page',
+      label: { en: 'Page', nl: 'Pagina' },
       type: 'relationship',
       relationTo: 'pages',
       admin: {
@@ -42,10 +51,15 @@ const destinationRow = (): RowField => ({
     },
     {
       name: 'url',
+      label: { en: 'URL', nl: 'URL' },
       type: 'text',
       admin: {
         width: '60%',
         condition: (_data, siblingData) => siblingData?.type === 'external',
+        description: {
+          en: 'Full web address, including https://',
+          nl: 'Volledig webadres, inclusief https://',
+        },
       },
     },
   ],
@@ -62,11 +76,13 @@ const destinationFields = (): Field[] => [
   destinationRow(),
   {
     name: 'anchor',
-    label: 'Section',
+    label: { en: 'Section', nl: 'Sectie' },
     type: 'text',
     admin: {
-      description:
-        'Optional. Scroll to a section on the selected page. Give the target section an Anchor ID for a readable link.',
+      description: {
+        en: 'Optional. Scroll to a section on the selected page. Give the target section an Anchor ID for a readable link.',
+        nl: 'Optioneel. Scroll naar een sectie op de gekozen pagina. Geef de doelsectie een Anker-ID voor een leesbare link.',
+      },
       condition: (_data, siblingData) => siblingData?.type === 'internal',
       components: {
         Field: '/components/SectionSelect#SectionSelect',
@@ -86,32 +102,53 @@ export const link = ({ name = 'link', label = 'Link', variant = true }: LinkArgs
           fields: [
             {
               name: 'label',
+              label: { en: 'Label', nl: 'Label' },
               type: 'text',
               required: true,
-              admin: { width: '50%' },
+              admin: {
+                width: '50%',
+                description: {
+                  en: 'The text shown on the button.',
+                  nl: 'De tekst die op de knop wordt getoond.',
+                },
+              },
             },
             {
               name: 'variant',
+              label: { en: 'Variant', nl: 'Variant' },
               type: 'select',
               defaultValue: 'primary',
               options: [
-                { label: 'Primary (teal pill)', value: 'primary' },
-                { label: 'Secondary (text + arrow)', value: 'secondary' },
+                { label: { en: 'Primary (teal pill)', nl: 'Primair (turquoise knop)' }, value: 'primary' },
+                { label: { en: 'Secondary (text + arrow)', nl: 'Secundair (tekst + pijl)' }, value: 'secondary' },
               ],
-              admin: { width: '50%' },
+              admin: {
+                width: '50%',
+                description: {
+                  en: 'Visual style of the button.',
+                  nl: 'Visuele stijl van de knop.',
+                },
+              },
             },
           ],
         }
       : {
           name: 'label',
+          label: { en: 'Label', nl: 'Label' },
           type: 'text',
           required: true,
+          admin: {
+            description: {
+              en: 'The text shown on the link.',
+              nl: 'De tekst die op de link wordt getoond.',
+            },
+          },
         },
     ...destinationFields(),
     {
       name: 'newTab',
       type: 'checkbox',
-      label: 'Open in new tab',
+      label: { en: 'Open in new tab', nl: 'Openen in nieuw tabblad' },
       defaultValue: false,
     },
   ],
@@ -126,24 +163,37 @@ export const link = ({ name = 'link', label = 'Link', variant = true }: LinkArgs
 export const navLinkFields = ({ requiredLabel = true }: { requiredLabel?: boolean } = {}): Field[] => [
   {
     name: 'label',
+    label: { en: 'Label', nl: 'Label' },
     type: 'text',
     required: requiredLabel,
+    admin: {
+      description: {
+        en: 'The text shown on the link.',
+        nl: 'De tekst die op de link wordt getoond.',
+      },
+    },
   },
   ...destinationFields(),
   {
     name: 'newTab',
     type: 'checkbox',
-    label: 'Open in new tab',
+    label: { en: 'Open in new tab', nl: 'Openen in nieuw tabblad' },
     defaultValue: false,
   },
 ]
 
 /** An unbounded list of links/buttons — any block can carry 0…N of them. */
-export const linkGroup = ({ name = 'buttons', label = 'Buttons' }: LinkArgs = {}): ArrayField => ({
+export const linkGroup = ({
+  name = 'buttons',
+  label = { en: 'Buttons', nl: 'Knoppen' },
+}: LinkArgs = {}): ArrayField => ({
   name,
   label,
   type: 'array',
-  labels: { singular: 'Button', plural: 'Buttons' },
+  labels: {
+    singular: { en: 'Button', nl: 'Knop' },
+    plural: { en: 'Buttons', nl: 'Knoppen' },
+  },
   admin: { initCollapsed: true },
   fields: link({ name: 'link' }).fields,
 })

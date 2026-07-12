@@ -2,14 +2,25 @@ import type { CollectionConfig } from 'payload'
 
 export const Media: CollectionConfig = {
   slug: 'media',
+  labels: {
+    singular: { en: 'Media', nl: 'Media' },
+    plural: { en: 'Media', nl: 'Media' },
+  },
   access: {
     read: () => true,
   },
   fields: [
     {
       name: 'alt',
+      label: { en: 'Alt text', nl: 'Alt-tekst' },
       type: 'text',
       required: true,
+      admin: {
+        description: {
+          en: 'Short description of the image for screen readers and when the image can’t load. Important for accessibility and SEO.',
+          nl: 'Korte beschrijving van de afbeelding voor schermlezers en als de afbeelding niet laadt. Belangrijk voor toegankelijkheid en SEO.',
+        },
+      },
     },
   ],
   upload: {

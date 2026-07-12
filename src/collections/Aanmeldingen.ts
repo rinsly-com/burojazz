@@ -51,6 +51,7 @@ export const Aanmeldingen: CollectionConfig = {
   fields: [
     {
       name: 'status',
+      label: { en: 'Status', nl: 'Status' },
       type: 'select',
       defaultValue: 'nieuw',
       options: [
@@ -58,7 +59,13 @@ export const Aanmeldingen: CollectionConfig = {
         { value: 'in-behandeling', label: 'In behandeling' },
         { value: 'afgehandeld', label: 'Afgehandeld' },
       ],
-      admin: { position: 'sidebar' },
+      admin: {
+        position: 'sidebar',
+        description: {
+          en: 'Handling status of this submission. New submissions start as “Nieuw”; update it as the team picks it up.',
+          nl: 'Behandelstatus van deze aanmelding. Nieuwe aanmeldingen beginnen op “Nieuw”; werk deze bij zodra het team ermee aan de slag gaat.',
+        },
+      },
     },
 
     section('1 · Persoonsgegevens', [

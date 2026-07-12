@@ -6,29 +6,57 @@ import { sectionHeader } from '../fields/sectionHeader'
 export const coreValuesBlock: Block = {
   slug: 'coreValues',
   interfaceName: 'CoreValuesBlock',
-  labels: { singular: 'Core values', plural: 'Core values sections' },
+  labels: {
+    singular: { en: 'Core values', nl: 'Kernwaarden' },
+    plural: { en: 'Core values sections', nl: 'Kernwaarden-secties' },
+  },
   fields: [
     sectionHeader(['icon', 'eyebrow', 'title']),
-    { name: 'logo', label: 'Logo (midden)', type: 'upload', relationTo: 'media' },
+    {
+      name: 'logo',
+      label: { en: 'Logo (center)', nl: 'Logo (midden)' },
+      type: 'upload',
+      relationTo: 'media',
+      admin: {
+        description: {
+          en: 'Logo shown in the center of the circle of values.',
+          nl: 'Logo in het midden van de cirkel met waarden.',
+        },
+      },
+    },
     {
       name: 'values',
-      label: 'Values',
-      labels: { singular: 'Value', plural: 'Values' },
+      label: { en: 'Values', nl: 'Waarden' },
+      labels: {
+        singular: { en: 'Value', nl: 'Waarde' },
+        plural: { en: 'Values', nl: 'Waarden' },
+      },
       type: 'array',
       admin: { initCollapsed: true },
       fields: [
-        { name: 'label', type: 'text' },
+        { name: 'label', label: { en: 'Label', nl: 'Label' }, type: 'text' },
         {
           name: 'description',
+          label: { en: 'Description', nl: 'Beschrijving' },
           type: 'textarea',
-          admin: { description: 'Shown when the card is hovered.' },
+          admin: {
+            description: {
+              en: 'Shown when the card is hovered.',
+              nl: 'Wordt getoond wanneer je met de muis over de kaart gaat.',
+            },
+          },
         },
         {
           name: 'image',
-          label: 'Icon',
+          label: { en: 'Icon', nl: 'Icoon' },
           type: 'upload',
           relationTo: 'media',
-          admin: { description: 'Line-art icon shown in the value’s circle.' },
+          admin: {
+            description: {
+              en: 'Line-art icon shown in the value’s circle.',
+              nl: 'Lijn-icoon in de cirkel van de waarde.',
+            },
+          },
         },
       ],
     },
