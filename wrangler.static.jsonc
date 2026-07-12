@@ -5,7 +5,7 @@
   // Built from published content on accp. Deploy: pnpm run deploy:static
   // ===========================================================================
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "burojazz-prod",
+  "name": "burojazz",
   "compatibility_date": "2025-08-15",
   "assets": {
     "directory": "out",
