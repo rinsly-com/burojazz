@@ -8,7 +8,7 @@ export const vacanciesBlock: Block = {
   interfaceName: 'VacanciesBlock',
   labels: { singular: 'Vacancies', plural: 'Vacancies sections' },
   fields: [
-    sectionHeader(),
+    sectionHeader(['icon', 'eyebrow', 'title', 'intro']),
     {
       name: 'cards',
       label: 'Vacancy cards',
@@ -20,7 +20,7 @@ export const vacanciesBlock: Block = {
         { name: 'location', type: 'text' },
         { name: 'hours', type: 'text' },
         { name: 'text', type: 'textarea' },
-        link(),
+        link({ variant: false }),
       ],
     },
   ],

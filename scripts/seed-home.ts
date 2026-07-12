@@ -8,12 +8,90 @@
  * If the database has no users (fresh local DB), a dev admin is created:
  * dev@burojazz.local / burojazz-dev — change or replace it via /admin.
  */
+import path from 'path'
+import { fileURLToPath } from 'url'
 import { getPayload } from 'payload'
 
 import config from '../src/payload.config'
 import type { Page, User } from '../src/payload-types'
 
 type Layout = NonNullable<Page['layout']>
+type PayloadInstance = Awaited<ReturnType<typeof getPayload>>
+
+const seedDir = path.dirname(fileURLToPath(import.meta.url))
+
+// Core-value labels, their source icon SVG (uploaded to Media on seed), and an
+// optional description revealed when the card is hovered. Only Betrouwbaar is
+// seeded with copy (from the design); editors fill in the rest via the CMS.
+const CORE_VALUE_ICONS: { label: string; file: string; description?: string }[] = [
+  { label: 'Zorgzaam', file: 'zorgzaam.svg' },
+  { label: 'Eerlijk', file: 'eerlijk.svg' },
+  { label: 'Presentie', file: 'presentie.svg' },
+  { label: 'Passend & integraal', file: 'passend.svg' },
+  { label: 'Aansluiten', file: 'aansluiten.svg' },
+  {
+    label: 'Betrouwbaar',
+    file: 'betrouwbaar.svg',
+    description: 'Doen wat je zegt en zeggen wat je doet. Jij moet op ons kunnen vertrouwen.',
+  },
+  { label: 'Voorbeeldfunctie', file: 'voorbeeldfunctie.svg' },
+  { label: 'Vernieuwend', file: 'vernieuwend.svg' },
+]
+
+// Contact persons: name/role, their portrait (uploaded to Media on seed), and
+// the phone/email behind the card's contact buttons. Editors replace via CMS.
+const CONTACT_PEOPLE: {
+  name: string
+  role: string
+  file: string
+  phone: string
+  email: string
+}[] = [
+  {
+    name: 'Egbert de Boer',
+    role: 'Bestuurder',
+    file: 'egbert.png',
+    phone: '+31 6 55202233',
+    email: 'contact@burojazz.nl',
+  },
+  {
+    name: 'Andres van Eeten',
+    role: 'Bestuurder',
+    file: 'andres.png',
+    phone: '+31 6 55202233',
+    email: 'contact@burojazz.nl',
+  },
+]
+
+/**
+ * Upload a file from public/ to the Media collection, reusing the existing doc
+ * on re-run (matched by filename) so seeding stays idempotent. `publicRelPath`
+ * is relative to the project's public/ dir, e.g. `images/core-values/x.svg`.
+ */
+async function upsertMedia(
+  payload: PayloadInstance,
+  user: User,
+  publicRelPath: string,
+  alt: string,
+): Promise<number> {
+  const file = path.basename(publicRelPath)
+  const existing = await payload.find({
+    collection: 'media',
+    where: { filename: { equals: file } },
+    limit: 1,
+    depth: 0,
+  })
+  const found = existing.docs[0]
+  if (found) return found.id as number
+  const created = await payload.create({
+    collection: 'media',
+    data: { alt },
+    filePath: path.join(seedDir, '../public', publicRelPath),
+    user,
+  })
+  console.log(`Uploaded media ${file} (id ${created.id})`)
+  return created.id as number
+}
 
 // Buttons/links use the shared link shape. Internal pages for these routes
 // don't exist yet, so they are seeded as external (relative) URLs — switch to
@@ -24,6 +102,31 @@ const extLink = (label: string, url: string, variant: 'primary' | 'secondary' = 
   type: 'external' as const,
   url,
   newTab: false,
+})
+
+// Body copy uses the restricted `basicEditor` (see src/fields/basicEditor.ts):
+// plain paragraphs with inline marks only. This builds the Lexical serialized
+// state for one paragraph per string, no inline formatting.
+const richBody = (...paragraphs: string[]) => ({
+  root: {
+    type: 'root',
+    format: '' as const,
+    indent: 0,
+    version: 1,
+    direction: 'ltr' as const,
+    children: paragraphs.map((text) => ({
+      type: 'paragraph',
+      format: '' as const,
+      indent: 0,
+      version: 1,
+      direction: 'ltr' as const,
+      textFormat: 0,
+      textStyle: '',
+      children: [
+        { type: 'text', detail: 0, format: 0, mode: 'normal', style: '', text, version: 1 },
+      ],
+    })),
+  },
 })
 
 const layout: Layout = [
@@ -39,11 +142,6 @@ const layout: Layout = [
       extLink('Direct aanmelden', '/aanmelden', 'primary'),
       extLink('Neem contact op', '/contact', 'secondary'),
     ],
-    cert: {
-      title: 'Gecertificeerde kwaliteit',
-      text: 'Buro J.A.Z.Z. is Kiwa gecertificeerd voor betrouwbare en veilige zorg.',
-      link: extLink('Meer informatie', '/certificaat', 'secondary'),
-    },
   },
   {
     blockType: 'services',
@@ -53,42 +151,98 @@ const layout: Layout = [
       title: 'Ambulante jeugdhulp en verblijf, gericht op behandeling en begeleiding.',
     },
     tabs: [
-      { label: 'Behandeling' },
-      { label: 'Begeleiding' },
-      { label: 'Diagnostiek & Consultatie' },
-      { label: 'Crisis & Verblijf' },
-    ],
-    cards: [
       {
-        number: '01',
-        title: 'Cognitieve Gedragstherapie (CGT)',
-        description:
-          'Korte, doelgerichte behandeling om negatieve denk- en gedragspatronen te veranderen.',
-        link: extLink('Lees verder', '#', 'secondary'),
+        label: 'Behandeling',
+        cards: [
+          {
+            number: '01',
+            title: 'Cognitieve Gedragstherapie (CGT)',
+            description:
+              'Korte, doelgerichte behandeling om negatieve denk- en gedragspatronen te veranderen.',
+            link: extLink('Lees verder', '#', 'secondary'),
+          },
+          {
+            number: '02',
+            title: 'Trauma behandeling',
+            description: 'Hulp bij het verwerken van ingrijpende ervaringen in een veilige setting.',
+            link: extLink('Lees verder', '#', 'secondary'),
+          },
+          {
+            number: '03',
+            title: 'Systeemtherapie',
+            description: 'Behandeling die relaties en gezinsdynamiek centraal stelt.',
+            link: extLink('Lees verder', '#', 'secondary'),
+          },
+          {
+            number: '04',
+            title: 'Psychomotore Therapie (PMT)',
+            description: 'Therapie gericht op lichaam, gedrag en emotie via beweging en ervaring.',
+            link: extLink('Lees verder', '#', 'secondary'),
+          },
+          {
+            number: '05',
+            title: 'Theraplay',
+            description: 'Speelse therapie om de band tussen ouder en kind te verbeteren.',
+            link: extLink('Lees verder', '#', 'secondary'),
+          },
+        ],
       },
       {
-        number: '02',
-        title: 'Trauma behandeling',
-        description: 'Hulp bij het verwerken van ingrijpende ervaringen in een veilige setting.',
-        link: extLink('Lees verder', '#', 'secondary'),
+        label: 'Begeleiding',
+        cards: [
+          {
+            number: '01',
+            title: 'Ambulante begeleiding',
+            description: 'Persoonlijke ondersteuning thuis en in de eigen omgeving van de jeugdige.',
+            link: extLink('Lees verder', '#', 'secondary'),
+          },
+          {
+            number: '02',
+            title: 'Gezinsbegeleiding',
+            description: 'Praktische en pedagogische ondersteuning voor het hele gezin.',
+            link: extLink('Lees verder', '#', 'secondary'),
+          },
+          {
+            number: '03',
+            title: 'Individuele coaching',
+            description: 'Doelgerichte begeleiding om vaardigheden en zelfstandigheid te versterken.',
+            link: extLink('Lees verder', '#', 'secondary'),
+          },
+        ],
       },
       {
-        number: '03',
-        title: 'Systeemtherapie',
-        description: 'Behandeling die relaties en gezinsdynamiek centraal stelt.',
-        link: extLink('Lees verder', '#', 'secondary'),
+        label: 'Diagnostiek & Consultatie',
+        cards: [
+          {
+            number: '01',
+            title: 'Psychodiagnostisch onderzoek',
+            description: 'Onderzoek naar cognitief, sociaal en emotioneel functioneren.',
+            link: extLink('Lees verder', '#', 'secondary'),
+          },
+          {
+            number: '02',
+            title: 'Consultatie & advies',
+            description: 'Inhoudelijk advies aan ouders, scholen en verwijzers.',
+            link: extLink('Lees verder', '#', 'secondary'),
+          },
+        ],
       },
       {
-        number: '04',
-        title: 'Psychomotore Therapie (PMT)',
-        description: 'Therapie gericht op lichaam, gedrag en emotie via beweging en ervaring.',
-        link: extLink('Lees verder', '#', 'secondary'),
-      },
-      {
-        number: '05',
-        title: 'Theraplay',
-        description: 'Speelse therapie om de band tussen ouder en kind te verbeteren.',
-        link: extLink('Lees verder', '#', 'secondary'),
+        label: 'Crisis & Verblijf',
+        cards: [
+          {
+            number: '01',
+            title: 'Crisisopvang',
+            description: 'Directe, veilige opvang wanneer thuis wonen tijdelijk niet kan.',
+            link: extLink('Lees verder', '#', 'secondary'),
+          },
+          {
+            number: '02',
+            title: 'Verblijf',
+            description: 'Een huiselijke woonplek met begeleiding, gericht op herstel en perspectief.',
+            link: extLink('Lees verder', '#', 'secondary'),
+          },
+        ],
       },
     ],
   },
@@ -99,7 +253,10 @@ const layout: Layout = [
       eyebrow: 'Wie wij zijn',
       title: 'Ook Buro J.A.Z.Z heeft goede zorg nodig',
     },
-    body: 'Andres en Egbert zijn de bestuurders van Stichting Buro J.A.Z.Z. Vanuit de kern van waar Buro J.A.Z.Z. voor staat – Jeugdhulp en Ambulante Zorg met Zorgzaamheid – zetten zij zich dagelijks in voor kwalitatieve en verantwoorde zorg. Met hun jarenlange ervaring als jeugdhulpverleners staan zij dicht bij de praktijk en ondersteunen zij begeleiders en behandelaren in hun werk. De raad van toezicht bewaakt daarbij de koers: zij houdt onafhankelijk toezicht, adviseert het bestuur en fungeert als kritische sparringpartner. Samen met de inspraak van cliënten en medewerkers vormt dit de basis voor de goede zorg die wij elke dag willen blijven leveren.',
+    body: richBody(
+      'Andres en Egbert zijn de bestuurders van Stichting Buro J.A.Z.Z. Vanuit de kern van waar Buro J.A.Z.Z. voor staat – Jeugdhulp en Ambulante Zorg met Zorgzaamheid – zetten zij zich dagelijks in voor kwalitatieve en verantwoorde zorg. Met hun jarenlange ervaring als jeugdhulpverleners staan zij dicht bij de praktijk en ondersteunen zij begeleiders en behandelaren in hun werk.',
+      'De raad van toezicht bewaakt daarbij de koers: zij houdt onafhankelijk toezicht, adviseert het bestuur en fungeert als kritische sparringpartner. Samen met de inspraak van cliënten en medewerkers vormt dit de basis voor de goede zorg die wij elke dag willen blijven leveren.',
+    ),
     email: 'contact@burojazz.nl',
     buttons: [
       extLink('Direct aanmelden', '/aanmelden', 'primary'),
@@ -131,17 +288,23 @@ const layout: Layout = [
       {
         icon: 'IconStar',
         heading: 'Onze visie',
-        body: 'Buro J.A.Z.Z. gelooft in een inclusieve samenleving waarin iedereen op een gezonde manier kan deelnemen. Iedereen staat in verbinding met zichzelf en de ander, vrij van belemmerende ervaringen of beperkingen.',
+        body: richBody(
+          'Buro J.A.Z.Z. gelooft in een inclusieve samenleving waarin iedereen op een gezonde manier kan deelnemen. Iedereen staat in verbinding met zichzelf en de ander, vrij van belemmerende ervaringen of beperkingen.',
+        ),
       },
       {
         icon: 'IconHeartHandshake',
         heading: 'Onze missie',
-        body: 'Wij bieden jeugdhulp die aansluit bij de leefwereld van jeugdigen en hun gezin: dichtbij, betrouwbaar en met oprechte aandacht, zodat zij weer grip krijgen op hun eigen toekomst.',
+        body: richBody(
+          'Wij bieden jeugdhulp die aansluit bij de leefwereld van jeugdigen en hun gezin: dichtbij, betrouwbaar en met oprechte aandacht, zodat zij weer grip krijgen op hun eigen toekomst.',
+        ),
       },
       {
         icon: 'IconTargetArrow',
         heading: 'Onze kernwaarden',
-        body: 'Zorgzaamheid, eerlijkheid en presentie vormen de basis van ons handelen. We sluiten aan bij wat nodig is, werken passend en integraal, en willen daarin betrouwbaar, vernieuwend en een voorbeeld zijn.',
+        body: richBody(
+          'Zorgzaamheid, eerlijkheid en presentie vormen de basis van ons handelen. We sluiten aan bij wat nodig is, werken passend en integraal, en willen daarin betrouwbaar, vernieuwend en een voorbeeld zijn.',
+        ),
       },
     ],
   },
@@ -170,6 +333,13 @@ const layout: Layout = [
       {
         title: 'Maak uw klacht bespreekbaar',
         text: 'Praat met uw zorgverlener over uw klacht, misschien kunt u het samen oplossen.',
+        infoPills: [
+          {
+            icon: 'IconHelpCircleFilled',
+            tone: 'brand',
+            text: 'Lukt het niet of wilt u liever niet met uw zorgaanbieder praten?',
+          },
+        ],
       },
       {
         title: 'Klacht indienen',
@@ -178,12 +348,39 @@ const layout: Layout = [
       {
         title: 'Klachtbrief maken',
         text: 'De klachtenfunctionaris beschrift uw klacht in de klachtbrief, deze wordt, na uw akkoord, aan de zorgaanbieder gestuurd. De zorgaanbieder reageert naar de klachtenfunctionaris. Deze bespreekt de reactie met u.',
+        infoPills: [
+          {
+            icon: 'IconExclamationMark',
+            tone: 'brand',
+            text: 'U kunt nog met uw zorgverlener praten waar de klachtenfunctionaris bij is. Dit bemiddelingsgesprek is gewenst, niet verplicht!',
+          },
+        ],
       },
       {
         title: 'Reactie zorgaanbieder',
         text: 'De zorgaanbieder schrijft alle gemaakte afspraken op in een brief. De klachtenfunctionaris schrift een afsluitende brief.',
+        infoPills: [
+          {
+            icon: 'IconCheck',
+            tone: 'brand',
+            text: 'Bent u hiermee tevreden?',
+            note: 'Dan is de klacht afgesloten.',
+          },
+          {
+            icon: 'IconX',
+            tone: 'danger',
+            text: 'Is er nog geen goede oplossing geboden door de zorgaanbieder?',
+            note: 'Dan kunt u stoppen met de procedure of met de brief van de zorgaanbieder naar Geschillencommissie KPZ.',
+          },
+        ],
       },
     ],
+    contact: {
+      title: 'Nog vragen?',
+      subtitle: 'Wij staan graag voor u klaar.',
+      phone: '+31 6 12 34 56 78',
+      email: 'info@burojazz.local',
+    },
   },
   {
     blockType: 'social',
@@ -232,57 +429,15 @@ const layout: Layout = [
   },
 ]
 
-/** Minimal Lexical rich-text state: a single paragraph. */
-const smallPageContent = (text: string): NonNullable<Page['content']> => ({
-  root: {
-    type: 'root',
-    direction: 'ltr',
-    format: '',
-    indent: 0,
-    version: 1,
-    children: [
-      {
-        type: 'paragraph',
-        direction: 'ltr',
-        format: '',
-        indent: 0,
-        version: 1,
-        children: [
-          { type: 'text', detail: 0, format: 0, mode: 'normal', style: '', text, version: 1 },
-        ],
-      },
-    ],
-  },
-})
 
 // Small starter pages for every nav route, so the menu links to real pages.
 // Editors replace the placeholder copy (or add layout blocks) in the CMS.
-const SMALL_PAGES: { slug: string; title: string; text: string }[] = [
-  {
-    slug: 'hulpverleningsvormen',
-    title: 'Hulpverleningsvormen',
-    text: 'Wij bieden ambulante jeugdhulp en jeugdhulp met verblijf, gericht op behandeling en begeleiding. Meer informatie over onze hulpverleningsvormen volgt binnenkort.',
-  },
-  {
-    slug: 'over-ons',
-    title: 'Over ons',
-    text: 'Buro J.A.Z.Z. staat voor Jeugdhulp en Ambulante Zorg met Zorgzaamheid. Meer over ons team en onze werkwijze volgt binnenkort.',
-  },
-  {
-    slug: 'klachtregeling',
-    title: 'Klachtregeling',
-    text: 'Heeft u een klacht over onze zorg of dienstverlening? Neem contact met ons op. De volledige klachtregeling volgt binnenkort.',
-  },
-  {
-    slug: 'vacatures',
-    title: 'Vacatures',
-    text: 'Wij zijn regelmatig op zoek naar nieuwe collega’s. Onze openstaande vacatures verschijnen binnenkort op deze pagina.',
-  },
-  {
-    slug: 'contact',
-    title: 'Contact',
-    text: 'Neem contact met ons op via contact@burojazz.nl of +31 6 55202233. Bezoekadres: Vlasakker 24, 3417 XT Montfoort.',
-  },
+const SMALL_PAGES: { slug: string; title: string }[] = [
+  { slug: 'hulpverleningsvormen', title: 'Hulpverleningsvormen' },
+  { slug: 'over-ons', title: 'Over ons' },
+  { slug: 'klachtregeling', title: 'Klachtregeling' },
+  { slug: 'vacatures', title: 'Vacatures' },
+  { slug: 'contact', title: 'Contact' },
 ]
 
 // Every menu item references a real Pages document, so links follow a page
@@ -353,6 +508,54 @@ async function run() {
   }
   console.log(`Seeding as ${user.email} (roles: ${user.roles?.join(', ')})`)
 
+  // --- a2. Upload core-value icons to Media and attach them to the block ---
+  const coreValuesBlock = layout.find((b) => b.blockType === 'coreValues')
+  if (coreValuesBlock && coreValuesBlock.blockType === 'coreValues') {
+    coreValuesBlock.values = await Promise.all(
+      CORE_VALUE_ICONS.map(async ({ label, file, description }) => ({
+        label,
+        description: description ?? null,
+        image: await upsertMedia(payload, user, `images/core-values/${file}`, `Kernwaarde icoon: ${label}`),
+      })),
+    )
+  }
+
+  // --- a3. Upload contact-person portraits and attach them to the block ---
+  const contactBlock = layout.find((b) => b.blockType === 'contactPersons')
+  if (contactBlock && contactBlock.blockType === 'contactPersons') {
+    contactBlock.people = await Promise.all(
+      CONTACT_PEOPLE.map(async ({ name, role, file, phone, email }) => ({
+        name,
+        role,
+        phone,
+        email,
+        photo: await upsertMedia(payload, user, `images/contact-persons/${file}`, `Portret ${name}`),
+      })),
+    )
+  }
+
+  // --- a4. Upload the hero image and attach it to the block ---
+  const heroBlock = layout.find((b) => b.blockType === 'hero')
+  if (heroBlock && heroBlock.blockType === 'hero') {
+    heroBlock.image = await upsertMedia(
+      payload,
+      user,
+      'images/header-hero/photo-2.jpg',
+      'Begeleider en jongere tijdens een bokstraining',
+    )
+  }
+
+  // --- a5. Upload the complaints contact portrait and attach it to the block ---
+  const complaintsBlk = layout.find((b) => b.blockType === 'complaints')
+  if (complaintsBlk && complaintsBlk.blockType === 'complaints' && complaintsBlk.contact) {
+    complaintsBlk.contact.photo = await upsertMedia(
+      payload,
+      user,
+      'images/contact-persons/egbert.png',
+      'Portret Egbert de Boer',
+    )
+  }
+
   // --- b. Upsert the 'home' page ---
   const existing = await payload.find({
     collection: 'pages',
@@ -416,7 +619,6 @@ async function run() {
           title: def.title,
           slug: def.slug,
           workflowStatus: 'draft',
-          content: smallPageContent(def.text),
         },
         user,
       })) as Page
@@ -426,7 +628,7 @@ async function run() {
       collection: 'pages',
       id: doc.id,
       draft: true,
-      data: { title: def.title, content: smallPageContent(def.text), workflowStatus: 'ready' },
+      data: { title: def.title, workflowStatus: 'ready' },
       user,
     })
     await payload.update({

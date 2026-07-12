@@ -7,5 +7,9 @@ export const socialBlock: Block = {
   slug: 'social',
   interfaceName: 'SocialBlock',
   labels: { singular: 'Social', plural: 'Social sections' },
-  fields: [sectionHeader(), { name: 'handle', type: 'text' }, link()],
+  fields: [
+    sectionHeader(['icon', 'eyebrow', 'title', 'subtitle']),
+    { name: 'handle', type: 'text' },
+    link({ variant: false }),
+  ],
 }

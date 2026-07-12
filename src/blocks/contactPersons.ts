@@ -7,7 +7,7 @@ export const contactPersonsBlock: Block = {
   interfaceName: 'ContactPersonsBlock',
   labels: { singular: 'Contact persons', plural: 'Contact persons sections' },
   fields: [
-    sectionHeader(),
+    sectionHeader(['icon', 'eyebrow', 'title', 'subtitle']),
     {
       name: 'people',
       label: 'People',
@@ -17,6 +17,15 @@ export const contactPersonsBlock: Block = {
       fields: [
         { name: 'name', type: 'text' },
         { name: 'role', type: 'text' },
+        {
+          name: 'photo',
+          label: 'Portret',
+          type: 'upload',
+          relationTo: 'media',
+          admin: { description: 'Portretfoto, uitgelijnd op de onderkant van de kaart.' },
+        },
+        { name: 'phone', label: 'Telefoonnummer', type: 'text' },
+        { name: 'email', type: 'email' },
       ],
     },
   ],

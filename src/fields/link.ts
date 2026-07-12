@@ -8,6 +8,13 @@ import type { ArrayField, Field, GroupField, RowField } from 'payload'
 type LinkArgs = {
   name?: string
   label?: string
+  /**
+   * Include the visual variant select. Only links rendered through
+   * `CMSLink`/`Buttons` use it; standalone links with fixed styling (service
+   * cards, vacancy cards, the hero certification, the social badge) pass
+   * `variant: false` so the admin UI never shows a select that has no effect.
+   */
+  variant?: boolean
 }
 
 /** The link destination row: internal Pages reference or external URL. */
@@ -44,32 +51,38 @@ const destinationRow = (): RowField => ({
   ],
 })
 
-export const link = ({ name = 'link', label = 'Link' }: LinkArgs = {}): GroupField => ({
+export const link = ({ name = 'link', label = 'Link', variant = true }: LinkArgs = {}): GroupField => ({
   name,
   label,
   type: 'group',
   fields: [
-    {
-      type: 'row',
-      fields: [
-        {
+    variant
+      ? {
+          type: 'row',
+          fields: [
+            {
+              name: 'label',
+              type: 'text',
+              required: true,
+              admin: { width: '50%' },
+            },
+            {
+              name: 'variant',
+              type: 'select',
+              defaultValue: 'primary',
+              options: [
+                { label: 'Primary (teal pill)', value: 'primary' },
+                { label: 'Secondary (text + arrow)', value: 'secondary' },
+              ],
+              admin: { width: '50%' },
+            },
+          ],
+        }
+      : {
           name: 'label',
           type: 'text',
           required: true,
-          admin: { width: '50%' },
         },
-        {
-          name: 'variant',
-          type: 'select',
-          defaultValue: 'primary',
-          options: [
-            { label: 'Primary (teal pill)', value: 'primary' },
-            { label: 'Secondary (text + arrow)', value: 'secondary' },
-          ],
-          admin: { width: '50%' },
-        },
-      ],
-    },
     destinationRow(),
     {
       name: 'newTab',

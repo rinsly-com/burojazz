@@ -1,5 +1,6 @@
 import type { Block } from 'payload'
 
+import { basicEditor } from '../fields/basicEditor'
 import { iconField } from '../fields/icon'
 import { sectionHeader } from '../fields/sectionHeader'
 
@@ -8,7 +9,7 @@ export const visionMissionBlock: Block = {
   interfaceName: 'VisionMissionBlock',
   labels: { singular: 'Vision & mission', plural: 'Vision & mission sections' },
   fields: [
-    sectionHeader(),
+    sectionHeader(['icon', 'eyebrow', 'title']),
     {
       name: 'items',
       label: 'Items',
@@ -18,7 +19,7 @@ export const visionMissionBlock: Block = {
       fields: [
         iconField({ description: 'Icoon in het ronde label. Laat leeg voor het standaardicoon.' }),
         { name: 'heading', type: 'text' },
-        { name: 'body', type: 'textarea' },
+        { name: 'body', type: 'richText', editor: basicEditor },
       ],
     },
   ],

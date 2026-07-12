@@ -66,7 +66,19 @@ if (env.R2) {
   )
 }
 
+// sharp is a native module (libvips) used by Payload to apply image crop/resize.
+// The Cloudflare Workers runtime can't load native addons, so load it only in
+// Node (local dev + the Payload CLI); on the Worker (accp) it stays undefined and
+// image processing is simply skipped. The specifier is obfuscated so the Worker
+// bundle never includes it — same guard used for the wrangler proxy above.
+const sharp =
+  isCLI || !isProduction
+    ? ((await import(/* webpackIgnore: true */ `${'__sharp'.replaceAll('_', '')}`)) as { default: unknown })
+        .default
+    : undefined
+
 export default buildConfig({
+  sharp: sharp as never,
   admin: {
     user: Users.slug,
     importMap: {

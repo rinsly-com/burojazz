@@ -191,21 +191,6 @@ export interface Page {
    * Advanced with the action button (Submit for review → Approve → Publish).
    */
   workflowStatus: 'draft' | 'review' | 'ready';
-  content?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
   /**
    * Page sections rendered on the site, in order.
    */
@@ -235,15 +220,14 @@ export interface Page {
  */
 export interface HeroBlock {
   header?: {
-    /**
-     * Icoon in het label boven de titel. Laat leeg voor het standaardicoon.
-     */
-    icon?: string | null;
-    eyebrow?: string | null;
     title?: string | null;
     subtitle?: string | null;
     intro?: string | null;
   };
+  /**
+   * Grote afbeelding die het rechtervlak van de hero vult.
+   */
+  image?: (number | null) | Media;
   buttons?:
     | {
         label: string;
@@ -255,18 +239,6 @@ export interface HeroBlock {
         id?: string | null;
       }[]
     | null;
-  cert: {
-    title?: string | null;
-    text?: string | null;
-    link: {
-      label: string;
-      variant?: ('primary' | 'secondary') | null;
-      type?: ('internal' | 'external') | null;
-      page?: (number | null) | Page;
-      url?: string | null;
-      newTab?: boolean | null;
-    };
-  };
   id?: string | null;
   blockName?: string | null;
   blockType: 'hero';
@@ -283,28 +255,28 @@ export interface ServicesBlock {
     icon?: string | null;
     eyebrow?: string | null;
     title?: string | null;
-    subtitle?: string | null;
-    intro?: string | null;
   };
+  /**
+   * Each tab shows its own set of service cards on the site.
+   */
   tabs?:
     | {
         label?: string | null;
-        id?: string | null;
-      }[]
-    | null;
-  cards?:
-    | {
-        number?: string | null;
-        title?: string | null;
-        description?: string | null;
-        link: {
-          label: string;
-          variant?: ('primary' | 'secondary') | null;
-          type?: ('internal' | 'external') | null;
-          page?: (number | null) | Page;
-          url?: string | null;
-          newTab?: boolean | null;
-        };
+        cards?:
+          | {
+              number?: string | null;
+              title?: string | null;
+              description?: string | null;
+              link: {
+                label: string;
+                type?: ('internal' | 'external') | null;
+                page?: (number | null) | Page;
+                url?: string | null;
+                newTab?: boolean | null;
+              };
+              id?: string | null;
+            }[]
+          | null;
         id?: string | null;
       }[]
     | null;
@@ -324,10 +296,22 @@ export interface AboutBlock {
     icon?: string | null;
     eyebrow?: string | null;
     title?: string | null;
-    subtitle?: string | null;
-    intro?: string | null;
   };
-  body?: string | null;
+  body?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
   email?: string | null;
   buttons?:
     | {
@@ -356,12 +340,18 @@ export interface CoreValuesBlock {
     icon?: string | null;
     eyebrow?: string | null;
     title?: string | null;
-    subtitle?: string | null;
-    intro?: string | null;
   };
   values?:
     | {
         label?: string | null;
+        /**
+         * Shown when the card is hovered.
+         */
+        description?: string | null;
+        /**
+         * Line-art icon shown in the value’s circle.
+         */
+        image?: (number | null) | Media;
         id?: string | null;
       }[]
     | null;
@@ -381,8 +371,6 @@ export interface VisionMissionBlock {
     icon?: string | null;
     eyebrow?: string | null;
     title?: string | null;
-    subtitle?: string | null;
-    intro?: string | null;
   };
   items?:
     | {
@@ -391,7 +379,21 @@ export interface VisionMissionBlock {
          */
         icon?: string | null;
         heading?: string | null;
-        body?: string | null;
+        body?: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        } | null;
         id?: string | null;
       }[]
     | null;
@@ -412,12 +414,17 @@ export interface ContactPersonsBlock {
     eyebrow?: string | null;
     title?: string | null;
     subtitle?: string | null;
-    intro?: string | null;
   };
   people?:
     | {
         name?: string | null;
         role?: string | null;
+        /**
+         * Portretfoto, uitgelijnd op de onderkant van de kaart.
+         */
+        photo?: (number | null) | Media;
+        phone?: string | null;
+        email?: string | null;
         id?: string | null;
       }[]
     | null;
@@ -437,16 +444,49 @@ export interface ComplaintsBlock {
     icon?: string | null;
     eyebrow?: string | null;
     title?: string | null;
-    subtitle?: string | null;
     intro?: string | null;
   };
   steps?:
     | {
         title?: string | null;
         text?: string | null;
+        /**
+         * Rounded callouts inside the step card (icon + text).
+         */
+        infoPills?:
+          | {
+              /**
+               * Icoon in de ronde badge. Laat leeg voor het standaardicoon.
+               */
+              icon?: string | null;
+              /**
+               * Colour of the badge and text.
+               */
+              tone?: ('brand' | 'danger') | null;
+              text?: string | null;
+              /**
+               * Optional arrow line shown below the callout text.
+               */
+              note?: string | null;
+              id?: string | null;
+            }[]
+          | null;
         id?: string | null;
       }[]
     | null;
+  /**
+   * Optional "Nog vragen?" card shown below the steps.
+   */
+  contact?: {
+    /**
+     * Leave empty to hide the card.
+     */
+    title?: string | null;
+    subtitle?: string | null;
+    photo?: (number | null) | Media;
+    phone?: string | null;
+    email?: string | null;
+  };
   id?: string | null;
   blockName?: string | null;
   blockType: 'complaints';
@@ -464,12 +504,10 @@ export interface SocialBlock {
     eyebrow?: string | null;
     title?: string | null;
     subtitle?: string | null;
-    intro?: string | null;
   };
   handle?: string | null;
   link: {
     label: string;
-    variant?: ('primary' | 'secondary') | null;
     type?: ('internal' | 'external') | null;
     page?: (number | null) | Page;
     url?: string | null;
@@ -491,7 +529,6 @@ export interface VacanciesBlock {
     icon?: string | null;
     eyebrow?: string | null;
     title?: string | null;
-    subtitle?: string | null;
     intro?: string | null;
   };
   cards?:
@@ -502,7 +539,6 @@ export interface VacanciesBlock {
         text?: string | null;
         link: {
           label: string;
-          variant?: ('primary' | 'secondary') | null;
           type?: ('internal' | 'external') | null;
           page?: (number | null) | Page;
           url?: string | null;
@@ -521,10 +557,6 @@ export interface VacanciesBlock {
  */
 export interface AccordionBlock {
   header?: {
-    /**
-     * Icoon in het label boven de titel. Laat leeg voor het standaardicoon.
-     */
-    icon?: string | null;
     eyebrow?: string | null;
     title?: string | null;
     subtitle?: string | null;
@@ -758,7 +790,6 @@ export interface PagesSelect<T extends boolean = true> {
   generateSlug?: T;
   slug?: T;
   workflowStatus?: T;
-  content?: T;
   layout?:
     | T
     | {
@@ -787,12 +818,11 @@ export interface HeroBlockSelect<T extends boolean = true> {
   header?:
     | T
     | {
-        icon?: T;
-        eyebrow?: T;
         title?: T;
         subtitle?: T;
         intro?: T;
       };
+  image?: T;
   buttons?:
     | T
     | {
@@ -803,22 +833,6 @@ export interface HeroBlockSelect<T extends boolean = true> {
         url?: T;
         newTab?: T;
         id?: T;
-      };
-  cert?:
-    | T
-    | {
-        title?: T;
-        text?: T;
-        link?:
-          | T
-          | {
-              label?: T;
-              variant?: T;
-              type?: T;
-              page?: T;
-              url?: T;
-              newTab?: T;
-            };
       };
   id?: T;
   blockName?: T;
@@ -834,30 +848,27 @@ export interface ServicesBlockSelect<T extends boolean = true> {
         icon?: T;
         eyebrow?: T;
         title?: T;
-        subtitle?: T;
-        intro?: T;
       };
   tabs?:
     | T
     | {
         label?: T;
-        id?: T;
-      };
-  cards?:
-    | T
-    | {
-        number?: T;
-        title?: T;
-        description?: T;
-        link?:
+        cards?:
           | T
           | {
-              label?: T;
-              variant?: T;
-              type?: T;
-              page?: T;
-              url?: T;
-              newTab?: T;
+              number?: T;
+              title?: T;
+              description?: T;
+              link?:
+                | T
+                | {
+                    label?: T;
+                    type?: T;
+                    page?: T;
+                    url?: T;
+                    newTab?: T;
+                  };
+              id?: T;
             };
         id?: T;
       };
@@ -875,8 +886,6 @@ export interface AboutBlockSelect<T extends boolean = true> {
         icon?: T;
         eyebrow?: T;
         title?: T;
-        subtitle?: T;
-        intro?: T;
       };
   body?: T;
   email?: T;
@@ -905,13 +914,13 @@ export interface CoreValuesBlockSelect<T extends boolean = true> {
         icon?: T;
         eyebrow?: T;
         title?: T;
-        subtitle?: T;
-        intro?: T;
       };
   values?:
     | T
     | {
         label?: T;
+        description?: T;
+        image?: T;
         id?: T;
       };
   id?: T;
@@ -928,8 +937,6 @@ export interface VisionMissionBlockSelect<T extends boolean = true> {
         icon?: T;
         eyebrow?: T;
         title?: T;
-        subtitle?: T;
-        intro?: T;
       };
   items?:
     | T
@@ -954,13 +961,15 @@ export interface ContactPersonsBlockSelect<T extends boolean = true> {
         eyebrow?: T;
         title?: T;
         subtitle?: T;
-        intro?: T;
       };
   people?:
     | T
     | {
         name?: T;
         role?: T;
+        photo?: T;
+        phone?: T;
+        email?: T;
         id?: T;
       };
   id?: T;
@@ -977,7 +986,6 @@ export interface ComplaintsBlockSelect<T extends boolean = true> {
         icon?: T;
         eyebrow?: T;
         title?: T;
-        subtitle?: T;
         intro?: T;
       };
   steps?:
@@ -985,7 +993,25 @@ export interface ComplaintsBlockSelect<T extends boolean = true> {
     | {
         title?: T;
         text?: T;
+        infoPills?:
+          | T
+          | {
+              icon?: T;
+              tone?: T;
+              text?: T;
+              note?: T;
+              id?: T;
+            };
         id?: T;
+      };
+  contact?:
+    | T
+    | {
+        title?: T;
+        subtitle?: T;
+        photo?: T;
+        phone?: T;
+        email?: T;
       };
   id?: T;
   blockName?: T;
@@ -1002,14 +1028,12 @@ export interface SocialBlockSelect<T extends boolean = true> {
         eyebrow?: T;
         title?: T;
         subtitle?: T;
-        intro?: T;
       };
   handle?: T;
   link?:
     | T
     | {
         label?: T;
-        variant?: T;
         type?: T;
         page?: T;
         url?: T;
@@ -1029,7 +1053,6 @@ export interface VacanciesBlockSelect<T extends boolean = true> {
         icon?: T;
         eyebrow?: T;
         title?: T;
-        subtitle?: T;
         intro?: T;
       };
   cards?:
@@ -1043,7 +1066,6 @@ export interface VacanciesBlockSelect<T extends boolean = true> {
           | T
           | {
               label?: T;
-              variant?: T;
               type?: T;
               page?: T;
               url?: T;
@@ -1062,7 +1084,6 @@ export interface AccordionBlockSelect<T extends boolean = true> {
   header?:
     | T
     | {
-        icon?: T;
         eyebrow?: T;
         title?: T;
         subtitle?: T;

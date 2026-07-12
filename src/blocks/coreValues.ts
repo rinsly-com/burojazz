@@ -7,14 +7,28 @@ export const coreValuesBlock: Block = {
   interfaceName: 'CoreValuesBlock',
   labels: { singular: 'Core values', plural: 'Core values sections' },
   fields: [
-    sectionHeader(),
+    sectionHeader(['icon', 'eyebrow', 'title']),
     {
       name: 'values',
       label: 'Values',
       labels: { singular: 'Value', plural: 'Values' },
       type: 'array',
       admin: { initCollapsed: true },
-      fields: [{ name: 'label', type: 'text' }],
+      fields: [
+        { name: 'label', type: 'text' },
+        {
+          name: 'description',
+          type: 'textarea',
+          admin: { description: 'Shown when the card is hovered.' },
+        },
+        {
+          name: 'image',
+          label: 'Icon',
+          type: 'upload',
+          relationTo: 'media',
+          admin: { description: 'Line-art icon shown in the value’s circle.' },
+        },
+      ],
     },
   ],
 }

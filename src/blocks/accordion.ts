@@ -1,5 +1,6 @@
 import type { Block } from 'payload'
 
+import { basicEditor } from '../fields/basicEditor'
 import { sectionHeader } from '../fields/sectionHeader'
 
 export const accordionBlock: Block = {
@@ -7,7 +8,8 @@ export const accordionBlock: Block = {
   interfaceName: 'AccordionBlock',
   labels: { singular: 'Accordion', plural: 'Accordions' },
   fields: [
-    sectionHeader(),
+    // The accordion renders its eyebrow as plain text, without an icon pill.
+    sectionHeader(['eyebrow', 'title', 'subtitle', 'intro']),
     {
       name: 'items',
       label: 'Items',
@@ -16,7 +18,7 @@ export const accordionBlock: Block = {
       admin: { initCollapsed: true },
       fields: [
         { name: 'title', type: 'text', required: true },
-        { name: 'body', type: 'richText' },
+        { name: 'body', type: 'richText', editor: basicEditor },
       ],
     },
   ],

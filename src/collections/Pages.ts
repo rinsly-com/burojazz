@@ -1,4 +1,4 @@
-import type { CollectionConfig, Where } from 'payload'
+import type { CollectionConfig } from 'payload'
 import { slugField } from 'payload'
 
 import { authenticated, reviewerOnly, isReviewer } from '../access/roles'
@@ -33,17 +33,12 @@ export const Pages: CollectionConfig = {
     },
   },
   access: {
-    // Unauthenticated reads see published pages AND pages approved for release
-    // (Ready), so accp/dev can preview approved content rendered. The production
-    // static build explicitly queries published only, so Ready pages are
-    // previewable but never end up in prod.
-    read: ({ req: { user } }) => {
-      if (user) return true
-      const where: Where = {
-        or: [{ _status: { equals: 'published' } }, { workflowStatus: { equals: 'ready' } }],
-      }
-      return where
-    },
+    // Preview environments (dev/accp) render every page's latest edit regardless
+    // of workflow status, so editors always see their changes. Workflow status
+    // only governs what ships to production: the production static build queries
+    // published pages explicitly (see lib/pages.ts + BUILD_STATIC), so unpublished
+    // drafts are previewable but never end up in prod.
+    read: () => true,
     create: authenticated,
     update: authenticated,
     delete: reviewerOnly,
@@ -101,10 +96,6 @@ export const Pages: CollectionConfig = {
           Cell: '/components/WorkflowStatusCell#WorkflowStatusCell',
         },
       },
-    },
-    {
-      name: 'content',
-      type: 'richText',
     },
     {
       name: 'layout',

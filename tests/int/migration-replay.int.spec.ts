@@ -66,6 +66,14 @@ const seedBefore: Record<string, () => Promise<void>> = {
       `INSERT INTO header_nav_items (_order, _parent_id, id, label, url) VALUES (1, 1, 'nav1', 'Home', '/'), (2, 1, 'nav2', 'Over ons', '/over-ons')`,
     )
   },
+  '20260711_152316_trim_unrendered_block_fields': async () => {
+    // A hero block with values in both kept and soon-dropped columns
+    // (reuses the pages row with id 1 seeded before header_nav_links).
+    await run(
+      `INSERT INTO pages_blocks_hero (_order, _parent_id, _path, id, header_icon, header_eyebrow, header_title, header_subtitle, cert_link_variant, cert_link_label)
+       VALUES (1, 1, 'layout', 'hero1', 'IconStar', 'Welkom', 'BURO J.A.Z.Z.', 'Jeugdhulp met Zorgzaamheid', 'secondary', 'Lees meer')`,
+    )
+  },
 }
 
 /** Assertions run immediately AFTER the named migration. */
@@ -97,6 +105,32 @@ const assertAfter: Record<string, () => Promise<void>> = {
     expect(header.cta_label).toBe('Contact')
     expect(header.cta_type).toBe('external')
     expect(header.cta_page_id).toBeNull()
+  },
+  '20260711_152316_trim_unrendered_block_fields': async () => {
+    const [hero] = await all('SELECT * FROM pages_blocks_hero')
+
+    // Values in kept columns survive the column drops untouched.
+    expect(hero.header_title).toBe('BURO J.A.Z.Z.')
+    expect(hero.header_subtitle).toBe('Jeugdhulp met Zorgzaamheid')
+    expect(hero.cert_link_label).toBe('Lees meer')
+
+    // The unrendered columns are actually gone.
+    expect(hero).not.toHaveProperty('header_icon')
+    expect(hero).not.toHaveProperty('header_eyebrow')
+    expect(hero).not.toHaveProperty('cert_link_variant')
+  },
+  '20260711_181919_remove_hero_cert': async () => {
+    // The hero table is recreated to drop the cert_* columns. The kept columns
+    // (title/subtitle from the seeded row) must survive the copy untouched...
+    const [hero] = await all('SELECT * FROM pages_blocks_hero')
+    expect(hero.header_title).toBe('BURO J.A.Z.Z.')
+    expect(hero.header_subtitle).toBe('Jeugdhulp met Zorgzaamheid')
+
+    // ...and every cert_* column must be gone (not silently string-filled).
+    expect(hero).not.toHaveProperty('cert_title')
+    expect(hero).not.toHaveProperty('cert_text')
+    expect(hero).not.toHaveProperty('cert_link_label')
+    expect(hero).not.toHaveProperty('cert_link_type')
   },
 }
 

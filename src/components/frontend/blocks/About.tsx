@@ -1,3 +1,5 @@
+import { RichText } from '@payloadcms/richtext-lexical/react'
+
 import type { Page } from '@/payload-types'
 
 import { Button } from '@/components/frontend/ui/Button'
@@ -23,10 +25,6 @@ export function About(props: Props) {
   const eyebrow = props.header?.eyebrow ?? 'Wie wij zijn'
   const title = props.header?.title ?? DEFAULT_TITLE
   const email = props.email ?? 'contact@burojazz.nl'
-
-  const bodyParagraphs = props.body
-    ? props.body.split(/\n\s*\n/).filter((p) => p.trim().length > 0)
-    : null
 
   return (
     <Section id="wie-wij-zijn" py="py-16 md:pt-28 md:pb-36">
@@ -64,9 +62,9 @@ export function About(props: Props) {
             <h2 className="max-w-[568px] font-sans text-[28px] leading-[1.2] font-semibold tracking-[0.02em] text-black sm:text-[32px] lg:text-[40px]">
               {title}
             </h2>
-            <div className="flex max-w-[549px] flex-col gap-[1.6em] text-sm leading-[1.6] font-medium text-ink">
-              {bodyParagraphs ? (
-                bodyParagraphs.map((paragraph, i) => <p key={i}>{paragraph}</p>)
+            <div className="flex max-w-[549px] flex-col gap-[1.6em] text-sm leading-[1.6] font-medium text-ink [&_a]:text-brand [&_a]:underline">
+              {props.body ? (
+                <RichText data={props.body} disableContainer />
               ) : (
                 <>
                   <p>

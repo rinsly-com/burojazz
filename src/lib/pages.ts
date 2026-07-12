@@ -8,10 +8,10 @@ import { readSnapshot } from './contentSnapshot'
  *
  * Two modes, switched by BUILD_STATIC:
  * - **Production static build** (`BUILD_STATIC=true`): published pages only.
- * - **Preview** (dev / accp runtime): published pages PLUS pages approved for
- *   release (workflowStatus = "ready"), fetched as drafts, so reviewers can see
- *   approved content rendered before it is published. Ready pages are therefore
- *   previewable but are never included in the production static build.
+ * - **Preview** (dev / accp runtime): the latest saved version of every page,
+ *   fetched as drafts, regardless of workflow status — so editors always see
+ *   their edits. Workflow status only governs the production build, so drafts
+ *   are previewable but are never included in the production static build.
  *
  * Configure the API origin with PAYLOAD_API_URL (defaults to local dev).
  */
@@ -39,16 +39,13 @@ export async function getRenderablePages(): Promise<Page[]> {
     if (snapshot) return snapshot
   }
 
-  const published = await fetchPages('where[_status][equals]=published&limit=200&depth=0')
-  if (PRODUCTION_BUILD) return published
+  if (PRODUCTION_BUILD) {
+    return fetchPages('where[_status][equals]=published&limit=200&depth=0')
+  }
 
-  // Preview: overlay Ready drafts on top of the published set (a Ready page
-  // shows its approved draft even if an older published version exists).
-  const ready = await fetchPages('draft=true&where[workflowStatus][equals]=ready&limit=200&depth=0')
-  const byId = new Map<Page['id'], Page>()
-  for (const page of published) byId.set(page.id, page)
-  for (const page of ready) byId.set(page.id, page)
-  return [...byId.values()]
+  // Preview: the latest version of every page (draft or published), so editors
+  // see their edits regardless of workflow status.
+  return fetchPages('draft=true&limit=200&depth=0')
 }
 
 export async function getRenderablePageBySlug(slug: string): Promise<Page | null> {
@@ -61,11 +58,12 @@ export async function getRenderablePageBySlug(slug: string): Promise<Page | null
   }
 
   if (!PRODUCTION_BUILD) {
-    // Preview: prefer an approved (Ready) draft if one exists.
-    const ready = await fetchPages(
-      `draft=true&where[and][0][slug][equals]=${encoded}&where[and][1][workflowStatus][equals]=ready&limit=1&depth=1`,
+    // Preview: the latest version of this page (draft or published), regardless
+    // of workflow status.
+    const preview = await fetchPages(
+      `draft=true&where[slug][equals]=${encoded}&limit=1&depth=1`,
     )
-    if (ready[0]) return ready[0]
+    return preview[0] ?? null
   }
 
   const published = await fetchPages(

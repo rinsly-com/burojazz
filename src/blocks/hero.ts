@@ -1,6 +1,6 @@
 import type { Block } from 'payload'
 
-import { link, linkGroup } from '../fields/link'
+import { linkGroup } from '../fields/link'
 import { sectionHeader } from '../fields/sectionHeader'
 
 export const heroBlock: Block = {
@@ -8,17 +8,15 @@ export const heroBlock: Block = {
   interfaceName: 'HeroBlock',
   labels: { singular: 'Hero', plural: 'Heroes' },
   fields: [
-    sectionHeader(),
-    linkGroup(),
+    // The hero has no eyebrow pill — the wordmark title takes its place.
+    sectionHeader(['title', 'subtitle', 'intro']),
     {
-      name: 'cert',
-      label: 'Certification',
-      type: 'group',
-      fields: [
-        { name: 'title', type: 'text' },
-        { name: 'text', type: 'text' },
-        link(),
-      ],
+      name: 'image',
+      label: 'Hero image',
+      type: 'upload',
+      relationTo: 'media',
+      admin: { description: 'Grote afbeelding die het rechtervlak van de hero vult.' },
     },
+    linkGroup(),
   ],
 }

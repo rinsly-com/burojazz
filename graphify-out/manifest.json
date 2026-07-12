@@ -28,8 +28,8 @@
     "hash": "1404b93da88e8398d33f9559fc91b44b"
   },
   "/home/rinseyaron/projects/burojazz/tests/int/migration-replay.int.spec.ts": {
-    "mtime": 1783781427.5685034,
-    "hash": "1f18fd67641820b68d486debfc68ef75"
+    "mtime": 1783793999.5718694,
+    "hash": "a8ce5327acf2d820066c2f9f56429a5e"
   },
   "/home/rinseyaron/projects/burojazz/tests/int/api.int.spec.ts": {
     "mtime": 1783775209.5395274,
@@ -60,8 +60,8 @@
     "hash": "3237d6ccb6a17c69beeacb48c56da9ec"
   },
   "/home/rinseyaron/projects/burojazz/scripts/seed-home.ts": {
-    "mtime": 1783779323.7616096,
-    "hash": "3424467b864983fe907f330ede4b8f25"
+    "mtime": 1783856905.5431,
+    "hash": "6ea7a45cf32cd4bba0f8c02dd7f77a6a"
   },
   "/home/rinseyaron/projects/burojazz/scripts/build-static.mjs": {
     "mtime": 1783777405.9563735,
@@ -72,12 +72,12 @@
     "hash": "c8c3b0114edaa70190843c5cb5d315b7"
   },
   "/home/rinseyaron/projects/burojazz/src/payload.config.ts": {
-    "mtime": 1783777405.9575095,
-    "hash": "f37778b564a0d8256bc0126e16d20fde"
+    "mtime": 1783856604.6161153,
+    "hash": "525aeddde306975766ebe41f799a512b"
   },
   "/home/rinseyaron/projects/burojazz/src/payload-types.ts": {
-    "mtime": 1783779001.647626,
-    "hash": "22c36645085b6ef117845e98281caf3f"
+    "mtime": 1783856673.3201118,
+    "hash": "fadeb8db380f350b4c471404f36b78f4"
   },
   "/home/rinseyaron/projects/burojazz/src/globals/Footer.ts": {
     "mtime": 1783777405.9574847,
@@ -96,28 +96,28 @@
     "hash": "0ebbf2c5074b7d0fc5251105b2041bc5"
   },
   "/home/rinseyaron/projects/burojazz/src/collections/Pages.ts": {
-    "mtime": 1783777405.9570382,
-    "hash": "d9ff6bc84ea9c3b9dc257ea7d7f654da"
+    "mtime": 1783782905.167429,
+    "hash": "5ec3cd025a31918170a1e717f657fe3e"
   },
   "/home/rinseyaron/projects/burojazz/src/collections/Media.ts": {
-    "mtime": 1783775209.5391808,
-    "hash": "da9af1a6c01844d000e47e1be9202a64"
+    "mtime": 1783856614.1331148,
+    "hash": "b0e95cca44a12f44f2c7bb8e5221ddc0"
   },
   "/home/rinseyaron/projects/burojazz/src/lib/contentSnapshot.ts": {
     "mtime": 1783777405.9575095,
     "hash": "4782563349f14c1c70fac6b9da7e71aa"
   },
   "/home/rinseyaron/projects/burojazz/src/lib/pages.ts": {
-    "mtime": 1783777405.9575095,
-    "hash": "272eee03120092aed68a15d3c86192ab"
+    "mtime": 1783782924.533428,
+    "hash": "541cb7010a5eadd8c4d80d740ba5c979"
   },
   "/home/rinseyaron/projects/burojazz/src/lib/globals.ts": {
     "mtime": 1783777405.9575095,
     "hash": "e07ad0e9d94f7179ee4888d73a7bf66d"
   },
   "/home/rinseyaron/projects/burojazz/src/blocks/visionMission.ts": {
-    "mtime": 1783778988.6326265,
-    "hash": "3234c88c72d24d0ab0649a67be18c963"
+    "mtime": 1783784133.467367,
+    "hash": "b3d55eda72a4af6f87b4193129344397"
   },
   "/home/rinseyaron/projects/burojazz/src/blocks/buttonRow.ts": {
     "mtime": 1783777405.9570382,
@@ -128,44 +128,44 @@
     "hash": "8913288e62d9010d07ae0bca142df102"
   },
   "/home/rinseyaron/projects/burojazz/src/blocks/complaints.ts": {
-    "mtime": 1783777405.9570382,
-    "hash": "8a74e2529e827dee481b249b1d4ab48e"
+    "mtime": 1783856671.150112,
+    "hash": "f8ea10b0562f9546064fbcb8288207d5"
   },
   "/home/rinseyaron/projects/burojazz/src/blocks/accordion.ts": {
-    "mtime": 1783777405.9570382,
-    "hash": "a64bc921c0a783f61af9b694979c9fa7"
+    "mtime": 1783784139.7663667,
+    "hash": "8f63311af06ab45487c0b94a6ef1dd2d"
   },
   "/home/rinseyaron/projects/burojazz/src/blocks/coreValues.ts": {
-    "mtime": 1783777405.9570382,
-    "hash": "983e083175c974ca3a741599540ab705"
+    "mtime": 1783785834.9152813,
+    "hash": "b671eccb2487d362a6a84f330064343e"
   },
   "/home/rinseyaron/projects/burojazz/src/blocks/vacancies.ts": {
-    "mtime": 1783777405.9570382,
-    "hash": "e3e7348131b7c11ed0346a5471000384"
+    "mtime": 1783783338.0894072,
+    "hash": "a6f1a3a1831cb6d6c169d12b5226d757"
   },
   "/home/rinseyaron/projects/burojazz/src/blocks/about.ts": {
-    "mtime": 1783777405.9567063,
-    "hash": "24b36e1e6b0c8a51a75ca91b020d1d0d"
+    "mtime": 1783784130.2103672,
+    "hash": "393fd22a5e86cf05420df07c851eafe0"
   },
   "/home/rinseyaron/projects/burojazz/src/blocks/services.ts": {
-    "mtime": 1783777405.9570382,
-    "hash": "3867f021f6cd2f583ad708e4d8cb9112"
+    "mtime": 1783783474.5954003,
+    "hash": "c2461f3c98a496b0d90d8d37c15196d6"
   },
   "/home/rinseyaron/projects/burojazz/src/blocks/contactPersons.ts": {
-    "mtime": 1783777405.9570382,
-    "hash": "7d0971f85ee1b76cc642be638d029d53"
+    "mtime": 1783795372.5308,
+    "hash": "2428937a68e98d9bddc938c66ce752ee"
   },
   "/home/rinseyaron/projects/burojazz/src/blocks/hero.ts": {
-    "mtime": 1783777405.9570382,
-    "hash": "ecc6d320ed016a4656c2ba285017f87c"
+    "mtime": 1783793930.032873,
+    "hash": "c134d45f6b63c532b0625557a86583f9"
   },
   "/home/rinseyaron/projects/burojazz/src/blocks/richText.ts": {
     "mtime": 1783777405.9570382,
     "hash": "b1bd09ee6beae7ccd3f065dd698c4274"
   },
   "/home/rinseyaron/projects/burojazz/src/blocks/social.ts": {
-    "mtime": 1783777405.9570382,
-    "hash": "9a4b6e2bb872cbe6a2dd01e5b0209f76"
+    "mtime": 1783783335.2364073,
+    "hash": "7759cdf0d790b5c264eb3bf5326c129e"
   },
   "/home/rinseyaron/projects/burojazz/src/app/(frontend)/page.tsx": {
     "mtime": 1783777405.9567063,
@@ -200,8 +200,8 @@
     "hash": "65862beb6110cc10dc01e27e7c69d87f"
   },
   "/home/rinseyaron/projects/burojazz/src/app/(payload)/admin/importMap.js": {
-    "mtime": 1783778984.0666268,
-    "hash": "179b36aa6569bb1b8dccd4c42a52f71d"
+    "mtime": 1783856614.586115,
+    "hash": "c8e9827a5ea43038a7de050ef3727449"
   },
   "/home/rinseyaron/projects/burojazz/src/app/(payload)/admin/[[...segments]]/not-found.tsx": {
     "mtime": 1783775209.5390265,
@@ -216,12 +216,16 @@
     "hash": "ef3785f67efeb4c3e4ea8105fcbd9bdc"
   },
   "/home/rinseyaron/projects/burojazz/src/fields/link.ts": {
-    "mtime": 1783778289.6004403,
-    "hash": "5db109ef7a60942be7c3ccbd7af5d6df"
+    "mtime": 1783783276.8334103,
+    "hash": "9b8029a1482ba1fba893afcd3a20cca2"
   },
   "/home/rinseyaron/projects/burojazz/src/fields/sectionHeader.ts": {
-    "mtime": 1783778983.5386267,
-    "hash": "d70133ac8d558a58b487fd45f423f5c6"
+    "mtime": 1783783243.2224119,
+    "hash": "58ec5e85323cd97aa1138a949385a431"
+  },
+  "/home/rinseyaron/projects/burojazz/src/fields/basicEditor.ts": {
+    "mtime": 1783784073.84237,
+    "hash": "3683de0f6d2a5632b3b70166e1d39a9b"
   },
   "/home/rinseyaron/projects/burojazz/src/access/roles.ts": {
     "mtime": 1783775209.5388172,
@@ -236,8 +240,8 @@
     "hash": "ab0d4c6c50a0b58321171525b2b472ae"
   },
   "/home/rinseyaron/projects/burojazz/src/migrations/index.ts": {
-    "mtime": 1783778289.6004403,
-    "hash": "04ee7a4db0ee143ecf88ef8f3a8fab20"
+    "mtime": 1783856923.9750993,
+    "hash": "39e2c5be478d35e78eb97459bb2b89b2"
   },
   "/home/rinseyaron/projects/burojazz/src/migrations/20260709_180930_initial.ts": {
     "mtime": 1783777405.9575095,
@@ -246,6 +250,38 @@
   "/home/rinseyaron/projects/burojazz/src/migrations/20260711_135639_header_nav_links.ts": {
     "mtime": 1783781313.4468243,
     "hash": "303c90e412cc8ad22a29d3bf01bc1b36"
+  },
+  "/home/rinseyaron/projects/burojazz/src/migrations/20260712_114843_complaints_pills_contact.ts": {
+    "mtime": 1783856923.9750993,
+    "hash": "b1ba7b9e3781c034a263f92eaeeabc75"
+  },
+  "/home/rinseyaron/projects/burojazz/src/migrations/20260711_155148_core_value_image.ts": {
+    "mtime": 1783785108.248318,
+    "hash": "1c2cdf0328b90dc2a85b4036399db3db"
+  },
+  "/home/rinseyaron/projects/burojazz/src/migrations/20260711_160558_core_value_description.ts": {
+    "mtime": 1783785958.361275,
+    "hash": "4b7f410eb74fb909441f3c3aa8a11bd3"
+  },
+  "/home/rinseyaron/projects/burojazz/src/migrations/20260711_181919_remove_hero_cert.ts": {
+    "mtime": 1783793959.7478714,
+    "hash": "22a2cd8b2578ceb4885bddcb611097a2"
+  },
+  "/home/rinseyaron/projects/burojazz/src/migrations/20260711_154019_services_tabs_cards.ts": {
+    "mtime": 1783784433.756352,
+    "hash": "794c3287376bbd94feece8d36084f3c6"
+  },
+  "/home/rinseyaron/projects/burojazz/src/migrations/20260711_161451_contact_person_fields.ts": {
+    "mtime": 1783786491.8332481,
+    "hash": "224b5641f2a246dd34601644a8980d63"
+  },
+  "/home/rinseyaron/projects/burojazz/src/migrations/20260711_152316_trim_unrendered_block_fields.ts": {
+    "mtime": 1783783396.8604043,
+    "hash": "368f2cba06c5ab9ff8acc99295153bed"
+  },
+  "/home/rinseyaron/projects/burojazz/src/migrations/20260711_150801_drop_page_content.ts": {
+    "mtime": 1783782481.6594503,
+    "hash": "462609c8f53eae745bee479a1ac0ab0e"
   },
   "/home/rinseyaron/projects/burojazz/src/components/CommentsPanel.tsx": {
     "mtime": 1783775209.5391808,
@@ -280,20 +316,24 @@
     "hash": "1f4ac7d0161a9218d2c6365a5e4c71b4"
   },
   "/home/rinseyaron/projects/burojazz/src/components/frontend/PageView.tsx": {
-    "mtime": 1783779039.808624,
-    "hash": "7b08ffbf6929231fa5a3f2b86880664a"
+    "mtime": 1783782431.639453,
+    "hash": "6567da4154516c105fe99df3743e2abb"
   },
   "/home/rinseyaron/projects/burojazz/src/components/frontend/blocks/Vacancies.tsx": {
     "mtime": 1783779215.300615,
     "hash": "1cb51aaa3d8324d2a5a05c209475b35b"
   },
   "/home/rinseyaron/projects/burojazz/src/components/frontend/blocks/Complaints.tsx": {
-    "mtime": 1783779252.1556132,
-    "hash": "6cd6d03997e5cbb8b9153a3ba8d1390a"
+    "mtime": 1783857838.659053,
+    "hash": "876aed6cde127b6f83bf3e8e25ad10b3"
+  },
+  "/home/rinseyaron/projects/burojazz/src/components/frontend/blocks/ServicesTabs.tsx": {
+    "mtime": 1783783491.4233994,
+    "hash": "b0795dd5c827b7ee6f806e7aed040e6a"
   },
   "/home/rinseyaron/projects/burojazz/src/components/frontend/blocks/About.tsx": {
-    "mtime": 1783779141.8996189,
-    "hash": "e373196035c91c73b390fd92ee1bfe70"
+    "mtime": 1783784101.3663685,
+    "hash": "c29ff71e6439ac636e8061c4a0812b8b"
   },
   "/home/rinseyaron/projects/burojazz/src/components/frontend/blocks/Social.tsx": {
     "mtime": 1783779186.9466164,
@@ -304,32 +344,44 @@
     "hash": "e4e62c32f8c102bd3896e33ff3e3d93d"
   },
   "/home/rinseyaron/projects/burojazz/src/components/frontend/blocks/ContactPersons.tsx": {
-    "mtime": 1783779170.1696174,
-    "hash": "202cd6fec1e1c9eb892b00e4ad6e1263"
+    "mtime": 1783857181.5190861,
+    "hash": "5048e94ba42281e6509fe0ec85289d47"
+  },
+  "/home/rinseyaron/projects/burojazz/src/components/frontend/blocks/VisionMissionAccordion.tsx": {
+    "mtime": 1783785277.1423094,
+    "hash": "8bfaa5118708a06a4a8d227765b4bbb8"
   },
   "/home/rinseyaron/projects/burojazz/src/components/frontend/blocks/Accordion.tsx": {
     "mtime": 1783777405.9572449,
     "hash": "71c4cb11e7e89675082490ff593e038a"
   },
   "/home/rinseyaron/projects/burojazz/src/components/frontend/blocks/Services.tsx": {
-    "mtime": 1783779228.5986145,
-    "hash": "73765eb2fbc0ad64c0f368efcc5e920c"
+    "mtime": 1783783511.5673983,
+    "hash": "c167ac992366ac3ced0c71ec48f05594"
   },
   "/home/rinseyaron/projects/burojazz/src/components/frontend/blocks/ButtonRow.tsx": {
     "mtime": 1783777405.9572449,
     "hash": "785da9a3dc52000b079b3f362bd5f43f"
   },
   "/home/rinseyaron/projects/burojazz/src/components/frontend/blocks/VisionMission.tsx": {
-    "mtime": 1783779118.11762,
-    "hash": "d9c663dc24a0e482f42eb6ca6e9d46b6"
+    "mtime": 1783785264.53731,
+    "hash": "3b8969963b4bf95ceb145dd3a94b3cf6"
   },
   "/home/rinseyaron/projects/burojazz/src/components/frontend/blocks/Hero.tsx": {
-    "mtime": 1783777405.9572449,
-    "hash": "d7d7e3fd787a9d20461158698c6306aa"
+    "mtime": 1783857858.266052,
+    "hash": "94a4fa3b4202f72e483f782371d65f4f"
   },
   "/home/rinseyaron/projects/burojazz/src/components/frontend/blocks/CoreValues.tsx": {
-    "mtime": 1783779238.6136138,
-    "hash": "4b87939e40208829b01bd7e4b11a56b0"
+    "mtime": 1783857802.752055,
+    "hash": "5cc70aa9c03ec7e071b52dbf088404f6"
+  },
+  "/home/rinseyaron/projects/burojazz/src/components/frontend/blocks/ComplaintsStepper.tsx": {
+    "mtime": 1783857540.2640681,
+    "hash": "b19eced5dc7940011f1d5dcbcd0ba7ad"
+  },
+  "/home/rinseyaron/projects/burojazz/src/components/frontend/ui/Media.tsx": {
+    "mtime": 1783857121.9200892,
+    "hash": "83c929eceb504f93044c34cac488dc20"
   },
   "/home/rinseyaron/projects/burojazz/src/components/frontend/ui/Button.tsx": {
     "mtime": 1783777405.9574313,
@@ -431,10 +483,6 @@
     "mtime": 1783777405.9527063,
     "hash": "e26034f21991179722090dee6cb47fd2"
   },
-  "/home/rinseyaron/projects/burojazz/public/images/core-values/cursor.svg": {
-    "mtime": 1783777405.9530902,
-    "hash": "dbaf365f0c9ebfc3df7a652487000de7"
-  },
   "/home/rinseyaron/projects/burojazz/public/images/core-values/voorbeeldfunctie.svg": {
     "mtime": 1783777405.9530902,
     "hash": "97ff2457fb778a39ff6cad1a4bdc01c0"
@@ -484,16 +532,16 @@
     "hash": "8b730f3b4ec04b06abccf50c76e2073c"
   },
   "/home/rinseyaron/projects/burojazz/public/images/contact-persons/andres.png": {
-    "mtime": 1783777405.9517064,
-    "hash": "6c6ad307708a756d57ae53ae1ded88fc"
+    "mtime": 1783853143.9162898,
+    "hash": "594648d64634e71f4a9c41f3fe6fa38e"
   },
   "/home/rinseyaron/projects/burojazz/public/images/contact-persons/blob.svg": {
     "mtime": 1783777405.9517064,
     "hash": "e9126e2d960c564779067106dc4beade"
   },
   "/home/rinseyaron/projects/burojazz/public/images/contact-persons/egbert.png": {
-    "mtime": 1783777405.9527063,
-    "hash": "5bc1cc7a898aa44fe904d75aac610678"
+    "mtime": 1783853143.79229,
+    "hash": "39ba31ef1bbcb826bc06cb3d8d28ae81"
   },
   "/home/rinseyaron/projects/burojazz/public/images/footer/social-2.svg": {
     "mtime": 1783777405.9533408,
@@ -546,5 +594,93 @@
   "/home/rinseyaron/projects/burojazz/public/images/services/card-logo.svg": {
     "mtime": 1783777405.953899,
     "hash": "f239ec4dc2e474de5afa646f7bd78352"
+  },
+  "/home/rinseyaron/projects/burojazz/media/presentie.svg": {
+    "mtime": 1783785270.8703096,
+    "hash": "4167d742e7a8444b3acea09a4b6ed89c"
+  },
+  "/home/rinseyaron/projects/burojazz/media/betrouwbaar.svg": {
+    "mtime": 1783785270.8703096,
+    "hash": "1fc6ee8a59c058cd92ae2975b804a21f"
+  },
+  "/home/rinseyaron/projects/burojazz/media/betrouwbaar-1.svg": {
+    "mtime": 1783857750.3250575,
+    "hash": "1fc6ee8a59c058cd92ae2975b804a21f"
+  },
+  "/home/rinseyaron/projects/burojazz/media/andres-1.png": {
+    "mtime": 1783857750.4970574,
+    "hash": "594648d64634e71f4a9c41f3fe6fa38e"
+  },
+  "/home/rinseyaron/projects/burojazz/media/photo-2.jpg": {
+    "mtime": 1783856728.1781092,
+    "hash": "effb35d95e3759bae0fa180d655b0343"
+  },
+  "/home/rinseyaron/projects/burojazz/media/passend.svg": {
+    "mtime": 1783785270.8703096,
+    "hash": "1a1696d9038150d86a4a2d7e06ce9495"
+  },
+  "/home/rinseyaron/projects/burojazz/media/andres.png": {
+    "mtime": 1783857675.3130612,
+    "hash": "9d91cc472200ac4c44921aef53149e2f"
+  },
+  "/home/rinseyaron/projects/burojazz/media/vernieuwend-1.svg": {
+    "mtime": 1783857750.3250575,
+    "hash": "737262142dc95a5e8fd2fb85bc742273"
+  },
+  "/home/rinseyaron/projects/burojazz/media/eerlijk-1.svg": {
+    "mtime": 1783857750.2800574,
+    "hash": "2d0da2340b50cebc25698fc39c581234"
+  },
+  "/home/rinseyaron/projects/burojazz/media/photo-3.jpg": {
+    "mtime": 1783857750.5690575,
+    "hash": "d5b70bd4ab4dbecdb08f84462738e3b8"
+  },
+  "/home/rinseyaron/projects/burojazz/media/zorgzaam-1.svg": {
+    "mtime": 1783857750.2790575,
+    "hash": "1fcf8dec2ba403a073435336790d2b3d"
+  },
+  "/home/rinseyaron/projects/burojazz/media/eerlijk.svg": {
+    "mtime": 1783785270.8703096,
+    "hash": "2d0da2340b50cebc25698fc39c581234"
+  },
+  "/home/rinseyaron/projects/burojazz/media/vernieuwend.svg": {
+    "mtime": 1783785270.8703096,
+    "hash": "737262142dc95a5e8fd2fb85bc742273"
+  },
+  "/home/rinseyaron/projects/burojazz/media/zorgzaam.svg": {
+    "mtime": 1783785270.8703096,
+    "hash": "1fcf8dec2ba403a073435336790d2b3d"
+  },
+  "/home/rinseyaron/projects/burojazz/media/presentie-1.svg": {
+    "mtime": 1783857750.2800574,
+    "hash": "4167d742e7a8444b3acea09a4b6ed89c"
+  },
+  "/home/rinseyaron/projects/burojazz/media/aansluiten.svg": {
+    "mtime": 1783785270.8703096,
+    "hash": "e26034f21991179722090dee6cb47fd2"
+  },
+  "/home/rinseyaron/projects/burojazz/media/passend-1.svg": {
+    "mtime": 1783857750.2800574,
+    "hash": "1a1696d9038150d86a4a2d7e06ce9495"
+  },
+  "/home/rinseyaron/projects/burojazz/media/aansluiten-1.svg": {
+    "mtime": 1783857750.2800574,
+    "hash": "e26034f21991179722090dee6cb47fd2"
+  },
+  "/home/rinseyaron/projects/burojazz/media/voorbeeldfunctie-1.svg": {
+    "mtime": 1783857750.3250575,
+    "hash": "97ff2457fb778a39ff6cad1a4bdc01c0"
+  },
+  "/home/rinseyaron/projects/burojazz/media/egbert.png": {
+    "mtime": 1783857750.4880576,
+    "hash": "39ba31ef1bbcb826bc06cb3d8d28ae81"
+  },
+  "/home/rinseyaron/projects/burojazz/media/voorbeeldfunctie.svg": {
+    "mtime": 1783785270.8703096,
+    "hash": "97ff2457fb778a39ff6cad1a4bdc01c0"
+  },
+  "/home/rinseyaron/projects/burojazz/media/2737334e0f4dd9f8b0fd4928e2ee2b21dfcf503a(1).png": {
+    "mtime": 1783857496.3590703,
+    "hash": "d6c9f7350ea9b725eadb2a9748b12c11"
   }
 }

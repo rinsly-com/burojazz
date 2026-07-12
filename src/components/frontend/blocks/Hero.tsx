@@ -1,18 +1,19 @@
-import Link from 'next/link'
-
-import { ArrowIcon } from '@/components/frontend/ui/ArrowIcon'
 import { Button } from '@/components/frontend/ui/Button'
-import { Buttons, hrefFor } from '@/components/frontend/ui/CMSLink'
+import { Buttons } from '@/components/frontend/ui/CMSLink'
+import { mediaUrl } from '@/components/frontend/ui/Media'
 import type { Page } from '@/payload-types'
 
 type Props = Extract<NonNullable<Page['layout']>[number], { blockType: 'hero' }>
 
+const DEFAULT_IMAGE = '/images/header-hero/photo-2.jpg'
+const IMAGE_ALT = 'Begeleider en jongere tijdens een bokstraining'
+
 /**
- * Hero section: huge teal "BURO J.A.Z.Z." wordmark, subtitle, description,
- * two CTAs and the Kiwa certification callout on the left; rotated
- * rounded-photo imagery with organic shapes on the right (desktop only).
- * The floating SiteHeader renders over this section, hence the generous
- * top padding. Server component — decorative shapes are pure CSS/images.
+ * Hero section: huge teal "BURO J.A.Z.Z." wordmark, subtitle, description and
+ * two CTAs on the left; on the right a big white rounded plane behind a single
+ * rotated photo driven by the CMS Hero image (desktop only). The floating
+ * SiteHeader renders over this section, hence the generous top padding.
+ * Server component — decorative shapes are CSS/images.
  */
 export function Hero(props: Props) {
   const title = props.header?.title ?? 'BURO J.A.Z.Z.'
@@ -20,16 +21,7 @@ export function Hero(props: Props) {
   const description =
     props.header?.intro ??
     'Wij bieden ambulante jeugdhulp en jeugdhulp met verblijf, gericht op behandeling en begeleiding.'
-  const certHref = props.cert?.link ? hrefFor(props.cert.link) : '#'
-  const cert = {
-    title: props.cert?.title ?? 'Kiwa gecertificeerd',
-    text:
-      props.cert?.text ??
-      'Buro J.A.Z.Z. is Kiwa gecertificeerd en voldoet aan de kwaliteitseisen voor jeugdhulp.',
-    linkLabel: props.cert?.link?.label ?? 'Lees meer',
-    linkUrl: certHref === '#' ? '/over-ons' : certHref,
-    linkNewTab: props.cert?.link?.newTab ?? false,
-  }
+  const imageUrl = mediaUrl(props.image) ?? DEFAULT_IMAGE
 
   return (
     <section className="relative overflow-hidden bg-white">
@@ -45,29 +37,21 @@ export function Hero(props: Props) {
           alt=""
           className="absolute left-[-452px] top-[266px] size-[1020px] max-w-none"
         />
-        {/* Underlying rotated photo (peeks out top-right) */}
-        <div className="absolute left-[821px] top-[-215px] flex h-[1302px] w-[1455px] items-center justify-center">
-          <div className="h-[1217px] w-[801px] shrink-0 rotate-[-120deg] overflow-hidden rounded-photo">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/images/header-hero/photo-1.jpg"
-              alt=""
-              className="size-full object-cover"
-            />
-          </div>
-        </div>
         {/* Giant rotated white rounded rect with soft shadow (the diagonal white plane) */}
         <div className="absolute left-[-194px] top-[-540px] flex h-[1393px] w-[1824px] items-center justify-center">
           <div className="h-[905px] w-[1615px] shrink-0 rotate-[-19.56deg] rounded-[210px] bg-white shadow-[0px_9px_26.9px_0px_rgba(0,0,0,0.12)]" />
         </div>
-        {/* Main rotated photo, right side */}
+        {/* Main photo, right side (from the CMS Hero image). The frame is
+            rotated -30° so it reads as a tilted panel, but the image itself is
+            counter-rotated +30° (net upright) and object-cover, so the photo
+            stays horizontal and fills the frame instead of being cropped askew. */}
         <div className="absolute left-[818px] top-[-168px] flex h-[1616px] w-[1581px] items-center justify-center">
           <div className="relative h-[1217px] w-[1122px] shrink-0 rotate-[-30deg] overflow-hidden rounded-photo">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/images/header-hero/photo-2.jpg"
+              src={imageUrl}
               alt=""
-              className="absolute left-[-22.8%] top-[-68.11%] h-[115.47%] w-[132.69%] max-w-none"
+              className="absolute left-1/2 top-1/2 h-[1616px] w-[1581px] max-w-none -translate-x-1/2 -translate-y-1/2 rotate-[30deg] object-cover"
             />
             <div className="absolute inset-0 bg-black/[0.03]" />
           </div>
@@ -103,26 +87,11 @@ export function Hero(props: Props) {
             </div>
           )}
 
-          {/* Kiwa certification callout card */}
-          <div className="max-w-[420px] rounded-[32px] bg-white p-6 shadow-[0px_9px_26.9px_0px_rgba(0,0,0,0.1)]">
-            <p className="text-sm font-semibold text-ink">{cert.title}</p>
-            <p className="mt-2 text-sm font-medium leading-normal text-ink/80">{cert.text}</p>
-            <Link
-              href={cert.linkUrl}
-              target={cert.linkNewTab ? '_blank' : undefined}
-              rel={cert.linkNewTab ? 'noopener noreferrer' : undefined}
-              className="mt-3 inline-flex items-center gap-2.5 text-sm font-medium text-brand transition-colors hover:text-[#3fadb7]"
-            >
-              {cert.linkLabel}
-              <ArrowIcon />
-            </Link>
-          </div>
-
           {/* Mobile/tablet photo (replaces the rotated desktop composition) */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="/images/header-hero/photo-2.jpg"
-            alt="Begeleider en jongere tijdens een bokstraining"
+            src={imageUrl}
+            alt={IMAGE_ALT}
             className="aspect-[4/3] w-full rounded-[40px] object-cover xl:hidden"
           />
         </div>
