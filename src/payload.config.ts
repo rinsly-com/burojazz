@@ -89,12 +89,17 @@ const frontendOrigins = (process.env.FRONTEND_URL || 'https://burojazz.com')
   .map((o) => o.trim())
   .filter(Boolean)
 // The accp worker's OWN origin (where the admin panel is served) must be in the
-// csrf/cors lists too, or Payload rejects the auth cookie on writes and every
+// csrf/cors lists, or Payload rejects the auth cookie on writes and every
 // mutation fails with "You are not allowed to perform this action" (reads are
-// public so viewing still works). PAYLOAD_API_URL is set to this worker's origin.
-const selfOrigin = (process.env.PAYLOAD_API_URL || '').trim()
+// public so viewing still works). Hardcoded because it must be present at
+// RUNTIME: PAYLOAD_API_URL is only a build-time var and is undefined in the
+// deployed worker, so it can't be relied on here. PAYLOAD_API_URL is still
+// included for environments where it IS set at runtime.
+const adminOrigins = ['https://accp.burojazz.com', (process.env.PAYLOAD_API_URL || '').trim()].filter(
+  Boolean,
+)
 const corsOrigins = Array.from(
-  new Set([...frontendOrigins, 'http://localhost:3000', ...(selfOrigin ? [selfOrigin] : [])]),
+  new Set([...frontendOrigins, 'http://localhost:3000', ...adminOrigins]),
 )
 
 export default buildConfig({
