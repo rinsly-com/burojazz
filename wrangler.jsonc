@@ -20,7 +20,7 @@
   // is served from a local SQLite mock under .wrangler/state. CLOUDFLARE_ENV is
   // left unset for dev.
   // ---------------------------------------------------------------------------
-  "name": "burojazz-dev",
+  "name": "burojazz",
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS",
