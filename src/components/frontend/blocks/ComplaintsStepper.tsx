@@ -301,7 +301,7 @@ export function ComplaintsStepper({
                           key={pill.key}
                           className="flex flex-col items-start rounded-[44px] border border-ink/5 bg-white p-3"
                         >
-                          <div className="flex w-full items-start gap-3">
+                          <div className="flex w-full items-center gap-3">
                             <span
                               className={`flex size-8 shrink-0 items-center justify-center rounded-full text-white ${
                                 pill.tone === 'danger' ? 'bg-[#f86a6d]' : 'bg-brand'

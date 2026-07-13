@@ -68,12 +68,19 @@ function PersonCard({
         <p className="text-sm font-medium">{role}</p>
       </div>
 
-      {/* Portrait fills the card frame (object-cover). The editor's focal point
-          (via <Media>) controls what stays in frame; the lower body fades into
-          the teal below. */}
+      {/* Portrait fills the card frame (object-cover). The frame is a touch
+          wider than the photo, so cover overflows vertically; anchor the crop to
+          the top (object-position) so the subject's head stays in frame while
+          the lower body fades into the teal below. Overrides the focal point,
+          which Payload always stores at 50/50 here and would clip the head. */}
       <div className="absolute inset-x-0 bottom-0 top-[120px]">
         {hasPhoto ? (
-          <Media resource={photo} alt={name} className="absolute inset-0 size-full" />
+          <Media
+            resource={photo}
+            alt={name}
+            className="absolute inset-0 size-full"
+            style={{ objectPosition: 'center top' }}
+          />
         ) : (
           <div className="absolute inset-x-10 bottom-0 top-8 rounded-t-[160px] bg-white/15" />
         )}

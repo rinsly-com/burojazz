@@ -1,9 +1,29 @@
+import type { Metadata } from 'next'
+
 import { AanmeldenForm } from '@/components/frontend/aanmelden/AanmeldenForm'
 import { Section } from '@/components/frontend/ui/Section'
+import { absoluteUrl, SITE_NAME } from '@/lib/siteUrl'
 
-export const metadata = {
-  title: 'Direct aanmelden — Buro J.A.Z.Z.',
-  description: 'Meld je aan voor jeugdhulp en ambulante zorg bij Buro J.A.Z.Z.',
+const TITLE = 'Direct aanmelden'
+const DESCRIPTION = 'Meld je aan voor jeugdhulp en ambulante zorg bij Buro J.A.Z.Z.'
+
+export const metadata: Metadata = {
+  title: TITLE,
+  description: DESCRIPTION,
+  alternates: { canonical: absoluteUrl('/aanmelden') },
+  openGraph: {
+    type: 'website',
+    siteName: SITE_NAME,
+    locale: 'nl_NL',
+    url: absoluteUrl('/aanmelden'),
+    title: `${TITLE} — ${SITE_NAME}`,
+    description: DESCRIPTION,
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: `${TITLE} — ${SITE_NAME}`,
+    description: DESCRIPTION,
+  },
 }
 
 /**

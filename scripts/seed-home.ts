@@ -11,6 +11,7 @@
 import path from 'path'
 import { fileURLToPath } from 'url'
 import { getPayload } from 'payload'
+import { sql } from '@payloadcms/db-d1-sqlite'
 
 import config from '../src/payload.config'
 import type { Page, User } from '../src/payload-types'
@@ -24,18 +25,48 @@ const seedDir = path.dirname(fileURLToPath(import.meta.url))
 // optional description revealed when the card is hovered. Only Betrouwbaar is
 // seeded with copy (from the design); editors fill in the rest via the CMS.
 const CORE_VALUE_ICONS: { label: string; file: string; description?: string }[] = [
-  { label: 'Zorgzaam', file: 'zorgzaam.svg' },
-  { label: 'Eerlijk', file: 'eerlijk.svg' },
-  { label: 'Presentie', file: 'presentie.svg' },
-  { label: 'Passend & integraal', file: 'passend.svg' },
-  { label: 'Aansluiten', file: 'aansluiten.svg' },
+  {
+    label: 'Zorgzaam',
+    file: 'zorgzaam.svg',
+    description: 'Wij vinden het belangrijk dat jij je veilig voelt en de juiste aandacht krijgt.',
+  },
+  {
+    label: 'Eerlijk',
+    file: 'eerlijk.svg',
+    description: 'Jij ervaart eerlijke hulp bij Buro J.A.Z.Z. ook als dat soms even moeilijk is.',
+  },
+  {
+    label: 'Presentie',
+    file: 'presentie.svg',
+    description: 'Wij zijn er, jij ervaart je gezien en gehoord.',
+  },
+  {
+    label: 'Passend & integraal',
+    file: 'passend.svg',
+    description:
+      'Jij mag zorg verwachten die bij jou past en gepast is met een breed aanbod vanuit één organisatie.',
+  },
+  {
+    label: 'Aansluiten',
+    file: 'aansluiten.svg',
+    description: 'Wij sluiten aan bij jouw zorgvraag, behoefte en leefwereld.',
+  },
   {
     label: 'Betrouwbaar',
     file: 'betrouwbaar.svg',
     description: 'Doen wat je zegt en zeggen wat je doet. Jij moet op ons kunnen vertrouwen.',
   },
-  { label: 'Voorbeeldfunctie', file: 'voorbeeldfunctie.svg' },
-  { label: 'Vernieuwend', file: 'vernieuwend.svg' },
+  {
+    label: 'Voorbeeldfunctie',
+    file: 'voorbeeldfunctie.svg',
+    description:
+      'Jij mag van ons het goede voorbeeld verwachten en wij zijn ons bewust van ons gedrag.',
+  },
+  {
+    label: 'Vernieuwend',
+    file: 'vernieuwend.svg',
+    description: 'Kan het beter? Moet het beter? Dan vinden we nieuwe manieren en wegen.',
+  },
 ]
 
 // Contact persons: name/role, their portrait (uploaded to Media on seed), and
@@ -150,6 +181,7 @@ const layout: Layout = [
   },
   {
     blockType: 'services',
+    anchor: 'hulpverleningsvormen',
     header: {
       icon: 'IconDiamond',
       eyebrow: 'Hulpverleningsvormen',
@@ -161,6 +193,7 @@ const layout: Layout = [
         cards: [
           {
             number: '01',
+            icon: 'IconBrain',
             title: 'Cognitieve Gedragstherapie (CGT)',
             description:
               'Korte, doelgerichte behandeling om negatieve denk- en gedragspatronen te veranderen.',
@@ -168,24 +201,28 @@ const layout: Layout = [
           },
           {
             number: '02',
+            icon: 'IconHeartbeat',
             title: 'Trauma behandeling',
             description: 'Hulp bij het verwerken van ingrijpende ervaringen in een veilige setting.',
             link: extLink('Lees verder', '#', 'secondary'),
           },
           {
             number: '03',
+            icon: 'IconUsersGroup',
             title: 'Systeemtherapie',
             description: 'Behandeling die relaties en gezinsdynamiek centraal stelt.',
             link: extLink('Lees verder', '#', 'secondary'),
           },
           {
             number: '04',
+            icon: 'IconRun',
             title: 'Psychomotore Therapie (PMT)',
             description: 'Therapie gericht op lichaam, gedrag en emotie via beweging en ervaring.',
             link: extLink('Lees verder', '#', 'secondary'),
           },
           {
             number: '05',
+            icon: 'IconMoodKid',
             title: 'Theraplay',
             description: 'Speelse therapie om de band tussen ouder en kind te verbeteren.',
             link: extLink('Lees verder', '#', 'secondary'),
@@ -197,18 +234,21 @@ const layout: Layout = [
         cards: [
           {
             number: '01',
+            icon: 'IconHome',
             title: 'Ambulante begeleiding',
             description: 'Persoonlijke ondersteuning thuis en in de eigen omgeving van de jeugdige.',
             link: extLink('Lees verder', '#', 'secondary'),
           },
           {
             number: '02',
+            icon: 'IconUsers',
             title: 'Gezinsbegeleiding',
             description: 'Praktische en pedagogische ondersteuning voor het hele gezin.',
             link: extLink('Lees verder', '#', 'secondary'),
           },
           {
             number: '03',
+            icon: 'IconUser',
             title: 'Individuele coaching',
             description: 'Doelgerichte begeleiding om vaardigheden en zelfstandigheid te versterken.',
             link: extLink('Lees verder', '#', 'secondary'),
@@ -220,12 +260,14 @@ const layout: Layout = [
         cards: [
           {
             number: '01',
+            icon: 'IconClipboardText',
             title: 'Psychodiagnostisch onderzoek',
             description: 'Onderzoek naar cognitief, sociaal en emotioneel functioneren.',
             link: extLink('Lees verder', '#', 'secondary'),
           },
           {
             number: '02',
+            icon: 'IconMessage2',
             title: 'Consultatie & advies',
             description: 'Inhoudelijk advies aan ouders, scholen en verwijzers.',
             link: extLink('Lees verder', '#', 'secondary'),
@@ -237,12 +279,14 @@ const layout: Layout = [
         cards: [
           {
             number: '01',
+            icon: 'IconAlertTriangle',
             title: 'Crisisopvang',
             description: 'Directe, veilige opvang wanneer thuis wonen tijdelijk niet kan.',
             link: extLink('Lees verder', '#', 'secondary'),
           },
           {
             number: '02',
+            icon: 'IconBed',
             title: 'Verblijf',
             description: 'Een huiselijke woonplek met begeleiding, gericht op herstel en perspectief.',
             link: extLink('Lees verder', '#', 'secondary'),
@@ -253,6 +297,7 @@ const layout: Layout = [
   },
   {
     blockType: 'about',
+    anchor: 'over-ons',
     header: {
       icon: 'IconUsers',
       eyebrow: 'Wie wij zijn',
@@ -328,6 +373,7 @@ const layout: Layout = [
   },
   {
     blockType: 'complaints',
+    anchor: 'klachtregeling',
     header: {
       eyebrow: 'Stap voor stap',
       title: 'Klachtenregeling',
@@ -403,6 +449,7 @@ const layout: Layout = [
   },
   {
     blockType: 'vacancies',
+    anchor: 'vacatures',
     header: {
       icon: 'IconBriefcase',
       title: 'Word onderdeel van ons team',
@@ -435,29 +482,31 @@ const layout: Layout = [
 ]
 
 
-// Small starter pages for every nav route, so the menu links to real pages.
-// Editors replace the placeholder copy (or add layout blocks) in the CMS.
-const SMALL_PAGES: { slug: string; title: string }[] = [
-  { slug: 'hulpverleningsvormen', title: 'Hulpverleningsvormen' },
-  { slug: 'over-ons', title: 'Over ons' },
-  { slug: 'klachtregeling', title: 'Klachtregeling' },
-  { slug: 'vacatures', title: 'Vacatures' },
-  { slug: 'contact', title: 'Contact' },
-]
+// The site is a onepager: every section lives on the home page and the menu
+// scrolls to it (see headerData below). The only separate page is Contact,
+// which the header CTA links to. Editors add layout blocks to it in the CMS.
+const SMALL_PAGES: { slug: string; title: string }[] = [{ slug: 'contact', title: 'Contact' }]
 
-// Every menu item references a real Pages document, so links follow a page
-// when its slug changes.
+// Onepager navigation: every menu item links to the home page and scrolls to a
+// section via its Anchor ID (the `anchor` set on the matching home block above;
+// resolved by hrefFor to `/#anchor`). The Contact CTA links to the Contact page.
 const headerData = (ids: Map<string, Page['id']>) => ({
   navItems: [
     { label: 'Home', type: 'internal' as const, page: ids.get('home') },
     {
       label: 'Hulpverleningsvormen',
       type: 'internal' as const,
-      page: ids.get('hulpverleningsvormen'),
+      page: ids.get('home'),
+      anchor: 'hulpverleningsvormen',
     },
-    { label: 'Over ons', type: 'internal' as const, page: ids.get('over-ons') },
-    { label: 'Klachtregeling', type: 'internal' as const, page: ids.get('klachtregeling') },
-    { label: 'Vacatures', type: 'internal' as const, page: ids.get('vacatures') },
+    { label: 'Over ons', type: 'internal' as const, page: ids.get('home'), anchor: 'over-ons' },
+    {
+      label: 'Klachtregeling',
+      type: 'internal' as const,
+      page: ids.get('home'),
+      anchor: 'klachtregeling',
+    },
+    { label: 'Vacatures', type: 'internal' as const, page: ids.get('home'), anchor: 'vacatures' },
   ],
   cta: { label: 'Contact', type: 'internal' as const, page: ids.get('contact') },
 })
@@ -466,7 +515,7 @@ const footerData = {
   tagline: 'J.A.Z.Z. – Jeugdhulp en Ambulante Zorg met Zorgzaamheid.',
   email: 'contact@burojazz.nl',
   phone: '+31 6 55202233',
-  address: 'Vlasakker 24, 3417 XT Montfoort',
+  address: 'Vlasakker 24, 3417 XT, Montfoort',
   menuItems: [
     { label: 'Home', url: '/' },
     { label: 'Hulpverleningsvormen', url: '/hulpverleningsvormen' },
@@ -486,8 +535,48 @@ const footerData = {
   copyright: 'Copyright © Buro J.A.Z.Z. 2026 –– Alle rechten voorbehouden.',
 }
 
+/**
+ * Repair severed page-version links before seeding.
+ *
+ * In dev, Payload keeps the schema in sync with drizzle *push* (not versioned
+ * migrations). To apply some schema changes SQLite forces a full table rebuild,
+ * and dropping/recreating `pages` fires `_pages_v`'s `ON DELETE set null` FK,
+ * orphaning EVERY version row (`parent_id` → NULL). Those orphans then surface
+ * as ghost docs with a null id, which break the frontend preview and crash this
+ * seed. (Production is unaffected: it deploys via `payload migrate`, whose
+ * migrations only `ADD COLUMN` and never recreate `pages`.)
+ *
+ * Re-link orphans to their page by slug, then drop any version whose page no
+ * longer exists. Idempotent — a no-op on a healthy database.
+ */
+async function repairOrphanedVersions(payload: PayloadInstance) {
+  // `payload.db.drizzle` is the same drizzle handle migrations run against.
+  const drizzle = (
+    payload.db as unknown as {
+      drizzle?: { run: (query: ReturnType<typeof sql>) => Promise<unknown> }
+    }
+  ).drizzle
+  if (!drizzle) {
+    console.warn('Version-link repair skipped: drizzle handle unavailable')
+    return
+  }
+  try {
+    await drizzle.run(
+      sql`UPDATE _pages_v SET parent_id = (SELECT p.id FROM pages p WHERE p.slug = _pages_v.version_slug)
+          WHERE parent_id IS NULL AND EXISTS (SELECT 1 FROM pages p WHERE p.slug = _pages_v.version_slug)`,
+    )
+    await drizzle.run(sql`DELETE FROM _pages_v WHERE parent_id IS NULL`)
+    console.log('Checked/repaired orphaned page-version links')
+  } catch (err) {
+    console.warn('Version-link repair skipped:', err instanceof Error ? err.message : err)
+  }
+}
+
 async function run() {
   const payload = await getPayload({ config })
+
+  // Heal any drizzle-push-severed version links before touching the pages.
+  await repairOrphanedVersions(payload)
 
   // --- a. Ensure an admin user exists (the workflow hook checks roles) ---
   const users = await payload.find({ collection: 'users', limit: 1, sort: 'createdAt' })
@@ -629,7 +718,10 @@ async function run() {
     limit: 1,
     depth: 0,
   })
-  let home = existing.docs[0] as Page | undefined
+  // Guard against orphaned version rows (parent_id NULL) surfacing as docs with
+  // a null id under `draft: true` — updating with a null id throws "Missing
+  // 'where' query". Only ever act on a doc with a real id.
+  let home = existing.docs.find((d) => d?.id != null) as Page | undefined
   if (!home) {
     home = (await payload.create({
       collection: 'pages',
@@ -675,7 +767,7 @@ async function run() {
       limit: 1,
       depth: 0,
     })
-    let doc = found.docs[0] as Page | undefined
+    let doc = found.docs.find((d) => d?.id != null) as Page | undefined
     if (!doc) {
       doc = (await payload.create({
         collection: 'pages',

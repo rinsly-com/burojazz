@@ -1,5 +1,6 @@
 import Link from 'next/link'
 
+import { Icon } from '@/components/frontend/ui/Icon'
 import { Media } from '@/components/frontend/ui/Media'
 import type { Footer } from '@/payload-types'
 
@@ -68,7 +69,10 @@ export function SiteFooter({ footer }: Props) {
   const tagline = footer?.tagline ?? 'J.A.Z.Z. – Jeugdhulp en Ambulante Zorg met Zorgzaamheid.'
   const email = footer?.email ?? 'contact@burojazz.nl'
   const phone = footer?.phone ?? '+31 6 55202233'
-  const address = footer?.address ?? 'Vlasakker 24, 3417 XT Montfoort'
+  const address = footer?.address ?? 'Vlasakker 24, 3417 XT, Montfoort'
+  // Show the street on its own line and the rest below (split on the first comma).
+  const [addressStreet, ...addressRest] = address.split(',')
+  const addressCity = addressRest.join(',').trim()
   const menuItems = footer?.menuItems?.length ? footer.menuItems : FALLBACK_MENU
   const infoLinks = footer?.infoLinks?.length ? footer.infoLinks : FALLBACK_INFO
   const copyright =
@@ -103,7 +107,7 @@ export function SiteFooter({ footer }: Props) {
                       href={`mailto:${email}`}
                       className="flex items-center gap-2 text-sm font-medium leading-[1.16] tracking-[-0.01em] transition-opacity hover:opacity-80"
                     >
-                      <img src="/images/footer/icon-mail.svg" alt="" width={24} height={24} className="size-6" />
+                      <Icon fallback="IconMail" size={24} stroke={1.5} className="shrink-0" />
                       {email}
                     </a>
                   </li>
@@ -112,13 +116,16 @@ export function SiteFooter({ footer }: Props) {
                       href={`tel:${phone.replace(/\s+/g, '')}`}
                       className="flex items-center gap-2 text-sm font-medium leading-[1.16] tracking-[-0.01em] transition-opacity hover:opacity-80"
                     >
-                      <img src="/images/footer/icon-phone.svg" alt="" width={24} height={24} className="size-6" />
+                      <Icon fallback="IconPhone" size={24} stroke={1.5} className="shrink-0" />
                       {phone}
                     </a>
                   </li>
-                  <li className="flex items-center gap-2 text-sm font-medium leading-[1.16] tracking-[-0.01em]">
-                    <img src="/images/footer/icon-location.svg" alt="" width={24} height={24} className="size-6" />
-                    {address}
+                  <li className="flex items-start gap-2 text-sm font-medium leading-[1.4] tracking-[-0.01em]">
+                    <Icon fallback="IconMapPin" size={24} stroke={1.5} className="shrink-0" />
+                    <span className="flex flex-col">
+                      <span>{addressStreet.trim()},</span>
+                      {addressCity && <span>{addressCity}</span>}
+                    </span>
                   </li>
                 </ul>
               </div>

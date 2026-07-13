@@ -43,22 +43,35 @@
       "remote": true,
     },
   ],
-  // Cloudflare Email Routing: lets the worker send the "Direct aanmelden"
-  // notification. Requires Email Routing enabled on the domain and the
-  // destination verified. `destination_address` pins the only allowed recipient.
-  // See src/lib/email.ts.
+  // Email bindings for the "Direct aanmelden" flow. See src/lib/email.ts.
+  //
+  //  AANMELDING_EMAIL — team notification via Cloudflare Email Routing. Requires
+  //    Email Routing enabled on the domain and the destination verified;
+  //    `destination_address` pins the only allowed recipient.
+  //
+  //  AANMELDING_CONFIRM_EMAIL — receipt confirmation to the submitter (an
+  //    arbitrary referrer inbox), so it goes through Cloudflare Email *Sending*.
+  //    Requires the send domain onboarded: `wrangler email sending enable
+  //    noreply.burojazz.com` (adds SPF/DKIM/DMARC). `allowed_sender_addresses`
+  //    pins the From to that onboarded domain; no destination_address so it can
+  //    reach any recipient.
   "send_email": [
     {
       "name": "AANMELDING_EMAIL",
       "destination_address": "rinseschaeffer@gmail.com",
     },
+    {
+      "name": "AANMELDING_CONFIRM_EMAIL",
+      "allowed_sender_addresses": ["aanmelding@noreply.burojazz.com"],
+    },
   ],
   // Recipient of aanmelding notifications (must equal the verified Email Routing
-  // destination above) + the From address shown on the mail. Swap to a shared
-  // team mailbox once real @burojazz.com mailboxes exist.
+  // destination above) + the From addresses shown on outgoing mail. Swap to a
+  // shared team mailbox once real @burojazz.com mailboxes exist.
   "vars": {
     "AANMELDING_NOTIFY_TO": "rinseschaeffer@gmail.com",
     "EMAIL_FROM_ADDRESS": "aanmeldingen@burojazz.com",
+    "EMAIL_CONFIRM_FROM_ADDRESS": "aanmelding@noreply.burojazz.com",
   },
   // Media storage. Originals are stored in R2 and served by this worker at
   // /api/media/file/<filename>; payload.config.ts activates the R2 storage

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 
 import { ArrowIcon } from '@/components/frontend/ui/ArrowIcon'
@@ -32,6 +32,19 @@ function toNavItem(link: LinkFields, key: string): NavItem | null {
  */
 export function SiteHeader({ header }: SiteHeaderProps) {
   const [open, setOpen] = useState(false)
+  const pillRef = useRef<HTMLDivElement>(null)
+
+  // Close the open mobile menu when clicking/tapping outside the pill.
+  useEffect(() => {
+    if (!open) return
+    const onPointerDown = (e: PointerEvent) => {
+      if (pillRef.current && !pillRef.current.contains(e.target as Node)) {
+        setOpen(false)
+      }
+    }
+    document.addEventListener('pointerdown', onPointerDown)
+    return () => document.removeEventListener('pointerdown', onPointerDown)
+  }, [open])
 
   const navItems = (header?.navItems ?? [])
     .map((item, i) => toNavItem(item, item.id ?? String(i)))
@@ -73,9 +86,14 @@ export function SiteHeader({ header }: SiteHeaderProps) {
   }
 
   return (
-    <header className="absolute inset-x-0 top-0 z-40">
+    <header className="fixed inset-x-0 top-0 z-40">
       <div className="mx-auto w-full max-w-[1512px] px-4 py-4 md:px-20 md:py-[21px]">
-        <div className="rounded-[70px] bg-white p-3 shadow-[0px_9px_26.9px_0px_rgba(0,0,0,0.08)] md:p-4">
+        <div
+          ref={pillRef}
+          className={`bg-white p-3 shadow-[0px_9px_26.9px_0px_rgba(0,0,0,0.08)] md:p-4 ${
+            open ? 'rounded-[36px] lg:rounded-[70px]' : 'rounded-[70px]'
+          }`}
+        >
           <div className="flex items-center justify-between">
             <Link href="/" aria-label="Buro J.A.Z.Z. home" className="shrink-0">
               <Media

@@ -46,6 +46,10 @@ const restore = () => {
 const DYNAMIC_ROUTES = [
   'src/app/(frontend)/page.tsx',
   'src/app/(frontend)/[slug]/page.tsx',
+  // The per-slug OG image route mirrors [slug]/page.tsx: dynamicParams=true on
+  // the worker (render any slug on demand), flipped to false for the static
+  // export so only the prerendered published slugs are generated.
+  'src/app/(frontend)/[slug]/opengraph-image.tsx',
 ]
 const savedRouteSrc = new Map()
 const staticizeRoutes = () => {

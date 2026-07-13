@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useState } from 'react'
+import { type ReactNode, useState } from 'react'
 
 import { ArrowIcon } from '@/components/frontend/ui/ArrowIcon'
 import { hrefFor, type LinkFields } from '@/components/frontend/ui/CMSLink'
@@ -12,6 +12,14 @@ export type CardData = {
   description?: string | null
   link?: LinkFields | null
   id?: string | null
+  /** Tabler icon component name from the CMS (e.g. "IconHeart"). */
+  icon?: string | null
+  /**
+   * Server-rendered icon element for the white circle, injected by the parent
+   * server component (Services.tsx). Kept as a node so the Tabler icon barrel
+   * stays server-side and no icon JS ships to the browser.
+   */
+  iconNode?: ReactNode
 }
 
 export type TabData = {
@@ -33,7 +41,12 @@ function ServiceCard({ card, index }: { card: CardData; index: number }) {
       />
       <div className="relative flex w-full flex-col gap-8">
         <div className="flex w-full items-start justify-between gap-9">
-          <div className="size-[60px] rounded-full bg-white" aria-hidden="true" />
+          <div
+            className="flex size-[60px] shrink-0 items-center justify-center rounded-full bg-white text-brand"
+            aria-hidden="true"
+          >
+            {card.iconNode}
+          </div>
           <p className="text-xl font-bold text-white">
             {card.number ?? String(index + 1).padStart(2, '0')}
           </p>

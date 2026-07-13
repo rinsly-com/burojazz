@@ -1,9 +1,13 @@
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import React from 'react'
 
+import { JsonLd } from '@/components/frontend/JsonLd'
 import { PageView } from '@/components/frontend/PageView'
 import { RenderBlocks } from '@/components/frontend/RenderBlocks'
+import { buildPageMetadata } from '@/lib/metadata'
 import { getRenderablePageBySlug, getRenderablePages } from '@/lib/pages'
+import { buildPageJsonLd } from '@/lib/structuredData'
 import '../styles.css'
 
 // On the accp worker, pages.ts reads request headers to self-fetch its API,
@@ -25,14 +29,32 @@ export async function generateStaticParams() {
   return pages.map((page) => ({ slug: page.slug }))
 }
 
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>
+}): Promise<Metadata> {
+  const { slug } = await params
+  const page = await getRenderablePageBySlug(slug)
+  if (!page) return {}
+  return buildPageMetadata(page, { path: `/${slug}` })
+}
+
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const page = await getRenderablePageBySlug(slug)
 
   if (!page) notFound()
 
+  const jsonLd = buildPageJsonLd(page)
+
   if (page.layout?.length) {
-    return <RenderBlocks layout={page.layout} />
+    return (
+      <>
+        {jsonLd.length > 0 && <JsonLd data={jsonLd} />}
+        <RenderBlocks layout={page.layout} />
+      </>
+    )
   }
 
   return <PageView page={page} />

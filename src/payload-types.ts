@@ -96,10 +96,12 @@ export interface Config {
   globals: {
     header: Header;
     footer: Footer;
+    'aanmelding-instellingen': AanmeldingInstellingen;
   };
   globalsSelect: {
     header: HeaderSelect<false> | HeaderSelect<true>;
     footer: FooterSelect<false> | FooterSelect<true>;
+    'aanmelding-instellingen': AanmeldingInstellingenSelect<false> | AanmeldingInstellingenSelect<true>;
   };
   locale: null;
   widgets: {
@@ -164,6 +166,9 @@ export interface User {
  */
 export interface Media {
   id: number;
+  /**
+   * Short description of the image for screen readers and when the image can’t load. Important for accessibility and SEO.
+   */
   alt: string;
   updatedAt: string;
   createdAt: string;
@@ -212,6 +217,18 @@ export interface Page {
         | RichTextBlock
       )[]
     | null;
+  meta?: {
+    title?: string | null;
+    description?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (number | null) | Media;
+    /**
+     * When on, search engines are asked not to index or follow this page.
+     */
+    noindex?: boolean | null;
+  };
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -224,18 +241,33 @@ export interface HeroBlock {
   header?: {
     title?: string | null;
     subtitle?: string | null;
+    /**
+     * Introductory paragraph shown below the title.
+     */
     intro?: string | null;
   };
   /**
-   * Grote afbeelding die het rechtervlak van de hero vult.
+   * Large image that fills the right-hand side of the hero.
    */
   image?: (number | null) | Media;
   buttons?:
     | {
+        /**
+         * The text shown on the button.
+         */
         label: string;
+        /**
+         * Visual style of the button.
+         */
         variant?: ('primary' | 'secondary') | null;
+        /**
+         * Link to a page on this site (follows the page if its address changes) or to an external web address.
+         */
         type?: ('internal' | 'external') | null;
         page?: (number | null) | Page;
+        /**
+         * Full web address, including https://
+         */
         url?: string | null;
         /**
          * Optional. Scroll to a section on the selected page. Give the target section an Anchor ID for a readable link.
@@ -260,9 +292,12 @@ export interface HeroBlock {
 export interface ServicesBlock {
   header?: {
     /**
-     * Icoon in het label boven de titel. Laat leeg voor het standaardicoon.
+     * Icon shown in the small label above the title. Leave empty for the default icon.
      */
     icon?: string | null;
+    /**
+     * Small line of text shown above the title.
+     */
     eyebrow?: string | null;
     title?: string | null;
   };
@@ -274,13 +309,29 @@ export interface ServicesBlock {
         label?: string | null;
         cards?:
           | {
+              /**
+               * Icon shown in the white circle on the card. Leave empty for the default icon.
+               */
+              icon?: string | null;
+              /**
+               * Small number shown on the card (e.g. 01).
+               */
               number?: string | null;
               title?: string | null;
               description?: string | null;
               link: {
+                /**
+                 * The text shown on the link.
+                 */
                 label: string;
+                /**
+                 * Link to a page on this site (follows the page if its address changes) or to an external web address.
+                 */
                 type?: ('internal' | 'external') | null;
                 page?: (number | null) | Page;
+                /**
+                 * Full web address, including https://
+                 */
                 url?: string | null;
                 /**
                  * Optional. Scroll to a section on the selected page. Give the target section an Anchor ID for a readable link.
@@ -309,12 +360,18 @@ export interface ServicesBlock {
 export interface AboutBlock {
   header?: {
     /**
-     * Icoon in het label boven de titel. Laat leeg voor het standaardicoon.
+     * Icon shown in the small label above the title. Leave empty for the default icon.
      */
     icon?: string | null;
+    /**
+     * Small line of text shown above the title.
+     */
     eyebrow?: string | null;
     title?: string | null;
   };
+  /**
+   * Photo shown next to the text.
+   */
   image?: (number | null) | Media;
   body?: {
     root: {
@@ -331,13 +388,28 @@ export interface AboutBlock {
     };
     [k: string]: unknown;
   } | null;
+  /**
+   * Email address shown as a contact link in this section.
+   */
   email?: string | null;
   buttons?:
     | {
+        /**
+         * The text shown on the button.
+         */
         label: string;
+        /**
+         * Visual style of the button.
+         */
         variant?: ('primary' | 'secondary') | null;
+        /**
+         * Link to a page on this site (follows the page if its address changes) or to an external web address.
+         */
         type?: ('internal' | 'external') | null;
         page?: (number | null) | Page;
+        /**
+         * Full web address, including https://
+         */
         url?: string | null;
         /**
          * Optional. Scroll to a section on the selected page. Give the target section an Anchor ID for a readable link.
@@ -362,12 +434,18 @@ export interface AboutBlock {
 export interface CoreValuesBlock {
   header?: {
     /**
-     * Icoon in het label boven de titel. Laat leeg voor het standaardicoon.
+     * Icon shown in the small label above the title. Leave empty for the default icon.
      */
     icon?: string | null;
+    /**
+     * Small line of text shown above the title.
+     */
     eyebrow?: string | null;
     title?: string | null;
   };
+  /**
+   * Logo shown in the center of the circle of values.
+   */
   logo?: (number | null) | Media;
   values?:
     | {
@@ -398,17 +476,23 @@ export interface CoreValuesBlock {
 export interface VisionMissionBlock {
   header?: {
     /**
-     * Icoon in het label boven de titel. Laat leeg voor het standaardicoon.
+     * Icon shown in the small label above the title. Leave empty for the default icon.
      */
     icon?: string | null;
+    /**
+     * Small line of text shown above the title.
+     */
     eyebrow?: string | null;
     title?: string | null;
   };
+  /**
+   * Photo shown alongside the vision & mission items.
+   */
   image?: (number | null) | Media;
   items?:
     | {
         /**
-         * Icoon in het ronde label. Laat leeg voor het standaardicoon.
+         * Icon shown in the round label. Leave empty for the default icon.
          */
         icon?: string | null;
         heading?: string | null;
@@ -445,9 +529,12 @@ export interface VisionMissionBlock {
 export interface ContactPersonsBlock {
   header?: {
     /**
-     * Icoon in het label boven de titel. Laat leeg voor het standaardicoon.
+     * Icon shown in the small label above the title. Leave empty for the default icon.
      */
     icon?: string | null;
+    /**
+     * Small line of text shown above the title.
+     */
     eyebrow?: string | null;
     title?: string | null;
     subtitle?: string | null;
@@ -457,7 +544,7 @@ export interface ContactPersonsBlock {
         name?: string | null;
         role?: string | null;
         /**
-         * Portretfoto, uitgelijnd op de onderkant van de kaart.
+         * Portrait photo, aligned to the bottom of the card.
          */
         photo?: (number | null) | Media;
         phone?: string | null;
@@ -480,11 +567,17 @@ export interface ContactPersonsBlock {
 export interface ComplaintsBlock {
   header?: {
     /**
-     * Icoon in het label boven de titel. Laat leeg voor het standaardicoon.
+     * Icon shown in the small label above the title. Leave empty for the default icon.
      */
     icon?: string | null;
+    /**
+     * Small line of text shown above the title.
+     */
     eyebrow?: string | null;
     title?: string | null;
+    /**
+     * Introductory paragraph shown below the title.
+     */
     intro?: string | null;
   };
   steps?:
@@ -497,7 +590,7 @@ export interface ComplaintsBlock {
         infoPills?:
           | {
               /**
-               * Icoon in de ronde badge. Laat leeg voor het standaardicoon.
+               * Icon shown in the round badge. Leave empty for the default icon.
                */
               icon?: string | null;
               /**
@@ -524,6 +617,9 @@ export interface ComplaintsBlock {
      */
     title?: string | null;
     subtitle?: string | null;
+    /**
+     * Portrait photo of the contact person.
+     */
     photo?: (number | null) | Media;
     phone?: string | null;
     email?: string | null;
@@ -543,18 +639,33 @@ export interface ComplaintsBlock {
 export interface SocialBlock {
   header?: {
     /**
-     * Icoon in het label boven de titel. Laat leeg voor het standaardicoon.
+     * Icon shown in the small label above the title. Leave empty for the default icon.
      */
     icon?: string | null;
+    /**
+     * Small line of text shown above the title.
+     */
     eyebrow?: string | null;
     title?: string | null;
     subtitle?: string | null;
   };
+  /**
+   * Social media username shown in the section (e.g. @burojazz).
+   */
   handle?: string | null;
   link: {
+    /**
+     * The text shown on the link.
+     */
     label: string;
+    /**
+     * Link to a page on this site (follows the page if its address changes) or to an external web address.
+     */
     type?: ('internal' | 'external') | null;
     page?: (number | null) | Page;
+    /**
+     * Full web address, including https://
+     */
     url?: string | null;
     /**
      * Optional. Scroll to a section on the selected page. Give the target section an Anchor ID for a readable link.
@@ -563,7 +674,7 @@ export interface SocialBlock {
     newTab?: boolean | null;
   };
   /**
-   * De sfeerfoto’s in de collage. Laat leeg voor de standaardfoto.
+   * The photos in the collage, by position. Leave a slot empty to use the default photo.
    */
   photos?: {
     toys?: (number | null) | Media;
@@ -589,23 +700,41 @@ export interface SocialBlock {
 export interface VacanciesBlock {
   header?: {
     /**
-     * Icoon in het label boven de titel. Laat leeg voor het standaardicoon.
+     * Icon shown in the small label above the title. Leave empty for the default icon.
      */
     icon?: string | null;
+    /**
+     * Small line of text shown above the title.
+     */
     eyebrow?: string | null;
     title?: string | null;
+    /**
+     * Introductory paragraph shown below the title.
+     */
     intro?: string | null;
   };
   cards?:
     | {
         title?: string | null;
         location?: string | null;
+        /**
+         * Working hours for the vacancy (e.g. 32–36 hours per week).
+         */
         hours?: string | null;
         text?: string | null;
         link: {
+          /**
+           * The text shown on the link.
+           */
           label: string;
+          /**
+           * Link to a page on this site (follows the page if its address changes) or to an external web address.
+           */
           type?: ('internal' | 'external') | null;
           page?: (number | null) | Page;
+          /**
+           * Full web address, including https://
+           */
           url?: string | null;
           /**
            * Optional. Scroll to a section on the selected page. Give the target section an Anchor ID for a readable link.
@@ -630,9 +759,15 @@ export interface VacanciesBlock {
  */
 export interface AccordionBlock {
   header?: {
+    /**
+     * Small line of text shown above the title.
+     */
     eyebrow?: string | null;
     title?: string | null;
     subtitle?: string | null;
+    /**
+     * Introductory paragraph shown below the title.
+     */
     intro?: string | null;
   };
   items?:
@@ -671,10 +806,22 @@ export interface AccordionBlock {
 export interface ButtonRowBlock {
   buttons?:
     | {
+        /**
+         * The text shown on the button.
+         */
         label: string;
+        /**
+         * Visual style of the button.
+         */
         variant?: ('primary' | 'secondary') | null;
+        /**
+         * Link to a page on this site (follows the page if its address changes) or to an external web address.
+         */
         type?: ('internal' | 'external') | null;
         page?: (number | null) | Page;
+        /**
+         * Full web address, including https://
+         */
         url?: string | null;
         /**
          * Optional. Scroll to a section on the selected page. Give the target section an Anchor ID for a readable link.
@@ -753,6 +900,9 @@ export interface Comment {
  */
 export interface Aanmeldingen {
   id: number;
+  /**
+   * Handling status of this submission. New submissions start as “Nieuw”; update it as the team picks it up.
+   */
   status?: ('nieuw' | 'in-behandeling' | 'afgehandeld') | null;
   clientNaam: string;
   clientGeboortedatum: string;
@@ -954,6 +1104,14 @@ export interface PagesSelect<T extends boolean = true> {
         buttonRow?: T | ButtonRowBlockSelect<T>;
         richText?: T | RichTextBlockSelect<T>;
       };
+  meta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+        noindex?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
@@ -1006,6 +1164,7 @@ export interface ServicesBlockSelect<T extends boolean = true> {
         cards?:
           | T
           | {
+              icon?: T;
               number?: T;
               title?: T;
               description?: T;
@@ -1408,15 +1567,27 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
  */
 export interface Header {
   id: number;
+  /**
+   * Logo shown at the top-left of the header.
+   */
   logo?: (number | null) | Media;
   /**
    * The navigation links shown in the header, in order.
    */
   navItems?:
     | {
+        /**
+         * The text shown on the link.
+         */
         label: string;
+        /**
+         * Link to a page on this site (follows the page if its address changes) or to an external web address.
+         */
         type?: ('internal' | 'external') | null;
         page?: (number | null) | Page;
+        /**
+         * Full web address, including https://
+         */
         url?: string | null;
         /**
          * Optional. Scroll to a section on the selected page. Give the target section an Anchor ID for a readable link.
@@ -1430,9 +1601,18 @@ export interface Header {
    * The button on the right side of the header (teal pill). Leave the label empty to hide it.
    */
   cta?: {
+    /**
+     * The text shown on the link.
+     */
     label?: string | null;
+    /**
+     * Link to a page on this site (follows the page if its address changes) or to an external web address.
+     */
     type?: ('internal' | 'external') | null;
     page?: (number | null) | Page;
+    /**
+     * Full web address, including https://
+     */
     url?: string | null;
     /**
      * Optional. Scroll to a section on the selected page. Give the target section an Anchor ID for a readable link.
@@ -1449,12 +1629,24 @@ export interface Header {
  */
 export interface Footer {
   id: number;
+  /**
+   * Logo shown in the footer.
+   */
   logo?: (number | null) | Media;
+  /**
+   * Certification or quality-mark logo shown in the footer.
+   */
   certImage?: (number | null) | Media;
+  /**
+   * Short line of text shown next to the footer logo.
+   */
   tagline?: string | null;
   email?: string | null;
   phone?: string | null;
   address?: string | null;
+  /**
+   * Main navigation links in the footer (first column).
+   */
   menuItems?:
     | {
         label?: string | null;
@@ -1462,6 +1654,9 @@ export interface Footer {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Secondary links such as privacy statement and terms (second column).
+   */
   infoLinks?:
     | {
         label?: string | null;
@@ -1470,6 +1665,19 @@ export interface Footer {
       }[]
     | null;
   copyright?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "aanmelding-instellingen".
+ */
+export interface AanmeldingInstellingen {
+  id: number;
+  /**
+   * Optional personal message included in the confirmation email sent to the person who submitted the form. Leave empty to send only the standard acknowledgement. Do not put sensitive information here — it is emailed to the submitter.
+   */
+  bevestigingBericht?: string | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1530,6 +1738,16 @@ export interface FooterSelect<T extends boolean = true> {
         id?: T;
       };
   copyright?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "aanmelding-instellingen_select".
+ */
+export interface AanmeldingInstellingenSelect<T extends boolean = true> {
+  bevestigingBericht?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

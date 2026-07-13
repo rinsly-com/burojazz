@@ -1,7 +1,7 @@
 import type { CollectionConfig, PayloadRequest } from 'payload'
 
 import { authenticated, adminOnly } from '../access/roles'
-import { sendAanmeldingNotification } from '../lib/email'
+import { sendAanmeldingNotification, sendAanmeldingConfirmation } from '../lib/email'
 import {
   DSM_OPTIONS,
   PROBLEMATIEK_OPTIONS,
@@ -190,16 +190,25 @@ export const Aanmeldingen: CollectionConfig = {
   hooks: {
     afterChange: [
       async ({ doc, operation, req }) => {
-        if (operation === 'create') {
-          // Never let a mail failure roll back a stored submission.
-          try {
-            await sendAanmeldingNotification({ payload: req.payload, doc })
-          } catch (err) {
-            req.payload.logger.error({
-              msg: 'Aanmelding notification email failed',
-              err: err instanceof Error ? err.message : String(err),
-            })
-          }
+        if (operation !== 'create') return
+        // Never let a mail failure roll back a stored submission — each send is
+        // isolated so the confirmation still goes out if the team notice fails,
+        // and vice versa.
+        try {
+          await sendAanmeldingNotification({ payload: req.payload, doc })
+        } catch (err) {
+          req.payload.logger.error({
+            msg: 'Aanmelding notification email failed',
+            err: err instanceof Error ? err.message : String(err),
+          })
+        }
+        try {
+          await sendAanmeldingConfirmation({ payload: req.payload, doc })
+        } catch (err) {
+          req.payload.logger.error({
+            msg: 'Aanmelding confirmation email failed',
+            err: err instanceof Error ? err.message : String(err),
+          })
         }
       },
     ],
@@ -240,6 +249,9 @@ const SUBMITTABLE_FIELDS = [
   'privacyAkkoord',
 ] as const
 
+/** Optional single-select fields whose empty '' value is not a valid option. */
+const OPTIONAL_SELECT_FIELDS = new Set<string>(['dsmDiagnoseBekend'])
+
 /**
  * Public submission endpoint. Runs unauthenticated (the static site posts here),
  * so it whitelists incoming fields, honours a honeypot, and creates the row with
@@ -262,13 +274,22 @@ async function submitHandler(req: PayloadRequest): Promise<Response> {
 
   const data: Record<string, unknown> = {}
   for (const key of SUBMITTABLE_FIELDS) {
-    if (key in body) data[key] = body[key]
+    if (!(key in body)) continue
+    // Optional select fields reject '' — it is not one of the configured
+    // options — so treat an empty selection as "not provided" and omit it.
+    if (OPTIONAL_SELECT_FIELDS.has(key) && body[key] === '') continue
+    data[key] = body[key]
   }
   // Siblings is a nested array; validate its shape defensively.
   if (Array.isArray(body.siblings)) {
     data.siblings = (body.siblings as unknown[])
       .filter((s): s is Record<string, unknown> => typeof s === 'object' && s !== null)
-      .map((s) => ({ leeftijd: s.leeftijd ?? '', type: s.type ?? undefined }))
+      .map((s) => {
+        const row: Record<string, unknown> = { leeftijd: s.leeftijd ?? '' }
+        // Only set `type` when a real option was chosen; '' is not a valid one.
+        if (s.type) row.type = s.type
+        return row
+      })
   }
 
   try {

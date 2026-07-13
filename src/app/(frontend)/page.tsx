@@ -1,12 +1,22 @@
+import type { Metadata } from 'next'
 import React from 'react'
 
+import { JsonLd } from '@/components/frontend/JsonLd'
 import { RenderBlocks } from '@/components/frontend/RenderBlocks'
+import { buildPageMetadata } from '@/lib/metadata'
 import { getRenderablePageBySlug, getRenderablePages } from '@/lib/pages'
+import { buildPageJsonLd } from '@/lib/structuredData'
 import './styles.css'
 
 // accp worker: render on demand so the homepage always reflects live content.
 // The static production export (build-static.mjs) strips this so it can prerender.
 export const dynamic = 'force-dynamic'
+
+export async function generateMetadata(): Promise<Metadata> {
+  const page = await getRenderablePageBySlug('home')
+  if (!page) return {}
+  return buildPageMetadata(page, { path: '/', homepage: true })
+}
 
 /**
  * Home route: renders the "home" page's block layout when it exists;
@@ -16,7 +26,13 @@ export default async function HomePage() {
   const page = await getRenderablePageBySlug('home')
 
   if (page?.layout?.length) {
-    return <RenderBlocks layout={page.layout} />
+    const jsonLd = buildPageJsonLd(page)
+    return (
+      <>
+        {jsonLd.length > 0 && <JsonLd data={jsonLd} />}
+        <RenderBlocks layout={page.layout} />
+      </>
+    )
   }
 
   const pages = await getRenderablePages()

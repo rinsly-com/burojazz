@@ -12,6 +12,9 @@ import * as migration_20260712_130435_cms_managed_images from './20260712_130435
 import * as migration_20260712_131205_social_arrow_instagram from './20260712_131205_social_arrow_instagram';
 import * as migration_20260712_133841_aanmeldingen from './20260712_133841_aanmeldingen';
 import * as migration_20260712_134346_anchor_links from './20260712_134346_anchor_links';
+import * as migration_20260713_161147_services_card_icon from './20260713_161147_services_card_icon';
+import * as migration_20260713_163446_seo_meta from './20260713_163446_seo_meta';
+import * as migration_20260713_172042_noindex_meta from './20260713_172042_noindex_meta';
 
 export const migrations = [
   {
@@ -82,6 +85,21 @@ export const migrations = [
   {
     up: migration_20260712_134346_anchor_links.up,
     down: migration_20260712_134346_anchor_links.down,
-    name: '20260712_134346_anchor_links'
+    name: '20260712_134346_anchor_links',
+  },
+  {
+    up: migration_20260713_161147_services_card_icon.up,
+    down: migration_20260713_161147_services_card_icon.down,
+    name: '20260713_161147_services_card_icon',
+  },
+  {
+    up: migration_20260713_163446_seo_meta.up,
+    down: migration_20260713_163446_seo_meta.down,
+    name: '20260713_163446_seo_meta',
+  },
+  {
+    up: migration_20260713_172042_noindex_meta.up,
+    down: migration_20260713_172042_noindex_meta.down,
+    name: '20260713_172042_noindex_meta',
   },
 ];
