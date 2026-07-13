@@ -29,15 +29,28 @@ export const EMAIL_FROM = process.env.EMAIL_FROM_ADDRESS || 'aanmelden@burojazz.
 export const EMAIL_FROM_NAME = process.env.EMAIL_FROM_NAME || 'Buro J.A.Z.Z. website'
 export const EMAIL_TO = process.env.AANMELDING_NOTIFY_TO || 'aanmeldingen@burojazz.com'
 
+/**
+ * From address for the confirmation sent back to the submitter. Unlike the team
+ * notification (Email Routing → verified team inbox), this goes to an arbitrary
+ * referrer, so it must send FROM a domain onboarded onto Cloudflare Email
+ * Sending — see the AANMELDING_CONFIRM_EMAIL binding in wrangler.jsonc.
+ */
+export const EMAIL_CONFIRM_FROM =
+  process.env.EMAIL_CONFIRM_FROM_ADDRESS || 'aanmelding@noreply.burojazz.com'
+
+/** `send_email` binding names (see wrangler.jsonc). */
+const NOTIFY_BINDING = 'AANMELDING_EMAIL'
+const CONFIRM_BINDING = 'AANMELDING_CONFIRM_EMAIL'
+
 /** The `send_email` binding shape (a subset of Cloudflare's SendEmail). */
 type SendEmailBinding = { send: (message: unknown) => Promise<void> }
 
-/** Resolve the Cloudflare `send_email` binding at runtime, or null outside the Worker. */
-async function getEmailBinding(): Promise<SendEmailBinding | null> {
+/** Resolve a Cloudflare `send_email` binding by name at runtime, or null outside the Worker. */
+async function getEmailBinding(name: string): Promise<SendEmailBinding | null> {
   try {
     const { getCloudflareContext } = await import('@opennextjs/cloudflare')
     const ctx = await getCloudflareContext({ async: true })
-    const binding = (ctx.env as unknown as Record<string, unknown>).AANMELDING_EMAIL
+    const binding = (ctx.env as unknown as Record<string, unknown>)[name]
     return binding && typeof (binding as SendEmailBinding).send === 'function'
       ? (binding as SendEmailBinding)
       : null
@@ -87,7 +100,7 @@ export const cloudflareEmailAdapter: EmailAdapter = ({ payload }) => ({
   defaultFromAddress: EMAIL_FROM,
   defaultFromName: EMAIL_FROM_NAME,
   sendEmail: async (message: SendEmailOptions) => {
-    const binding = await getEmailBinding()
+    const binding = await getEmailBinding(NOTIFY_BINDING)
     if (!binding) {
       payload.logger.info({
         msg: '[email] no send_email binding (dev/CLI) — logging instead of sending',
@@ -202,4 +215,84 @@ export async function sendAanmeldingNotification({
   const { subject, text, html } = buildAanmeldingEmail(doc)
   const replyTo = doc.verwijzerEmail ? String(doc.verwijzerEmail) : undefined
   await payload.sendEmail({ to: EMAIL_TO, subject, text, html, ...(replyTo ? { replyTo } : {}) })
+}
+
+// ---------------------------------------------------------------------------
+// Aanmelding confirmation (to the submitter)
+// ---------------------------------------------------------------------------
+
+/**
+ * Confirmation email for the person who submitted the form (the verwijzer).
+ * Deliberately minimal — it must NOT echo the sensitive intake data (health,
+ * DSM, reason) back over email; it only acknowledges receipt.
+ */
+export function buildAanmeldingConfirmation(doc: AanmeldingDoc): {
+  subject: string
+  text: string
+  html: string
+} {
+  const naam = String(doc.verwijzerNaam ?? '').trim()
+  const client = String(doc.clientNaam ?? '').trim()
+  const greeting = naam ? `Beste ${naam},` : 'Beste,'
+  const voor = client ? ` voor ${client}` : ''
+  const subject = 'Bevestiging van uw aanmelding — Buro J.A.Z.Z.'
+
+  const text = `${greeting}
+
+We hebben uw aanmelding${voor} in goede orde ontvangen. We nemen zo spoedig mogelijk contact met u op.
+
+Heeft u vragen? U kunt deze e-mail beantwoorden.
+
+Met vriendelijke groet,
+Buro J.A.Z.Z.
+
+— Dit is een automatische bevestiging (aanmelding #${doc.id}). Reageren op deze e-mail komt bij ons team terecht.`
+
+  const html = `<!doctype html><html><body style="font-family:Arial,Helvetica,sans-serif;color:#291f09;line-height:1.6">
+    <h2 style="color:#51c2cc">Bedankt voor uw aanmelding</h2>
+    <p>${esc(greeting)}</p>
+    <p>We hebben uw aanmelding${esc(voor)} in goede orde ontvangen. We nemen zo spoedig mogelijk contact met u op.</p>
+    <p>Heeft u vragen? U kunt deze e-mail beantwoorden.</p>
+    <p>Met vriendelijke groet,<br><strong>Buro J.A.Z.Z.</strong></p>
+    <p style="font-size:12px;color:#8a8577;margin-top:20px">Dit is een automatische bevestiging (aanmelding #${esc(
+      doc.id,
+    )}). Reageren op deze e-mail komt bij ons team terecht.</p>
+  </body></html>`
+
+  return { subject, text, html }
+}
+
+/**
+ * Email the submitter a receipt confirmation. Sent FROM the Email-Sending
+ * subdomain (arbitrary recipient) via the CONFIRM_BINDING, with Reply-To set to
+ * the team so replies land where they're read. Throws are handled by the caller.
+ */
+export async function sendAanmeldingConfirmation({
+  payload,
+  doc,
+}: {
+  payload: Payload
+  doc: AanmeldingDoc
+}): Promise<void> {
+  const to = doc.verwijzerEmail ? String(doc.verwijzerEmail).trim() : ''
+  if (!to) return
+
+  const binding = await getEmailBinding(CONFIRM_BINDING)
+  const { subject, text, html } = buildAanmeldingConfirmation(doc)
+  if (!binding) {
+    payload.logger.info({
+      msg: '[email] no confirm send_email binding (dev/CLI) — logging instead of sending',
+      to,
+      subject,
+    })
+    return
+  }
+  await sendViaCloudflare(binding, {
+    to,
+    from: `Buro J.A.Z.Z. <${EMAIL_CONFIRM_FROM}>`,
+    subject,
+    text,
+    html,
+    replyTo: EMAIL_TO,
+  })
 }
