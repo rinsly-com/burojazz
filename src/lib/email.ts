@@ -59,7 +59,7 @@ async function sendViaCloudflare(
   const { EmailMessage } = (await import(
     /* webpackIgnore: true */ `${'cloudflare:_email'.replaceAll('_', '')}`
   )) as { EmailMessage: new (from: string, to: string, raw: string) => unknown }
-  const { createMimeMessage } = await import('mimetext')
+  const { createMimeMessage, Mailbox } = await import('mimetext')
 
   const to = String(Array.isArray(message.to) ? message.to[0] : (message.to ?? EMAIL_TO))
   const from = String(message.from ?? `${EMAIL_FROM_NAME} <${EMAIL_FROM}>`)
@@ -69,7 +69,9 @@ async function sendViaCloudflare(
   mime.setSender({ name: EMAIL_FROM_NAME, addr: fromAddr })
   mime.setRecipient(to)
   mime.setSubject(message.subject ?? '')
-  if (message.replyTo) mime.setHeader('Reply-To', String(message.replyTo))
+  // Reply-To must be a Mailbox instance — mimetext's address-header validator
+  // rejects a plain string/object outright ("header value is invalid").
+  if (message.replyTo) mime.setHeader('Reply-To', new Mailbox(String(message.replyTo)))
   if (message.text) mime.addMessage({ contentType: 'text/plain', data: String(message.text) })
   if (message.html) mime.addMessage({ contentType: 'text/html', data: String(message.html) })
   if (!message.text && !message.html) {
