@@ -2,9 +2,12 @@ import type { MetadataRoute } from 'next'
 
 import { SITE_NAME } from '@/lib/siteUrl'
 
-// Web app manifest — brand colours, install metadata, and icons. Static by
-// default, so it prerenders to /manifest.webmanifest in the export and Next
-// auto-links it from every page.
+// Web app manifest — brand colours, install metadata, and icons. Metadata
+// route handlers are not static-by-default under `output: export` (Next 16), so
+// force-static prerenders it to /manifest.webmanifest; Next auto-links it from
+// every page.
+export const dynamic = 'force-static'
+
 export default function manifest(): MetadataRoute.Manifest {
   return {
     name: 'Buro J.A.Z.Z. — jeugdzorg, advies, zorg en zekerheid',

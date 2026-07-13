@@ -5,6 +5,9 @@ import { ImageResponse } from 'next/og'
 // export; runs on next/og on the accp worker.
 export const size = { width: 180, height: 180 }
 export const contentType = 'image/png'
+// Image route handlers are not static-by-default under `output: export`
+// (Next 16); the icon is fixed, so force-static prerenders it to a PNG.
+export const dynamic = 'force-static'
 
 export default function AppleIcon() {
   return new ImageResponse(
