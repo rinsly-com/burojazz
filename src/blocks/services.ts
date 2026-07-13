@@ -1,6 +1,7 @@
 import type { Block } from 'payload'
 
 import { anchorField } from '../fields/anchor'
+import { iconField } from '../fields/icon'
 import { link } from '../fields/link'
 import { sectionHeader } from '../fields/sectionHeader'
 
@@ -40,6 +41,14 @@ export const servicesBlock: Block = {
           type: 'array',
           admin: { initCollapsed: true },
           fields: [
+            iconField({
+              name: 'icon',
+              label: { en: 'Card icon', nl: 'Kaarticoon' },
+              description: {
+                en: 'Icon shown in the white circle on the card. Leave empty for the default icon.',
+                nl: 'Icoon in de witte cirkel op de kaart. Laat leeg voor het standaardicoon.',
+              },
+            }),
             {
               name: 'number',
               label: { en: 'Number', nl: 'Nummer' },

@@ -226,7 +226,11 @@ export async function sendAanmeldingNotification({
  * Deliberately minimal — it must NOT echo the sensitive intake data (health,
  * DSM, reason) back over email; it only acknowledges receipt.
  */
-export function buildAanmeldingConfirmation(doc: AanmeldingDoc): {
+export function buildAanmeldingConfirmation(
+  doc: AanmeldingDoc,
+  /** Optional staff message from the CMS (aanmelding-instellingen global). */
+  extraMessage = '',
+): {
   subject: string
   text: string
   html: string
@@ -236,11 +240,12 @@ export function buildAanmeldingConfirmation(doc: AanmeldingDoc): {
   const greeting = naam ? `Beste ${naam},` : 'Beste,'
   const voor = client ? ` voor ${client}` : ''
   const subject = 'Bevestiging van uw aanmelding — Buro J.A.Z.Z.'
+  const message = extraMessage.trim()
 
   const text = `${greeting}
 
 We hebben uw aanmelding${voor} in goede orde ontvangen. We nemen zo spoedig mogelijk contact met u op.
-
+${message ? `\n${message}\n` : ''}
 Heeft u vragen? U kunt deze e-mail beantwoorden.
 
 Met vriendelijke groet,
@@ -252,6 +257,7 @@ Buro J.A.Z.Z.
     <h2 style="color:#51c2cc">Bedankt voor uw aanmelding</h2>
     <p>${esc(greeting)}</p>
     <p>We hebben uw aanmelding${esc(voor)} in goede orde ontvangen. We nemen zo spoedig mogelijk contact met u op.</p>
+    ${message ? `<p>${nl2(message)}</p>` : ''}
     <p>Heeft u vragen? U kunt deze e-mail beantwoorden.</p>
     <p>Met vriendelijke groet,<br><strong>Buro J.A.Z.Z.</strong></p>
     <p style="font-size:12px;color:#8a8577;margin-top:20px">Dit is een automatische bevestiging (aanmelding #${esc(
@@ -277,8 +283,27 @@ export async function sendAanmeldingConfirmation({
   const to = doc.verwijzerEmail ? String(doc.verwijzerEmail).trim() : ''
   if (!to) return
 
+  // Optional staff message from the CMS. Best-effort: if the global/table is not
+  // there yet (migration not applied) just send the standard acknowledgement.
+  let extraMessage = ''
+  try {
+    const settings = (await payload.findGlobal({
+      // Cast: the slug joins the typed GlobalSlug union only after `pnpm generate:types`.
+      slug: 'aanmelding-instellingen' as never,
+      overrideAccess: true,
+    })) as { bevestigingBericht?: string | null } | null
+    if (settings && typeof settings.bevestigingBericht === 'string') {
+      extraMessage = settings.bevestigingBericht
+    }
+  } catch (err) {
+    payload.logger.warn({
+      msg: '[email] could not read aanmelding-instellingen global',
+      err: err instanceof Error ? err.message : String(err),
+    })
+  }
+
   const binding = await getEmailBinding(CONFIRM_BINDING)
-  const { subject, text, html } = buildAanmeldingConfirmation(doc)
+  const { subject, text, html } = buildAanmeldingConfirmation(doc, extraMessage)
   if (!binding) {
     payload.logger.info({
       msg: '[email] no confirm send_email binding (dev/CLI) — logging instead of sending',

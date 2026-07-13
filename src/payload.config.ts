@@ -9,6 +9,7 @@ import { fileURLToPath } from 'url'
 import { type CloudflareContext, getCloudflareContext } from '@opennextjs/cloudflare'
 import type { GetPlatformProxyOptions } from 'wrangler'
 import { r2Storage } from '@payloadcms/storage-r2'
+import { seoPlugin } from '@payloadcms/plugin-seo'
 
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
@@ -17,6 +18,7 @@ import { Comments } from './collections/Comments'
 import { Aanmeldingen } from './collections/Aanmeldingen'
 import { Header } from './globals/Header'
 import { Footer } from './globals/Footer'
+import { AanmeldingInstellingen } from './globals/AanmeldingInstellingen'
 import { cloudflareEmailAdapter } from './lib/email'
 import { deployHandler } from './endpoints/deploy'
 
@@ -71,6 +73,45 @@ if (env.R2) {
   )
 }
 
+// SEO: adds a `meta` group (title / description / image) to Pages so editors
+// control per-page search + social metadata. `meta.image` is the manual
+// override for the generated OG image (see the frontend opengraph-image routes);
+// when it's empty the site falls back to the auto-generated branded card. Titles
+// and descriptions are Dutch — the customer is a Dutch jeugdzorg buro.
+plugins.push(
+  seoPlugin({
+    collections: ['pages'],
+    uploadsCollection: 'media',
+    tabbedUI: true,
+    generateTitle: ({ doc }: { doc?: { title?: string } }) =>
+      doc?.title ? `${doc.title} — Buro J.A.Z.Z.` : 'Buro J.A.Z.Z.',
+    generateDescription: ({ doc }: { doc?: { title?: string } }) =>
+      doc?.title
+        ? `${doc.title} — jeugdzorg, advies, zorg en zekerheid bij Buro J.A.Z.Z.`
+        : 'Buro J.A.Z.Z. — jeugdzorg, advies, zorg en zekerheid.',
+    // Append a per-page "hide from search engines" switch to the meta group.
+    // Honoured by buildPageMetadata (frontend) → robots noindex,nofollow. Lets
+    // editors keep utility pages (thank-you, etc.) out of the index.
+    fields: ({ defaultFields }) => [
+      ...defaultFields,
+      {
+        name: 'noindex',
+        type: 'checkbox',
+        label: {
+          en: 'Hide this page from search engines (noindex)',
+          nl: 'Deze pagina verbergen voor zoekmachines (noindex)',
+        },
+        admin: {
+          description: {
+            en: 'When on, search engines are asked not to index or follow this page.',
+            nl: 'Indien aan, wordt zoekmachines gevraagd deze pagina niet te indexeren of te volgen.',
+          },
+        },
+      },
+    ],
+  }),
+)
+
 // sharp is a native module (libvips) used by Payload to apply image crop/resize.
 // The Cloudflare Workers runtime can't load native addons, so load it only in
 // Node (local dev + the Payload CLI); on the Worker (accp) it stays undefined and
@@ -123,7 +164,7 @@ export default buildConfig({
     },
   },
   collections: [Users, Media, Pages, Comments, Aanmeldingen],
-  globals: [Header, Footer],
+  globals: [Header, Footer, AanmeldingInstellingen],
   // The customer is Dutch: default the admin panel to Dutch, but keep English
   // as a switchable secondary language. This translates Payload's built-in UI
   // (buttons, nav, columns, login, etc.); custom field labels are localized
