@@ -30,6 +30,13 @@ export const triggerDeploy = async (payload: Payload, reason: string): Promise<D
   }
   try {
     const res = await fetch(url, { method: 'POST' })
+    if (!res.ok) {
+      payload.logger.error(`[static-deploy] failed (${reason}) — deploy hook responded HTTP ${res.status}`)
+      return {
+        status: 'failed',
+        message: `Deploy hook responded HTTP ${res.status} — production was not rebuilt.`,
+      }
+    }
     payload.logger.info(`[static-deploy] triggered (${reason}) — HTTP ${res.status}`)
     return {
       status: 'triggered',
