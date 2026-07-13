@@ -15,6 +15,7 @@ import * as migration_20260712_134346_anchor_links from './20260712_134346_ancho
 import * as migration_20260713_161147_services_card_icon from './20260713_161147_services_card_icon';
 import * as migration_20260713_163446_seo_meta from './20260713_163446_seo_meta';
 import * as migration_20260713_172042_noindex_meta from './20260713_172042_noindex_meta';
+import * as migration_20260713_183112_aanmelding_instellingen from './20260713_183112_aanmelding_instellingen';
 
 export const migrations = [
   {
@@ -101,5 +102,10 @@ export const migrations = [
     up: migration_20260713_172042_noindex_meta.up,
     down: migration_20260713_172042_noindex_meta.down,
     name: '20260713_172042_noindex_meta',
+  },
+  {
+    up: migration_20260713_183112_aanmelding_instellingen.up,
+    down: migration_20260713_183112_aanmelding_instellingen.down,
+    name: '20260713_183112_aanmelding_instellingen'
   },
 ];
