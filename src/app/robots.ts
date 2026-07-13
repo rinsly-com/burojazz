@@ -8,6 +8,10 @@ import { absoluteUrl, SITE_URL } from '@/lib/siteUrl'
 // noindex robots meta the (frontend) layout emits on accp.
 const IS_STATIC_PROD = process.env.BUILD_STATIC === 'true'
 
+// Route handlers are not static-by-default under `output: export` (Next 16);
+// BUILD_STATIC is read at module load, so force-static is safe on both builds.
+export const dynamic = 'force-static'
+
 export default function robots(): MetadataRoute.Robots {
   if (!IS_STATIC_PROD) {
     return { rules: { userAgent: '*', disallow: '/' } }

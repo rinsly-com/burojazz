@@ -3,10 +3,13 @@ import type { MetadataRoute } from 'next'
 import { getRenderablePages } from '@/lib/pages'
 import { absoluteUrl } from '@/lib/siteUrl'
 
-// No `export const dynamic`: in the static export (BUILD_STATIC=true)
-// getRenderablePages reads the prebuilt snapshot — no headers(), so this
-// prerenders to a static /sitemap.xml. On the accp worker it fetches live and
-// renders dynamically (that surface is disallowed in robots.ts anyway).
+// Route handlers are not static-by-default under `output: export` (Next 16), so
+// force-static is required for the export. getRenderablePages reads the prebuilt
+// snapshot at build time (no headers()), so it prerenders cleanly to a static
+// /sitemap.xml. On the accp worker it renders once at build too — that surface
+// is disallowed in robots.ts anyway.
+export const dynamic = 'force-static'
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const pages = await getRenderablePages()
 
