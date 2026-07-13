@@ -1,7 +1,7 @@
 import type { CollectionConfig, PayloadRequest } from 'payload'
 
 import { authenticated, adminOnly } from '../access/roles'
-import { sendAanmeldingNotification } from '../lib/email'
+import { sendAanmeldingNotification, sendAanmeldingConfirmation } from '../lib/email'
 import {
   DSM_OPTIONS,
   PROBLEMATIEK_OPTIONS,
@@ -190,16 +190,25 @@ export const Aanmeldingen: CollectionConfig = {
   hooks: {
     afterChange: [
       async ({ doc, operation, req }) => {
-        if (operation === 'create') {
-          // Never let a mail failure roll back a stored submission.
-          try {
-            await sendAanmeldingNotification({ payload: req.payload, doc })
-          } catch (err) {
-            req.payload.logger.error({
-              msg: 'Aanmelding notification email failed',
-              err: err instanceof Error ? err.message : String(err),
-            })
-          }
+        if (operation !== 'create') return
+        // Never let a mail failure roll back a stored submission — each send is
+        // isolated so the confirmation still goes out if the team notice fails,
+        // and vice versa.
+        try {
+          await sendAanmeldingNotification({ payload: req.payload, doc })
+        } catch (err) {
+          req.payload.logger.error({
+            msg: 'Aanmelding notification email failed',
+            err: err instanceof Error ? err.message : String(err),
+          })
+        }
+        try {
+          await sendAanmeldingConfirmation({ payload: req.payload, doc })
+        } catch (err) {
+          req.payload.logger.error({
+            msg: 'Aanmelding confirmation email failed',
+            err: err instanceof Error ? err.message : String(err),
+          })
         }
       },
     ],

@@ -141,7 +141,8 @@ pnpm wrangler secret put CLOUDFLARE_DEPLOY_HOOK_URL --env accp
 | `NEXT_PUBLIC_PAYLOAD_API_URL`| prod build      | accp API origin the aanmelden form POSTs to (browser) |
 | `FRONTEND_URL`              | accp             | CORS/CSRF allow-list for the static site origin(s), comma-separated |
 | `AANMELDING_NOTIFY_TO`      | accp (optional)  | Team address that receives aanmelding emails (default `aanmeldingen@burojazz.com`) |
-| `EMAIL_FROM_ADDRESS`        | accp (optional)  | From address for outgoing mail (must be a burojazz.com address) |
+| `EMAIL_FROM_ADDRESS`        | accp (optional)  | From address for the team notification (must be a burojazz.com address) |
+| `EMAIL_CONFIRM_FROM_ADDRESS`| accp (optional)  | From address for the submitter confirmation (must be on the Email-Sending subdomain, default `aanmelding@noreply.burojazz.com`) |
 
 ### Media (R2 + Cloudflare Image Transformations)
 
@@ -196,7 +197,7 @@ no-JS fallback page. Requirements:
    `https://burojazz.com`) so the browser POST is allowed.
 2. **API origin** — set `NEXT_PUBLIC_PAYLOAD_API_URL` in the prod build to the
    accp origin. (In dev it's same-origin, so leave it unset.)
-3. **Email delivery — Cloudflare Email Routing** (see `src/lib/email.ts`):
+3. **Team notification — Cloudflare Email Routing** (see `src/lib/email.ts`):
    - Enable Email Routing on `burojazz.com`. ⚠ **This sets Cloudflare MX records
      and takes over inbound mail** — only do this if the domain does not already
      host mailboxes elsewhere, or use a subdomain.
@@ -205,6 +206,19 @@ no-JS fallback page. Requirements:
    - The `send_email` binding `AANMELDING_EMAIL` is declared in `wrangler.jsonc`
      (dev + accp); keep its `destination_address` in sync with the verified
      address. Outside the Worker (local dev/CLI) mail is logged, not sent.
+   - Because `destination_address` is pinned, this binding can send **only** to
+     the verified team address — it cannot email arbitrary users.
+4. **Submitter confirmation — Cloudflare Email Sending** (see `src/lib/email.ts`):
+   - A receipt confirmation goes back to the referrer (`verwijzerEmail`). That is
+     an arbitrary inbox, so it uses Email *Sending* (not Routing) from a dedicated
+     onboarded subdomain: `wrangler email sending enable noreply.burojazz.com`
+     (auto-adds SPF/DKIM/DMARC on the Cloudflare-managed zone).
+   - The `send_email` binding `AANMELDING_CONFIRM_EMAIL` has no
+     `destination_address` (any recipient) and `allowed_sender_addresses` pins the
+     From to `EMAIL_CONFIRM_FROM_ADDRESS` (`aanmelding@noreply.burojazz.com`).
+     Reply-To is set to the team address so replies are seen.
+   - The confirmation is intentionally minimal and never echoes the sensitive
+     intake data (health/DSM/reason) back over email.
 
 ## Manual commands
 
