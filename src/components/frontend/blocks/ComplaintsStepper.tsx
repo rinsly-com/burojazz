@@ -100,6 +100,9 @@ export function ComplaintsStepper({
   // Total snap slides = step cards + the optional contact card; lets a clicked
   // step map onto the full slide range (kept in sync inside the matchMedia).
   const slideCountRef = useRef(steps.length)
+  // Progress (0–1) of each card's snap point along the pinned scroll range.
+  // Interior values (never exactly 0 or 1) thanks to the RUNWAY buffers.
+  const snapPosRef = useRef<number[]>([])
 
   // `active` = which card is teal; `stepper` = whether the pinned enhancement is
   // live (drives the dimming of inactive cards + the moving pill). Defaults match
@@ -121,6 +124,12 @@ export function ComplaintsStepper({
         const track = trackRef.current!
         const count = cards.length
         slideCountRef.current = count
+        // One snap point per card, evenly spread across the pinned range: card 0
+        // at the pin start (progress 0), the last card at the release boundary
+        // (progress 1). No leading/trailing hold — scrolling in flows straight
+        // into the card movement so page momentum carries through the entry.
+        const snapPos = Array.from({ length: count }, (_, k) => k / (count - 1))
+        snapPosRef.current = snapPos
 
         // Enhanced (pinned) presentation — applied imperatively so the static
         // markup stays untouched for no-JS / reduced-motion.
@@ -150,9 +159,9 @@ export function ComplaintsStepper({
         }
         measure()
 
-        // One equal-duration segment per gap: this maps each snap point
-        // k/(count-1) to card k centred in the viewport, regardless of the cards'
-        // differing heights. Function-based y values are re-read on refresh
+        // One equal-duration segment per gap: this maps each snap point k/(count-1)
+        // to card k centred in the viewport, regardless of the cards' differing
+        // heights. Function-based y values are re-read on refresh
         // (invalidateOnRefresh) so the alignment survives layout changes.
         const trackTl = gsap.timeline({ defaults: { ease: 'none', duration: 1 } })
         for (let i = 1; i < count; i++) {
@@ -160,7 +169,16 @@ export function ComplaintsStepper({
         }
 
         const setActiveFromProgress = (progress: number) => {
-          const idx = Math.round(progress * (count - 1))
+          // Nearest snap point (the runway shifts card k off progress k/(count-1)).
+          let idx = 0
+          let best = Infinity
+          for (let k = 0; k < snapPos.length; k++) {
+            const d = Math.abs(progress - snapPos[k])
+            if (d < best) {
+              best = d
+              idx = k
+            }
+          }
           if (idx !== activeRef.current) {
             activeRef.current = idx
             setActive(idx)
@@ -180,11 +198,12 @@ export function ComplaintsStepper({
           animation: trackTl,
           invalidateOnRefresh: true,
           snap: {
-            snapTo: 1 / (count - 1),
-            // Snap to the NEAREST slide (not projected by scroll velocity), so a
-            // slide holds until you deliberately scroll past its halfway point —
-            // a flick past the last step no longer flies straight to the contact.
-            directional: false,
+            snapTo: snapPos,
+            // Project the snap in the direction of scroll velocity so your page
+            // momentum carries straight into the card stepping instead of being
+            // nullified on arrival — settling on the slide your scroll was headed
+            // for rather than hard-stopping at the nearest one.
+            directional: true,
             duration: { min: 0.25, max: 0.5 },
             delay: 0.08,
             ease: 'power2.inOut',
@@ -211,10 +230,11 @@ export function ComplaintsStepper({
 
   const goToStep = (i: number) => {
     const st = stRef.current
-    const n = slideCountRef.current
-    if (!st || n < 2) return
-    // Map the slide index (steps + contact card) onto the pinned scroll range.
-    const target = st.start + (i / (n - 1)) * (st.end - st.start)
+    const snapPos = snapPosRef.current
+    if (!st || slideCountRef.current < 2 || snapPos[i] == null) return
+    // Map the slide index (steps + contact card) onto its snap point within the
+    // pinned scroll range (runway-adjusted, matching snapTo).
+    const target = st.start + snapPos[i] * (st.end - st.start)
     gsap.to(window, { scrollTo: target, duration: 0.6, ease: 'power2.inOut' })
   }
 
