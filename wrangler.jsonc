@@ -58,7 +58,7 @@
   "send_email": [
     {
       "name": "AANMELDING_EMAIL",
-      "destination_address": "rinseschaeffer@gmail.com",
+      "destination_address": "aanmelden@burojazz.nl",
     },
     {
       "name": "AANMELDING_CONFIRM_EMAIL",
@@ -69,7 +69,7 @@
   // destination above) + the From addresses shown on outgoing mail. Swap to a
   // shared team mailbox once real @burojazz.com mailboxes exist.
   "vars": {
-    "AANMELDING_NOTIFY_TO": "rinseschaeffer@gmail.com",
+    "AANMELDING_NOTIFY_TO": "aanmelden@burojazz.nl",
     "EMAIL_FROM_ADDRESS": "aanmeldingen@burojazz.com",
     "EMAIL_CONFIRM_FROM_ADDRESS": "aanmelding@noreply.burojazz.com",
   },
