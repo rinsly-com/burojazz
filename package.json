@@ -5,7 +5,6 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "preinstall": "node scripts/ci-npmrc-auth.mjs",
     "build": "pnpm run generate:types:cloudflare && cross-env NODE_OPTIONS=\"--no-deprecation --max-old-space-size=8000\" next build",
     "build:static": "pnpm run generate:types:cloudflare && node scripts/build-static.mjs",
     "deploy": "pnpm run deploy:database && pnpm run deploy:app",
