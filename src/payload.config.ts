@@ -1,15 +1,8 @@
-import fs from 'fs'
 import path from 'path'
-import { sqliteD1Adapter } from '@payloadcms/db-d1-sqlite'
-import { lexicalEditor } from '@payloadcms/richtext-lexical'
-import { buildConfig, type Plugin } from 'payload'
-import { en } from '@payloadcms/translations/languages/en'
-import { nl } from '@payloadcms/translations/languages/nl'
 import { fileURLToPath } from 'url'
-import { type CloudflareContext, getCloudflareContext } from '@opennextjs/cloudflare'
-import type { GetPlatformProxyOptions } from 'wrangler'
-import { r2Storage } from '@payloadcms/storage-r2'
-import { seoPlugin } from '@payloadcms/plugin-seo'
+
+import { buildSiteConfig } from '@rinsly-com/site-core/config'
+import { siteConfig } from '@/site.config'
 
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
@@ -22,179 +15,30 @@ import { AanmeldingInstellingen } from './globals/AanmeldingInstellingen'
 import { cloudflareEmailAdapter } from './lib/email'
 import { deployHandler } from './endpoints/deploy'
 
-const filename = fileURLToPath(import.meta.url)
-const dirname = path.dirname(filename)
-const realpath = (value: string) => (fs.existsSync(value) ? fs.realpathSync(value) : undefined)
+const dirname = path.dirname(fileURLToPath(import.meta.url))
 
-// True when running the Payload CLI (e.g. `payload migrate`), where there is no
-// Workers runtime and bindings must come from wrangler's platform proxy instead.
-const isCLI = process.argv.some((value) => realpath(value)?.endsWith(path.join('payload', 'bin.js')))
-const isProduction = process.env.NODE_ENV === 'production'
-
-// Payload's default logger uses pino-pretty, which relies on Node APIs that are
-// not available in the Workers runtime. In production route logs through console.*.
-const createLog =
-  (level: string, fn: typeof console.log) => (objOrMsg: object | string, msg?: string) => {
-    if (typeof objOrMsg === 'string') {
-      fn(JSON.stringify({ level, msg: objOrMsg }))
-    } else {
-      fn(JSON.stringify({ level, ...objOrMsg, msg: msg ?? (objOrMsg as { msg?: string }).msg }))
-    }
-  }
-
-const cloudflareLogger = {
-  level: process.env.PAYLOAD_LOG_LEVEL || 'info',
-  trace: createLog('trace', console.debug),
-  debug: createLog('debug', console.debug),
-  info: createLog('info', console.log),
-  warn: createLog('warn', console.warn),
-  error: createLog('error', console.error),
-  fatal: createLog('fatal', console.error),
-  silent: () => {},
-} as any // Use PayloadLogger type when it's exported
-
-// In the Worker we read bindings from the live Cloudflare context. Locally and
-// under the CLI we spin up wrangler's platform proxy so the same config works.
-const cloudflare =
-  isCLI || !isProduction
-    ? await getCloudflareContextFromWrangler()
-    : await getCloudflareContext({ async: true })
-
-// R2 is prepared but optional: only wire the storage adapter when an R2 binding
-// actually exists. Without it, uploads fall back to the local filesystem in dev.
-const env = cloudflare.env as unknown as Record<string, unknown>
-const plugins: Plugin[] = []
-if (env.R2) {
-  plugins.push(
-    r2Storage({
-      bucket: env.R2 as never,
-      collections: { media: true },
-    }),
-  )
-}
-
-// SEO: adds a `meta` group (title / description / image) to Pages so editors
-// control per-page search + social metadata. `meta.image` is the manual
-// override for the generated OG image (see the frontend opengraph-image routes);
-// when it's empty the site falls back to the auto-generated branded card. Titles
-// and descriptions are Dutch — the customer is a Dutch jeugdzorg buro.
-plugins.push(
-  seoPlugin({
-    collections: ['pages'],
-    uploadsCollection: 'media',
-    tabbedUI: true,
-    generateTitle: ({ doc }: { doc?: { title?: string } }) =>
-      doc?.title ? `${doc.title} — Buro J.A.Z.Z.` : 'Buro J.A.Z.Z.',
-    generateDescription: ({ doc }: { doc?: { title?: string } }) =>
-      doc?.title
-        ? `${doc.title} — jeugdzorg, advies, zorg en zekerheid bij Buro J.A.Z.Z.`
-        : 'Buro J.A.Z.Z. — jeugdzorg, advies, zorg en zekerheid.',
-    // Append a per-page "hide from search engines" switch to the meta group.
-    // Honoured by buildPageMetadata (frontend) → robots noindex,nofollow. Lets
-    // editors keep utility pages (thank-you, etc.) out of the index.
-    fields: ({ defaultFields }) => [
-      ...defaultFields,
-      {
-        name: 'noindex',
-        type: 'checkbox',
-        label: {
-          en: 'Hide this page from search engines (noindex)',
-          nl: 'Deze pagina verbergen voor zoekmachines (noindex)',
-        },
-        admin: {
-          description: {
-            en: 'When on, search engines are asked not to index or follow this page.',
-            nl: 'Indien aan, wordt zoekmachines gevraagd deze pagina niet te indexeren of te volgen.',
-          },
-        },
-      },
-    ],
-  }),
-)
-
-// sharp is a native module (libvips) used by Payload to apply image crop/resize.
-// The Cloudflare Workers runtime can't load native addons, so load it only in
-// Node (local dev + the Payload CLI); on the Worker (accp) it stays undefined and
-// image processing is simply skipped. The specifier is obfuscated so the Worker
-// bundle never includes it — same guard used for the wrangler proxy above.
-const sharp =
-  isCLI || !isProduction
-    ? ((await import(/* webpackIgnore: true */ `${'__sharp'.replaceAll('_', '')}`)) as { default: unknown })
-        .default
-    : undefined
-
-// Origins allowed to call the API from a browser. The public production site is
-// a SEPARATE static deployment (burojazz-prod), so its origin must be allow-listed
-// for the "Direct aanmelden" form to POST cross-origin to this Payload worker.
-// Set FRONTEND_URL (comma-separated allowed) in the accp environment.
-const frontendOrigins = (process.env.FRONTEND_URL || 'https://burojazz.com')
-  .split(',')
-  .map((o) => o.trim())
-  .filter(Boolean)
-// The accp worker's OWN origin (where the admin panel is served) must be in the
-// csrf/cors lists, or Payload rejects the auth cookie on writes and every
-// mutation fails with "You are not allowed to perform this action" (reads are
-// public so viewing still works). Hardcoded because it must be present at
-// RUNTIME: PAYLOAD_API_URL is only a build-time var and is undefined in the
-// deployed worker, so it can't be relied on here. PAYLOAD_API_URL is still
-// included for environments where it IS set at runtime.
-const adminOrigins = ['https://accp.burojazz.com', (process.env.PAYLOAD_API_URL || '').trim()].filter(
-  Boolean,
-)
-const corsOrigins = Array.from(
-  new Set([...frontendOrigins, 'http://localhost:3000', ...adminOrigins]),
-)
-
-export default buildConfig({
-  sharp: sharp as never,
-  admin: {
-    user: Users.slug,
-    importMap: {
-      baseDir: path.resolve(dirname),
-    },
-    components: {
-      // Sidebar link + custom view for the manual production deploy button.
-      afterNavLinks: ['/components/DeployNavLink#DeployNavLink'],
-      views: {
-        deploy: {
-          Component: '/components/DeployView#DeployView',
-          path: '/deploy',
-        },
-      },
-    },
-  },
+/**
+ * Buro J.A.Z.Z. Payload config. The shared engine (@rinsly-com/site-core) provides
+ * the Cloudflare/D1/R2 plumbing, logger, sharp handling, SEO plugin and CORS; here
+ * we keep this site's OWN content model (single-language Dutch, editorial workflow,
+ * the aanmelding intake) plus its email adapter and the production Deploy button.
+ */
+export default buildSiteConfig({
+  siteConfig,
+  // This site owns its full content model (single-language, workflow, intake).
   collections: [Users, Media, Pages, Comments, Aanmeldingen],
   globals: [Header, Footer, AanmeldingInstellingen],
-  // The customer is Dutch: default the admin panel to Dutch, but keep English
-  // as a switchable secondary language. This translates Payload's built-in UI
-  // (buttons, nav, columns, login, etc.); custom field labels are localized
-  // in place via { en, nl } label objects on the collections/fields/blocks.
-  i18n: {
-    supportedLanguages: { nl, en },
-    fallbackLanguage: 'nl',
-  },
-  // POST /api/deploy — manual "rebuild production" trigger (see endpoints/deploy.ts).
-  endpoints: [{ path: '/deploy', method: 'post', handler: deployHandler }],
-  cors: corsOrigins,
-  csrf: corsOrigins,
+  localization: false, // content is Dutch-only (admin i18n nl/en stays on)
   email: cloudflareEmailAdapter,
-  editor: lexicalEditor(),
-  secret: process.env.PAYLOAD_SECRET || '',
-  typescript: {
-    outputFile: path.resolve(dirname, 'payload-types.ts'),
+  // POST /api/deploy — manual "rebuild production" trigger (endpoints/deploy.ts).
+  extraEndpoints: [{ path: '/deploy', method: 'post', handler: deployHandler }],
+  // Sidebar link + custom view for the manual production static deploy.
+  adminComponents: {
+    afterNavLinks: ['/components/DeployNavLink#DeployNavLink'],
+    views: {
+      deploy: { Component: '/components/DeployView#DeployView', path: '/deploy' },
+    },
   },
-  db: sqliteD1Adapter({ binding: cloudflare.env.D1 }),
-  logger: isProduction ? cloudflareLogger : undefined,
-  plugins,
+  importMapBaseDir: path.resolve(dirname),
+  typesOutputFile: path.resolve(dirname, 'payload-types.ts'),
 })
-
-// Adapted from https://github.com/opennextjs/opennextjs-cloudflare/blob/main/packages/cloudflare/src/api/cloudflare-context.ts
-function getCloudflareContextFromWrangler(): Promise<CloudflareContext> {
-  return import(/* webpackIgnore: true */ `${'__wrangler'.replaceAll('_', '')}`).then(
-    ({ getPlatformProxy }) =>
-      getPlatformProxy({
-        environment: process.env.CLOUDFLARE_ENV,
-        remoteBindings: isProduction,
-      } satisfies GetPlatformProxyOptions),
-  )
-}
