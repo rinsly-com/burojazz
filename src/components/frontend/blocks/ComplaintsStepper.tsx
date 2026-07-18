@@ -251,8 +251,14 @@ export function ComplaintsStepper({
               {steps.map((step, i) => {
                 const isActive = i === active
                 const dimmed = stepper && !isActive
+                // In stepper mode the card is an interactive control, so render a
+                // generic <div role="button"> — putting role="button" on <article>
+                // overrides its implicit article role, which malforms the a11y
+                // tree (fails Lighthouse's agentic-browsing audit). Static mode
+                // keeps the <article> semantics.
+                const Card = stepper ? 'div' : 'article'
                 return (
-                  <article
+                  <Card
                     key={step.key}
                     ref={(el) => {
                       cardRefs.current[i] = el
@@ -338,7 +344,7 @@ export function ComplaintsStepper({
                         <CurvedArrow flipped={i % 2 === 1} />
                       </div>
                     )}
-                  </article>
+                  </Card>
                 )
               })}
 
