@@ -1,6 +1,7 @@
 import { Button } from '@/components/frontend/ui/Button'
 import { Buttons } from '@/components/frontend/ui/CMSLink'
-import { mediaUrl } from '@/components/frontend/ui/Media'
+import { mediaUrl, resolveMedia } from '@/components/frontend/ui/Media'
+import { cfImageSrcSet } from '@/lib/image'
 import type { Page } from '@/payload-types'
 
 type Props = Extract<NonNullable<Page['layout']>[number], { blockType: 'hero' }>
@@ -22,6 +23,10 @@ export function Hero(props: Props) {
     props.header?.intro ??
     'Wij bieden ambulante jeugdhulp en jeugdhulp met verblijf, gericht op behandeling en begeleiding.'
   const imageUrl = mediaUrl(props.image, { width: 1600 }) ?? DEFAULT_IMAGE
+  // Responsive srcset for the mobile hero photo (the mobile LCP element) so
+  // phones fetch a viewport-sized variant instead of the fixed 1600px desktop
+  // image. Only CMS media can be transformed; the /public fallback has none.
+  const mobileImageSrcSet = cfImageSrcSet(resolveMedia(props.image)?.url ?? '')
 
   return (
     <section className="relative overflow-hidden bg-white">
@@ -35,6 +40,7 @@ export function Hero(props: Props) {
         <img
           src="/images/header-hero/blob-ellipse.svg"
           alt=""
+          loading="lazy"
           className="absolute left-[-452px] top-[266px] size-[1020px] max-w-none"
         />
         {/* Giant rotated white rounded rect with soft shadow (the diagonal white plane) */}
@@ -47,10 +53,16 @@ export function Hero(props: Props) {
             stays horizontal and fills the frame instead of being cropped askew. */}
         <div className="absolute left-[818px] top-[-168px] flex h-[1616px] w-[1581px] items-center justify-center">
           <div className="relative h-[1217px] w-[1122px] shrink-0 rotate-[-30deg] overflow-hidden rounded-photo">
+            {/* Desktop LCP photo. loading=lazy so mobile (where this whole
+                composition is display:none) never fetches this 1600px variant;
+                on desktop it's in the initial viewport, so it still loads —
+                with fetchpriority=high to win the race there. */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={imageUrl}
               alt=""
+              loading="lazy"
+              fetchPriority="high"
               className="absolute left-1/2 top-1/2 h-[1616px] w-[1581px] max-w-none -translate-x-1/2 -translate-y-1/2 rotate-[30deg] object-cover"
             />
             <div className="absolute inset-0 bg-black/[0.03]" />
@@ -87,11 +99,17 @@ export function Hero(props: Props) {
             </div>
           )}
 
-          {/* Mobile/tablet photo (replaces the rotated desktop composition) */}
+          {/* Mobile/tablet photo (replaces the rotated desktop composition).
+              This is the mobile LCP element, so it loads eagerly with
+              fetchpriority=high and a viewport-sized srcset. */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={imageUrl}
+            srcSet={mobileImageSrcSet}
+            sizes={mobileImageSrcSet ? '(min-width: 768px) 704px, 100vw' : undefined}
             alt={IMAGE_ALT}
+            loading="eager"
+            fetchPriority="high"
             className="aspect-[4/3] w-full rounded-[40px] object-cover xl:hidden"
           />
         </div>

@@ -46,6 +46,14 @@ type MediaProps = {
    * over-fetch. Only affects CMS media, not `fallbackSrc`.
    */
   sizes?: string
+  /**
+   * Mark this as an above-the-fold / LCP image: load it eagerly with
+   * `fetchpriority=high` so the browser fetches it ahead of everything else.
+   * Every other <Media> defaults to `loading=lazy`, so off-screen images don't
+   * compete for bandwidth with the hero on slow connections. Set this on at
+   * most one or two images per page (the largest thing in the first viewport).
+   */
+  priority?: boolean
 }
 
 /**
@@ -71,6 +79,7 @@ export function Media({
   style,
   fallbackSrc,
   sizes = '100vw',
+  priority = false,
 }: MediaProps) {
   const media = resolveMedia(resource)
   const rawSrc = media?.url ?? fallbackSrc
@@ -95,6 +104,8 @@ export function Media({
       sizes={srcSet ? sizes : undefined}
       alt={alt ?? media?.alt ?? ''}
       className={className}
+      loading={priority ? 'eager' : 'lazy'}
+      fetchPriority={priority ? 'high' : undefined}
       style={{ objectFit: fit, objectPosition: `${x}% ${y}%`, ...style }}
     />
   )
