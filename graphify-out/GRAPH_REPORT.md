@@ -1,7 +1,7 @@
 # Graph Report - burojazz  (2026-07-23)
 
 ## Corpus Check
-- 159 files · ~695,467 words
+- 159 files · ~695,558 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `5f784288`
+- Built from commit: `06485d6a`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -126,11 +126,11 @@ Nodes (16): Media, Pages, GET, OPTIONS, POST, adminOrigins, cloudflareLogger, co
 
 ### Community 7 - "Payload REST Catch-all Route"
 Cohesion: 0.13
-Nodes (22): ContactPersons(), DEFAULT_PEOPLE, OBJECT_POSITION, PersonCard(), PHOTOS, Props, Hero(), Props (+14 more)
+Nodes (23): Props, uploadUrl(), CardData, DEFAULT_CARDS, DEFAULT_TABS, Props, ServiceCard(), Services() (+15 more)
 
 ### Community 8 - "Static Deploy Architecture"
-Cohesion: 0.11
-Nodes (23): CardData, DEFAULT_CARDS, DEFAULT_TABS, Props, ServiceCard(), Services(), CardData, ServiceCard() (+15 more)
+Cohesion: 0.13
+Nodes (19): About(), Props, Accordion(), Props, ALIGN, ButtonRow(), Props, Props (+11 more)
 
 ### Community 9 - "Static Build Script"
 Cohesion: 0.12
@@ -145,36 +145,36 @@ Cohesion: 0.15
 Nodes (20): critical, dirname, Finding, findings, result, schema, applyStatement(), diffSchemas() (+12 more)
 
 ### Community 12 - "Next.js Config"
+Cohesion: 0.16
+Nodes (18): Hero(), InstagramPhone(), Post, SCREEN, Props, Social(), Photos, SocialParallax() (+10 more)
+
+### Community 13 - "Static Export Mode"
 Cohesion: 0.09
 Nodes (22): 1. Authenticate wrangler (interactive — run yourself), 2. Create the accp D1 database, 3. Create migrations, 4. Cloudflare Workers Build — accp (code deploy), 5. Create the production Deploy Hook + static build, 6. Wire the deploy hook into accp, code:block1 (push to main ───► Workers Build ───► deploy accp (Payload + ), code:bash (pnpm wrangler login) (+14 more)
 
-### Community 13 - "Static Export Mode"
-Cohesion: 0.17
-Nodes (13): About(), Props, ALIGN, ButtonRow(), Props, Complaints(), CoreValues(), Vacancies() (+5 more)
-
 ### Community 14 - "Frontend Root Layout"
-Cohesion: 0.15
-Nodes (13): Accordion(), Props, Props, RichTextBlock(), DEFAULT_ITEM_ICONS, DEFAULT_ITEMS, Props, VisionMission() (+5 more)
-
-### Community 15 - "ESLint Config"
 Cohesion: 0.18
 Nodes (12): adminFieldOnly(), adminOnly(), authenticated(), hasRole(), isAdmin(), isAuthenticated(), reviewerOnly(), Role (+4 more)
 
-### Community 16 - "Frontend E2E Test"
+### Community 15 - "ESLint Config"
 Cohesion: 0.16
 Nodes (12): CONTACT_PEOPLE, CORE_VALUE_ICONS, footerData, headerData(), Layout, PayloadInstance, repairOrphanedVersions(), run() (+4 more)
+
+### Community 16 - "Frontend E2E Test"
+Cohesion: 0.15
+Nodes (11): Complaints(), ContactCard(), FALLBACK_STEPS, PillData, Props, uploadUrl(), ComplaintsStepper(), Props (+3 more)
 
 ### Community 17 - "Authenticated Access"
 Cohesion: 0.13
 Nodes (12): adapterRequire, assertAfter, dangling, db, dirname, { drizzle }, migrationsDir, notNull (+4 more)
 
 ### Community 18 - "Vitest Setup"
-Cohesion: 0.18
-Nodes (10): FALLBACK_VALUES, ICONS, IconSpec, isHighlight(), normalize(), Props, SLOTS, ValueChip() (+2 more)
+Cohesion: 0.16
+Nodes (11): CoreValues(), FALLBACK_VALUES, ICONS, IconSpec, isHighlight(), normalize(), Props, SLOTS (+3 more)
 
 ### Community 19 - "Next Env Types"
-Cohesion: 0.18
-Nodes (9): ContactCard(), FALLBACK_STEPS, PillData, Props, uploadUrl(), ComplaintsStepper(), Props, Step (+1 more)
+Cohesion: 0.15
+Nodes (11): ContactPersons(), DEFAULT_PEOPLE, OBJECT_POSITION, PersonCard(), PHOTOS, Props, Icon(), IconProps (+3 more)
 
 ### Community 20 - "Playwright Config"
 Cohesion: 0.17
@@ -185,28 +185,28 @@ Cohesion: 0.19
 Nodes (13): CommentsPanel, Role model (author/reviewer/admin), Editorial state machine (Draft/Review/Ready/Published), enforceWorkflow, ReviewPanel, adminFieldOnly access helper, adminOnly access helper, hasRole (+5 more)
 
 ### Community 22 - "My-Route Handler"
-Cohesion: 0.21
-Nodes (9): InstagramPhone(), Post, SCREEN, Props, Icon(), IconProps, icons, resolve() (+1 more)
-
-### Community 23 - "Community 23"
 Cohesion: 0.17
 Nodes (11): 1. Instagram account, 2. Meta app + token, 3. Provision Cloudflare (accp worker), 4. Enable it in the CMS, code:bash (# a. create the KV namespace, then paste the returned id int), code:bash (curl https://accp.burojazz.com/api/instagram/latest), How it works, Instagram "latest post" integration (+3 more)
 
-### Community 24 - "Community 24"
+### Community 23 - "Community 23"
 Cohesion: 0.25
 Nodes (8): dashboardArtifact, editViewArtifact, listViewArtifact, login(), LoginOptions, cleanupTestUser(), seedTestUser(), testUser
 
-### Community 25 - "Community 25"
+### Community 24 - "Community 24"
 Cohesion: 0.29
 Nodes (9): instagramLatestHandler(), getKV(), getLatestInstagramPost(), getToken(), InstagramPost, KVNamespace, maybeRefreshToken(), MediaNode (+1 more)
 
-### Community 26 - "Community 26"
+### Community 25 - "Community 25"
 Cohesion: 0.18
 Nodes (10): Clone, Collections, Development, Docker, Docker (Optional), How it works, Payload Blank Template, Questions (+2 more)
 
-### Community 27 - "Community 27"
+### Community 26 - "Community 26"
 Cohesion: 0.22
 Nodes (7): code:sql (INSERT INTO `__new_header_nav_items`("_order", "_parent_id",), Expected, Local mitigation (this repo), Reproduction, Summary, Upstream bug report draft: `migrate:create` generates a data-corrupting copy statement (SQLite/D1), Why this is severe
+
+### Community 28 - "Community 28"
+Cohesion: 0.29
+Nodes (6): DEFAULT_ITEM_ICONS, DEFAULT_ITEMS, Props, VisionMission(), AccordionItem, VisionMissionAccordion()
 
 ### Community 29 - "Community 29"
 Cohesion: 0.25
