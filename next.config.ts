@@ -13,6 +13,9 @@ const dirname = path.dirname(__filename)
 const isStatic = process.env.BUILD_STATIC === 'true'
 
 const nextConfig: NextConfig = {
+  // The shared engine (@rinsly-com/site-core, used by payload.config) ships as
+  // TypeScript source; Next must transpile it.
+  transpilePackages: ['@rinsly-com/site-core'],
   images: {
     // Static export cannot use the Next image optimizer.
     unoptimized: isStatic,
