@@ -1,6 +1,7 @@
 import Link from 'next/link'
 
 import type { Page } from '@/payload-types'
+import { InstagramPhone } from '@/components/frontend/blocks/InstagramPhone'
 import { SocialParallax } from '@/components/frontend/blocks/SocialParallax'
 import { ArrowIcon } from '@/components/frontend/ui/ArrowIcon'
 import { hrefFor } from '@/components/frontend/ui/CMSLink'
@@ -60,15 +61,13 @@ export function Social(props: Props) {
               callout), with scroll parallax */}
           <SocialParallax photos={props.photos} />
 
-          {/* Phone in hand (cropped like the design frame) */}
-          <div className="relative mx-auto aspect-[762/694] w-full max-w-[560px] overflow-hidden md:max-w-[762px]">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={mediaUrl(props.photos?.phone, { width: 1200 }) ?? '/images/social/phone-hand.png'}
-              alt={`Telefoon met de Instagram-feed van ${handle}`}
-              className="absolute left-[-33.4%] top-[-34.15%] h-[146.41%] w-[166.8%] max-w-none"
-            />
-          </div>
+          {/* Phone in hand (cropped like the design frame). When "live" is on,
+              InstagramPhone overlays the most recent post on the screen. */}
+          <InstagramPhone
+            phoneSrc={mediaUrl(props.photos?.phone, { width: 1200 }) ?? '/images/social/phone-hand.png'}
+            live={props.instagramLive ?? false}
+            handle={handle}
+          />
 
           {/* Fade the bottom of the collage into the section background. */}
           <div

@@ -16,8 +16,8 @@
     "hash": "ad09c8b0b726ea71437f8e0cfdf5d128"
   },
   "/home/rinseyaron/projects/burojazz/cloudflare-env.d.ts": {
-    "mtime": 1783968918.5020974,
-    "hash": "24d6536bbdbfb045531a4eada450a49c"
+    "mtime": 1784830872.2589037,
+    "hash": "20a628c14165d98ee6a59b38e7d699c2"
   },
   "/home/rinseyaron/projects/burojazz/next.config.ts": {
     "mtime": 1784395417.4945223,
@@ -84,12 +84,12 @@
     "hash": "0242de58525d863cf56dd5d45ad6ea24"
   },
   "/home/rinseyaron/projects/burojazz/src/payload.config.ts": {
-    "mtime": 1784394351.641107,
-    "hash": "2772c1b1f42b570d6fd3ef5b4e827c0e"
+    "mtime": 1784830640.581537,
+    "hash": "5f073d4438688a3ef7c966d18c662976"
   },
   "/home/rinseyaron/projects/burojazz/src/payload-types.ts": {
-    "mtime": 1784830037.1489286,
-    "hash": "7524c2a14d514d2568c627ab19896361"
+    "mtime": 1784830787.8495843,
+    "hash": "58a0d2bbd61c7fdd8a7f6c18fd8f6768"
   },
   "/home/rinseyaron/projects/burojazz/src/globals/Footer.ts": {
     "mtime": 1784829981.9634066,
@@ -130,6 +130,10 @@
   "/home/rinseyaron/projects/burojazz/src/lib/structuredData.ts": {
     "mtime": 1783967016.0,
     "hash": "4f863c0387f6d513851e0cc6b689df2e"
+  },
+  "/home/rinseyaron/projects/burojazz/src/lib/instagram.ts": {
+    "mtime": 1784830621.8660226,
+    "hash": "342bb349fe645a58349eeae355dee7d5"
   },
   "/home/rinseyaron/projects/burojazz/src/lib/og.tsx": {
     "mtime": 1783967016.0,
@@ -216,8 +220,8 @@
     "hash": "d0175dbc120311bc0061c6562cfb855c"
   },
   "/home/rinseyaron/projects/burojazz/src/blocks/social.ts": {
-    "mtime": 1783884590.0,
-    "hash": "e9e33609f16445d2b52cfbda2ec7b0b1"
+    "mtime": 1784830649.1337721,
+    "hash": "d4700066a8bd0182332500a9c5a04efd"
   },
   "/home/rinseyaron/projects/burojazz/src/app/manifest.ts": {
     "mtime": 1784374940.8502245,
@@ -332,8 +336,8 @@
     "hash": "7c9049e4b573eda08994f65061537cdf"
   },
   "/home/rinseyaron/projects/burojazz/src/migrations/index.ts": {
-    "mtime": 1784830061.3815968,
-    "hash": "5f72db429e4dfd59be4090340c4705a4"
+    "mtime": 1784830795.910806,
+    "hash": "617def4417751612e7e4606b846e40a7"
   },
   "/home/rinseyaron/projects/burojazz/src/migrations/20260709_180930_initial.ts": {
     "mtime": 1783777405.9575095,
@@ -390,6 +394,10 @@
   "/home/rinseyaron/projects/burojazz/src/migrations/20260711_161451_contact_person_fields.ts": {
     "mtime": 1783786491.8332481,
     "hash": "224b5641f2a246dd34601644a8980d63"
+  },
+  "/home/rinseyaron/projects/burojazz/src/migrations/20260723_181955_social_instagram_live.ts": {
+    "mtime": 1784830795.909806,
+    "hash": "9155c46831a514b8b60535fd72431a92"
   },
   "/home/rinseyaron/projects/burojazz/src/migrations/20260712_134346_anchor_links.ts": {
     "mtime": 1783863826.194751,
@@ -480,8 +488,8 @@
     "hash": "d3bdc5ca37852d0e747cbb6160a27a68"
   },
   "/home/rinseyaron/projects/burojazz/src/components/frontend/blocks/Social.tsx": {
-    "mtime": 1783876698.0,
-    "hash": "19fc4cc5b6499a3b4ab13d9677d8a56c"
+    "mtime": 1784830765.1489606,
+    "hash": "74474c876d45e592547785fc2e5bd986"
   },
   "/home/rinseyaron/projects/burojazz/src/components/frontend/blocks/RichTextBlock.tsx": {
     "mtime": 1783777405.0,
@@ -494,6 +502,10 @@
   "/home/rinseyaron/projects/burojazz/src/components/frontend/blocks/VisionMissionAccordion.tsx": {
     "mtime": 1783785277.0,
     "hash": "8bfaa5118708a06a4a8d227765b4bbb8"
+  },
+  "/home/rinseyaron/projects/burojazz/src/components/frontend/blocks/InstagramPhone.tsx": {
+    "mtime": 1784830821.8175178,
+    "hash": "620b9aac4dce2620fa287005166147d4"
   },
   "/home/rinseyaron/projects/burojazz/src/components/frontend/blocks/Accordion.tsx": {
     "mtime": 1783777405.0,
@@ -575,6 +587,10 @@
     "mtime": 1783877608.0,
     "hash": "05dd7f7edeca813a208fb7ddffd93066"
   },
+  "/home/rinseyaron/projects/burojazz/src/endpoints/instagram.ts": {
+    "mtime": 1784830630.1552505,
+    "hash": "cf6397f472e1a0bc88820a07449b3a92"
+  },
   "/home/rinseyaron/projects/burojazz/README.md": {
     "mtime": 1783775209.0,
     "hash": "7203e7bebfd2f9a538dc85050f82649b"
@@ -590,6 +606,10 @@
   "/home/rinseyaron/projects/burojazz/docker-compose.yml": {
     "mtime": 1783775209.0,
     "hash": "72493b4c4c757098f0d9cc5d61a4388d"
+  },
+  "/home/rinseyaron/projects/burojazz/docs/INSTAGRAM.md": {
+    "mtime": 1784830898.6076276,
+    "hash": "090f22331d09003d009bb7eeef59309a"
   },
   "/home/rinseyaron/projects/burojazz/docs/upstream-migration-generator-bug.md": {
     "mtime": 1783781382.0,

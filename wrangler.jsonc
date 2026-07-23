@@ -85,4 +85,17 @@
   "r2_buckets": [
     { "binding": "R2", "bucket_name": "burojazz-accp" },
   ],
+  // Instagram "latest post" integration (src/lib/instagram.ts). Stores the
+  // refreshable long-lived access token + the cached latest post so we don't
+  // call the Graph API on every visitor. Until this is provisioned the social
+  // block falls back to the static phone mockup.
+  //
+  // SETUP (one-time — see docs/INSTAGRAM.md):
+  //   1. wrangler kv namespace create INSTAGRAM_KV   → paste the returned id below
+  //   2. seed the token once the Meta app is authorized:
+  //      wrangler kv key put --binding=INSTAGRAM_KV "ig:token" "<long-lived-token>" --remote
+  //   (Alternatively set an INSTAGRAM_ACCESS_TOKEN secret; KV takes precedence.)
+  "kv_namespaces": [
+    { "binding": "INSTAGRAM_KV", "id": "REPLACE_WITH_KV_NAMESPACE_ID" },
+  ],
 }

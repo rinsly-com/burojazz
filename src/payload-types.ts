@@ -674,6 +674,10 @@ export interface SocialBlock {
     newTab?: boolean | null;
   };
   /**
+   * Show the most recent Instagram post on the phone screen (requires the Instagram integration). When off, the "Phone in hand" image below is shown as-is.
+   */
+  instagramLive?: boolean | null;
+  /**
    * The photos in the collage, by position. Leave a slot empty to use the default photo.
    */
   photos?: {
@@ -1360,6 +1364,7 @@ export interface SocialBlockSelect<T extends boolean = true> {
         anchor?: T;
         newTab?: T;
       };
+  instagramLive?: T;
   photos?:
     | T
     | {

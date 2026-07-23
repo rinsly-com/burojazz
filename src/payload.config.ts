@@ -14,6 +14,7 @@ import { Footer } from './globals/Footer'
 import { AanmeldingInstellingen } from './globals/AanmeldingInstellingen'
 import { cloudflareEmailAdapter } from './lib/email'
 import { deployHandler } from './endpoints/deploy'
+import { instagramLatestHandler } from './endpoints/instagram'
 
 const dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -31,7 +32,11 @@ export default buildSiteConfig({
   localization: false, // content is Dutch-only (admin i18n nl/en stays on)
   email: cloudflareEmailAdapter,
   // POST /api/deploy — manual "rebuild production" trigger (endpoints/deploy.ts).
-  extraEndpoints: [{ path: '/deploy', method: 'post', handler: deployHandler }],
+  // GET /api/instagram/latest — latest @buro.jazz post for the social block.
+  extraEndpoints: [
+    { path: '/deploy', method: 'post', handler: deployHandler },
+    { path: '/instagram/latest', method: 'get', handler: instagramLatestHandler },
+  ],
   // Sidebar link + custom view for the manual production static deploy.
   adminComponents: {
     afterNavLinks: ['/components/DeployNavLink#DeployNavLink'],
