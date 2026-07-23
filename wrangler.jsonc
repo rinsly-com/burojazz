@@ -23,14 +23,10 @@
     // https://developers.cloudflare.com/workers/configuration/compatibility-flags/#global-fetch-strictly-public
     "global_fetch_strictly_public",
   ],
-  // Custom domain for the accp CMS. Cloudflare manages the DNS + cert for this
-  // hostname and routes it to this worker.
-  "routes": [
-    {
-      "pattern": "accp.burojazz.com",
-      "custom_domain": true,
-    },
-  ],
+  // Custom domain (accp.burojazz.com) is attached to this worker in the
+  // Cloudflare dashboard (Worker → Settings → Domains & Routes), NOT here — so CI
+  // deploys with an account-scoped token don't need zone (Workers Routes) perms.
+  // wrangler deploy only updates the worker script; the domain binding persists.
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS",
