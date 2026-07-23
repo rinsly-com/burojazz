@@ -19,9 +19,16 @@ export const siteConfig = {
       en: 'Buro J.A.Z.Z. — youth care, advice, care and certainty.',
     } as Localized,
   },
-  // The accp (CMS/admin) origin must be allow-listed so the static production
-  // site can POST the "Direct aanmelden" form cross-origin to the accp worker.
-  extraOrigins: ['https://accp.burojazz.com'] as string[],
+  // Origins allowed to call the accp worker's API cross-origin (CORS/CSRF) —
+  // chiefly the public static site POSTing the "Direct aanmelden" form. The
+  // live site is served from burojazz.nl (burojazz.com 301-redirects there), so
+  // both apex and www must be listed; `url` (burojazz.com) is added implicitly,
+  // and the accp origin itself is listed for admin-side requests.
+  extraOrigins: [
+    'https://burojazz.nl',
+    'https://www.burojazz.nl',
+    'https://accp.burojazz.com',
+  ] as string[],
 } as const
 
 export type SiteConfig = typeof siteConfig
