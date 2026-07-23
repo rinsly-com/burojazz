@@ -40,7 +40,8 @@ professional account*.
 ### 3. Provision Cloudflare (accp worker)
 ```bash
 # a. create the KV namespace, then paste the returned id into wrangler.jsonc
-#    (replace REPLACE_WITH_KV_NAMESPACE_ID)
+#    AND uncomment the kv_namespaces block (it ships disabled so deploys don't
+#    fail on a missing namespace)
 wrangler kv namespace create INSTAGRAM_KV
 
 # b. seed the long-lived token (KV takes precedence over the env secret)
