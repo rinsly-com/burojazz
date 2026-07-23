@@ -68,6 +68,10 @@
     "AANMELDING_NOTIFY_TO": "aanmelden@burojazz.nl",
     "EMAIL_FROM_ADDRESS": "aanmeldingen@burojazz.com",
     "EMAIL_CONFIRM_FROM_ADDRESS": "aanmelding@noreply.burojazz.com",
+    // GitHub repository_dispatch endpoint the CMS "Deploy" button POSTs to (see
+    // src/hooks/triggerStaticDeploy.ts). Non-secret. The paired
+    // DEPLOY_DISPATCH_TOKEN is a Worker SECRET (never stored here).
+    "DEPLOY_DISPATCH_URL": "https://api.github.com/repos/rinsly-com/burojazz/dispatches",
   },
   // Media storage. Originals are stored in R2 and served by this worker at
   // /api/media/file/<filename>; payload.config.ts activates the R2 storage
