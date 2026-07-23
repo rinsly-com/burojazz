@@ -532,6 +532,11 @@ const footerData = {
     { label: 'Cookies', url: '/cookies' },
     { label: 'Certificaat', url: '/certificaat' },
   ],
+  socials: [
+    { platform: 'instagram' as const, url: 'https://www.instagram.com/' },
+    { platform: 'linkedin' as const, url: 'https://www.linkedin.com/' },
+    { platform: 'facebook' as const, url: 'https://www.facebook.com/' },
+  ],
   copyright: 'Copyright © Buro J.A.Z.Z. 2026 –– Alle rechten voorbehouden.',
 }
 

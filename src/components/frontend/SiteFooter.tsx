@@ -28,10 +28,21 @@ const FALLBACK_INFO: LinkItem[] = [
   { label: 'Certificaat', url: '/certificaat' },
 ]
 
-const SOCIALS = [
-  { name: 'Instagram', href: 'https://www.instagram.com/', icon: '/images/footer/social-1.svg' },
-  { name: 'LinkedIn', href: 'https://www.linkedin.com/', icon: '/images/footer/social-2.svg' },
-  { name: 'Facebook', href: 'https://www.facebook.com/', icon: '/images/footer/social-3.svg' },
+/** Icon + display name per platform. The CMS stores only the platform + URL;
+ *  the icon follows the platform so editors never manage icon assets. */
+const SOCIAL_PLATFORMS = {
+  instagram: { name: 'Instagram', icon: '/images/footer/social-1.svg' },
+  linkedin: { name: 'LinkedIn', icon: '/images/footer/social-2.svg' },
+  facebook: { name: 'Facebook', icon: '/images/footer/social-3.svg' },
+} as const
+
+type SocialItem = { name: string; href: string; icon: string }
+
+/** Shown when the Footer global has no socials configured yet. */
+const FALLBACK_SOCIALS: SocialItem[] = [
+  { name: 'Instagram', href: 'https://www.instagram.com/', icon: SOCIAL_PLATFORMS.instagram.icon },
+  { name: 'LinkedIn', href: 'https://www.linkedin.com/', icon: SOCIAL_PLATFORMS.linkedin.icon },
+  { name: 'Facebook', href: 'https://www.facebook.com/', icon: SOCIAL_PLATFORMS.facebook.icon },
 ]
 
 function FooterLink({ item }: { item: LinkItem }) {
@@ -77,6 +88,13 @@ export function SiteFooter({ footer }: Props) {
   const infoLinks = footer?.infoLinks?.length ? footer.infoLinks : FALLBACK_INFO
   const copyright =
     footer?.copyright ?? 'Copyright © Buro J.A.Z.Z. 2026 –– Alle rechten voorbehouden.'
+  const socials: SocialItem[] = footer?.socials?.length
+    ? footer.socials.flatMap((s) => {
+        const platform = s.platform ? SOCIAL_PLATFORMS[s.platform] : undefined
+        if (!platform || !s.url) return []
+        return [{ name: platform.name, href: s.url, icon: platform.icon }]
+      })
+    : FALLBACK_SOCIALS
 
   return (
     <footer className="overflow-hidden bg-brand text-white">
@@ -172,10 +190,12 @@ export function SiteFooter({ footer }: Props) {
 
           {/* Social icons */}
           <div className="flex items-center gap-3">
-            {SOCIALS.map((social) => (
+            {socials.map((social) => (
               <a
                 key={social.name}
                 href={social.href}
+                target="_blank"
+                rel="noopener noreferrer"
                 aria-label={social.name}
                 className="flex size-12 items-center justify-center rounded-full bg-white/20 transition-colors hover:bg-white/30"
               >

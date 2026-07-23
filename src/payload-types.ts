@@ -1664,6 +1664,16 @@ export interface Footer {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Social media buttons shown in the footer. The icon follows the chosen platform.
+   */
+  socials?:
+    | {
+        platform: 'instagram' | 'linkedin' | 'facebook';
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
   copyright?: string | null;
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -1734,6 +1744,13 @@ export interface FooterSelect<T extends boolean = true> {
     | T
     | {
         label?: T;
+        url?: T;
+        id?: T;
+      };
+  socials?:
+    | T
+    | {
+        platform?: T;
         url?: T;
         id?: T;
       };

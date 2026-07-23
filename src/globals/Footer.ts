@@ -91,6 +91,40 @@ export const Footer: GlobalConfig = {
         { name: 'url', label: { en: 'URL', nl: 'URL' }, type: 'text' },
       ],
     },
+    {
+      name: 'socials',
+      label: { en: 'Social links', nl: 'Social media' },
+      type: 'array',
+      labels: {
+        singular: { en: 'Social link', nl: 'Social-link' },
+        plural: { en: 'Social links', nl: 'Social-links' },
+      },
+      admin: {
+        description: {
+          en: 'Social media buttons shown in the footer. The icon follows the chosen platform.',
+          nl: 'Social-mediaknoppen in de footer. Het icoon volgt het gekozen platform.',
+        },
+      },
+      fields: [
+        {
+          name: 'platform',
+          label: { en: 'Platform', nl: 'Platform' },
+          type: 'select',
+          required: true,
+          options: [
+            { label: 'Instagram', value: 'instagram' },
+            { label: 'LinkedIn', value: 'linkedin' },
+            { label: 'Facebook', value: 'facebook' },
+          ],
+        },
+        {
+          name: 'url',
+          label: { en: 'URL', nl: 'URL' },
+          type: 'text',
+          required: true,
+        },
+      ],
+    },
     { name: 'copyright', label: { en: 'Copyright', nl: 'Copyright' }, type: 'text' },
   ],
 }

@@ -16,6 +16,7 @@ import * as migration_20260713_161147_services_card_icon from './20260713_161147
 import * as migration_20260713_163446_seo_meta from './20260713_163446_seo_meta';
 import * as migration_20260713_172042_noindex_meta from './20260713_172042_noindex_meta';
 import * as migration_20260713_183112_aanmelding_instellingen from './20260713_183112_aanmelding_instellingen';
+import * as migration_20260723_180741_footer_socials from './20260723_180741_footer_socials';
 
 export const migrations = [
   {
@@ -106,6 +107,11 @@ export const migrations = [
   {
     up: migration_20260713_183112_aanmelding_instellingen.up,
     down: migration_20260713_183112_aanmelding_instellingen.down,
-    name: '20260713_183112_aanmelding_instellingen'
+    name: '20260713_183112_aanmelding_instellingen',
+  },
+  {
+    up: migration_20260723_180741_footer_socials.up,
+    down: migration_20260723_180741_footer_socials.down,
+    name: '20260723_180741_footer_socials'
   },
 ];
