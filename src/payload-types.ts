@@ -1654,18 +1654,50 @@ export interface Footer {
    */
   menuItems?:
     | {
-        label?: string | null;
+        /**
+         * The text shown on the link.
+         */
+        label: string;
+        /**
+         * Link to a page on this site (follows the page if its address changes) or to an external web address.
+         */
+        type?: ('internal' | 'external') | null;
+        page?: (number | null) | Page;
+        /**
+         * Full web address, including https://
+         */
         url?: string | null;
+        /**
+         * Optional. Scroll to a section on the selected page. Give the target section an Anchor ID for a readable link.
+         */
+        anchor?: string | null;
+        newTab?: boolean | null;
         id?: string | null;
       }[]
     | null;
   /**
-   * Secondary links such as privacy statement and terms (second column).
+   * Secondary links such as privacy statement and terms (second column). Leave the destination empty for plain text entries (e.g. a Chamber of Commerce number).
    */
   infoLinks?:
     | {
-        label?: string | null;
+        /**
+         * The text shown on the link.
+         */
+        label: string;
+        /**
+         * Link to a page on this site (follows the page if its address changes) or to an external web address.
+         */
+        type?: ('internal' | 'external') | null;
+        page?: (number | null) | Page;
+        /**
+         * Full web address, including https://
+         */
         url?: string | null;
+        /**
+         * Optional. Scroll to a section on the selected page. Give the target section an Anchor ID for a readable link.
+         */
+        anchor?: string | null;
+        newTab?: boolean | null;
         id?: string | null;
       }[]
     | null;
@@ -1742,14 +1774,22 @@ export interface FooterSelect<T extends boolean = true> {
     | T
     | {
         label?: T;
+        type?: T;
+        page?: T;
         url?: T;
+        anchor?: T;
+        newTab?: T;
         id?: T;
       };
   infoLinks?:
     | T
     | {
         label?: T;
+        type?: T;
+        page?: T;
         url?: T;
+        anchor?: T;
+        newTab?: T;
         id?: T;
       };
   socials?:

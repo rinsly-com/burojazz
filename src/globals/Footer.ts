@@ -1,10 +1,15 @@
 import type { GlobalConfig } from 'payload'
 
 import { authenticated } from '../access/roles'
+import { navLinkFields } from '../fields/link'
+import { triggerStaticDeployAfterGlobalChange } from '../hooks/triggerStaticDeploy'
 
 /**
  * Footer — tagline, contact details, menu/info link lists, and copyright.
- * Publicly readable so the static frontend can fetch it over HTTP.
+ * Link lists use the same `navLinkFields` as the Header global, so footer
+ * links can reference Pages documents (and a section on them) instead of
+ * hand-typed URLs. Publicly readable so the static frontend can fetch it
+ * over HTTP.
  */
 export const Footer: GlobalConfig = {
   slug: 'footer',
@@ -13,6 +18,11 @@ export const Footer: GlobalConfig = {
     // Any signed-in staff can edit site chrome (matches the collections). Public
     // read is required so the static frontend can fetch it over HTTP.
     update: authenticated,
+  },
+  hooks: {
+    // Globals have no draft stage — every change is immediately part of the
+    // published site, so rebuild the static production site right away.
+    afterChange: [triggerStaticDeployAfterGlobalChange],
   },
   fields: [
     {
@@ -67,10 +77,7 @@ export const Footer: GlobalConfig = {
           nl: 'Belangrijkste navigatielinks in de footer (eerste kolom).',
         },
       },
-      fields: [
-        { name: 'label', label: { en: 'Label', nl: 'Label' }, type: 'text' },
-        { name: 'url', label: { en: 'URL', nl: 'URL' }, type: 'text' },
-      ],
+      fields: navLinkFields(),
     },
     {
       name: 'infoLinks',
@@ -82,14 +89,11 @@ export const Footer: GlobalConfig = {
       },
       admin: {
         description: {
-          en: 'Secondary links such as privacy statement and terms (second column).',
-          nl: 'Secundaire links zoals privacyverklaring en voorwaarden (tweede kolom).',
+          en: 'Secondary links such as privacy statement and terms (second column). Leave the destination empty for plain text entries (e.g. a Chamber of Commerce number).',
+          nl: 'Secundaire links zoals privacyverklaring en voorwaarden (tweede kolom). Laat de bestemming leeg voor regels zonder link (bijvoorbeeld een KvK-nummer).',
         },
       },
-      fields: [
-        { name: 'label', label: { en: 'Label', nl: 'Label' }, type: 'text' },
-        { name: 'url', label: { en: 'URL', nl: 'URL' }, type: 'text' },
-      ],
+      fields: navLinkFields(),
     },
     {
       name: 'socials',

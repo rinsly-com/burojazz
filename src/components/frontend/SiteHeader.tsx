@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 
+import { scrollToAnchor } from '@/components/frontend/ui/AnchorLink'
 import { ArrowIcon } from '@/components/frontend/ui/ArrowIcon'
 import { hrefFor, type LinkFields } from '@/components/frontend/ui/CMSLink'
 import { Media } from '@/components/frontend/ui/Media'
@@ -55,34 +56,9 @@ export function SiteHeader({ header }: SiteHeaderProps) {
   const linkTarget = (item: NavItem) =>
     item.newTab ? { target: '_blank', rel: 'noopener noreferrer' } : {}
 
-  /**
-   * Animate the jump to an on-page section instead of letting Next's router
-   * scroll instantly (it force-sets `scroll-behavior: auto` during navigation,
-   * which defeats the CSS smooth-scroll). Only handles anchors on the current
-   * page; cross-page/external links fall through to normal navigation. The
-   * section's top lands flush against the top of the viewport (no offset).
-   */
+  /** Smooth-scroll same-page section links (shared with the footer nav). */
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    const hashIndex = href.indexOf('#')
-    if (hashIndex === -1) return
-    const pathPart = href.slice(0, hashIndex)
-    const id = href.slice(hashIndex + 1)
-    if (!id) return
-
-    const onCurrentPage =
-      pathPart === '' ||
-      pathPart === window.location.pathname ||
-      (pathPart === '/' && window.location.pathname === '/')
-    if (!onCurrentPage) return
-
-    const target = document.getElementById(decodeURIComponent(id))
-    if (!target) return
-
-    e.preventDefault()
-    setOpen(false)
-    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    target.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth', block: 'start' })
-    window.history.pushState(null, '', `#${id}`)
+    if (scrollToAnchor(e, href)) setOpen(false)
   }
 
   return (

@@ -74,6 +74,19 @@ const seedBefore: Record<string, () => Promise<void>> = {
        VALUES (1, 1, 'layout', 'hero1', 'IconStar', 'Welkom', 'BURO J.A.Z.Z.', 'Jeugdhulp met Zorgzaamheid', 'secondary', 'Lees meer')`,
     )
   },
+  '20260724_175542_footer_nav_links': async () => {
+    // Pre-migration state: footer link columns were free-text (label, url)
+    // rows, and info entries could be label-only (KvK / AGB numbers).
+    await run(
+      `INSERT INTO footer (id, tagline, copyright, updated_at, created_at) VALUES (1, 'J.A.Z.Z.', '© 2026', '2026-01-01', '2026-01-01')`,
+    )
+    await run(
+      `INSERT INTO footer_menu_items (_order, _parent_id, id, label, url) VALUES (1, 1, 'fm1', 'Home', '/'), (2, 1, 'fm2', 'Contact', '/contact')`,
+    )
+    await run(
+      `INSERT INTO footer_info_links (_order, _parent_id, id, label, url) VALUES (1, 1, 'fi1', 'KvK: 85863025', ''), (2, 1, 'fi2', 'Privacyverklaring', '/privacyverklaring')`,
+    )
+  },
 }
 
 /** Assertions run immediately AFTER the named migration. */
@@ -131,6 +144,30 @@ const assertAfter: Record<string, () => Promise<void>> = {
     expect(hero).not.toHaveProperty('cert_text')
     expect(hero).not.toHaveProperty('cert_link_label')
     expect(hero).not.toHaveProperty('cert_link_type')
+  },
+  '20260724_175542_footer_nav_links': async () => {
+    // Both footer link tables are recreated to gain the shared link fields
+    // (type / page_id / anchor / new_tab). Labels and URLs must survive, and
+    // the new columns must hold real values — not their own names as strings.
+    for (const table of ['footer_menu_items', 'footer_info_links']) {
+      const items = await all(`SELECT * FROM ${table} ORDER BY _order`)
+      expect(items).toHaveLength(2)
+      for (const item of items) {
+        expect(item.type).toBe('external')
+        expect(item.page_id).toBeNull()
+        expect(item.anchor).toBeNull()
+        expect([0, null]).toContain(item.new_tab)
+      }
+    }
+
+    const menu = await all('SELECT * FROM footer_menu_items ORDER BY _order')
+    expect(menu.map((i) => i.label)).toEqual(['Home', 'Contact'])
+    expect(menu.map((i) => i.url)).toEqual(['/', '/contact'])
+
+    // The label-only info entry keeps its empty URL (renders as plain text).
+    const info = await all('SELECT * FROM footer_info_links ORDER BY _order')
+    expect(info.map((i) => i.label)).toEqual(['KvK: 85863025', 'Privacyverklaring'])
+    expect(info.map((i) => i.url)).toEqual(['', '/privacyverklaring'])
   },
 }
 

@@ -511,26 +511,39 @@ const headerData = (ids: Map<string, Page['id']>) => ({
   cta: { label: 'Contact', type: 'internal' as const, page: ids.get('contact') },
 })
 
-const footerData = {
+// The footer link columns use the same link fields as the header nav, so they
+// reference Pages documents (plus an optional section) instead of typed URLs.
+// Info entries without a destination render as plain text (KvK / AGB numbers).
+const footerData = (ids: Map<string, Page['id']>) => ({
   tagline: 'J.A.Z.Z. – Jeugdhulp en Ambulante Zorg met Zorgzaamheid.',
   email: 'contact@burojazz.nl',
   phone: '+31 6 55202233',
   address: 'Vlasakker 24, 3417 XT, Montfoort',
   menuItems: [
-    { label: 'Home', url: '/' },
-    { label: 'Hulpverleningsvormen', url: '/hulpverleningsvormen' },
-    { label: 'Over ons', url: '/over-ons' },
-    { label: 'Klachtregeling', url: '/klachtregeling' },
-    { label: 'Vacatures', url: '/vacatures' },
-    { label: 'Contact', url: '/contact' },
+    { label: 'Home', type: 'internal' as const, page: ids.get('home') },
+    {
+      label: 'Hulpverleningsvormen',
+      type: 'internal' as const,
+      page: ids.get('home'),
+      anchor: 'hulpverleningsvormen',
+    },
+    { label: 'Over ons', type: 'internal' as const, page: ids.get('home'), anchor: 'over-ons' },
+    {
+      label: 'Klachtregeling',
+      type: 'internal' as const,
+      page: ids.get('home'),
+      anchor: 'klachtregeling',
+    },
+    { label: 'Vacatures', type: 'internal' as const, page: ids.get('home'), anchor: 'vacatures' },
+    { label: 'Contact', type: 'internal' as const, page: ids.get('contact') },
   ],
   infoLinks: [
-    { label: 'KvK: 85863025', url: '' },
-    { label: 'AGB: 90091069', url: '' },
-    { label: 'Algemene voorwaarden', url: '/algemene-voorwaarden' },
-    { label: 'Privacyverklaring', url: '/privacyverklaring' },
-    { label: 'Cookies', url: '/cookies' },
-    { label: 'Certificaat', url: '/certificaat' },
+    { label: 'KvK: 85863025' },
+    { label: 'AGB: 90091069' },
+    { label: 'Algemene voorwaarden', type: 'external' as const, url: '/algemene-voorwaarden' },
+    { label: 'Privacyverklaring', type: 'external' as const, url: '/privacyverklaring' },
+    { label: 'Cookies', type: 'external' as const, url: '/cookies' },
+    { label: 'Certificaat', type: 'external' as const, url: '/certificaat' },
   ],
   socials: [
     { platform: 'instagram' as const, url: 'https://www.instagram.com/' },
@@ -538,7 +551,7 @@ const footerData = {
     { platform: 'facebook' as const, url: 'https://www.facebook.com/' },
   ],
   copyright: 'Copyright © Buro J.A.Z.Z. 2026 –– Alle rechten voorbehouden.',
-}
+})
 
 /**
  * Repair severed page-version links before seeding.
@@ -812,7 +825,7 @@ async function run() {
   console.log('Header global seeded')
   await payload.updateGlobal({
     slug: 'footer',
-    data: { ...footerData, logo: footerLogoId, certImage: footerCertId },
+    data: { ...footerData(pageIdBySlug), logo: footerLogoId, certImage: footerCertId },
     user,
   })
   console.log('Footer global seeded')

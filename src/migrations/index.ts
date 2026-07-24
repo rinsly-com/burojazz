@@ -18,6 +18,7 @@ import * as migration_20260713_172042_noindex_meta from './20260713_172042_noind
 import * as migration_20260713_183112_aanmelding_instellingen from './20260713_183112_aanmelding_instellingen';
 import * as migration_20260723_180741_footer_socials from './20260723_180741_footer_socials';
 import * as migration_20260723_181955_social_instagram_live from './20260723_181955_social_instagram_live';
+import * as migration_20260724_175542_footer_nav_links from './20260724_175542_footer_nav_links';
 
 export const migrations = [
   {
@@ -118,6 +119,11 @@ export const migrations = [
   {
     up: migration_20260723_181955_social_instagram_live.up,
     down: migration_20260723_181955_social_instagram_live.down,
-    name: '20260723_181955_social_instagram_live'
+    name: '20260723_181955_social_instagram_live',
+  },
+  {
+    up: migration_20260724_175542_footer_nav_links.up,
+    down: migration_20260724_175542_footer_nav_links.down,
+    name: '20260724_175542_footer_nav_links'
   },
 ];
