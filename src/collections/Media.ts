@@ -24,10 +24,12 @@ export const Media: CollectionConfig = {
     },
   ],
   upload: {
-    // Payload's built-in crop/focal tools. They apply server-side via sharp,
-    // which is loaded in Node only (see payload.config.ts): cropping works in
-    // local dev but is a no-op on the accp Worker, where sharp can't run.
-    crop: true,
+    // Focal point only — NO server-side crop. Cropping needs sharp to cut the
+    // file, and sharp is Node-only (see payload.config.ts); on the accp Worker
+    // it isn't available, so the crop tool threw "Something went wrong" in the
+    // admin. Framing is instead done in the browser: editors set the focal
+    // point (just stored focalX/focalY %, no image processing) and the frontend
+    // applies it as CSS object-position (see components/frontend/ui/Media.tsx).
     focalPoint: true,
   },
 }

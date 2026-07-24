@@ -1,7 +1,10 @@
+import { RichText } from '@payloadcms/richtext-lexical/react'
+
 import type { Page } from '@/payload-types'
 import { Eyebrow } from '@/components/frontend/ui/Eyebrow'
 import { Icon } from '@/components/frontend/ui/Icon'
 import { Section } from '@/components/frontend/ui/Section'
+import { hasRichTextContent } from '@/lib/richText'
 
 import { ServicesTabs, type TabData } from './ServicesTabs'
 
@@ -119,15 +122,22 @@ export function Services(props: Props) {
     'Ambulante jeugdhulp en verblijf, gericht op behandeling en begeleiding.'
   const tabs: TabData[] = props.tabs?.length ? props.tabs : DEFAULT_TABS
 
-  // Render each card's icon here (server component) so the resolved Tabler SVG
-  // is inlined into the static HTML — the client ServicesTabs just places the
-  // node, keeping the icon barrel out of the shipped JS.
+  // Render each card's icon and read-more rich text here (server component) so
+  // the resolved Tabler SVG and lexical output are inlined into the static HTML
+  // — the client ServicesTabs just places the nodes, keeping the icon barrel and
+  // the rich text renderer out of the shipped JS. Cards whose `details` is empty
+  // get no node, so their read-more link keeps navigating instead of opening
+  // the dialog.
   const renderedTabs: TabData[] = tabs.map((tab) => ({
     ...tab,
-    cards: (tab.cards ?? []).map((card) => ({
-      ...card,
-      iconNode: <Icon name={card.icon} fallback={DEFAULT_CARD_ICON} size={28} stroke={1.75} />,
-    })),
+    cards: (tab.cards ?? []).map((card) => {
+      const details = hasRichTextContent(card.details) ? card.details : null
+      return {
+        ...card,
+        iconNode: <Icon name={card.icon} fallback={DEFAULT_CARD_ICON} size={28} stroke={1.75} />,
+        detailsNode: details ? <RichText data={details} disableContainer /> : undefined,
+      }
+    }),
   }))
 
   return (

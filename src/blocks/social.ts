@@ -26,6 +26,18 @@ export const socialBlock: Block = {
     },
     link({ variant: false }),
     {
+      name: 'instagramLive',
+      label: { en: 'Show latest Instagram post', nl: 'Toon meest recente Instagram-post' },
+      type: 'checkbox',
+      defaultValue: false,
+      admin: {
+        description: {
+          en: 'Show the most recent Instagram post on the phone screen (requires the Instagram integration). When off, the "Phone in hand" image below is shown as-is.',
+          nl: 'Toon de meest recente Instagram-post op het telefoonscherm (vereist de Instagram-koppeling). Uit = de afbeelding “Telefoon in hand” hieronder wordt getoond zoals die is.',
+        },
+      },
+    },
+    {
       name: 'photos',
       label: { en: 'Collage photos', nl: 'Collage-foto’s' },
       type: 'group',

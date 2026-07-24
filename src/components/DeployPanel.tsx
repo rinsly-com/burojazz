@@ -15,13 +15,13 @@ type PanelState =
 
 /**
  * The interactive body of the admin Deploy view: a single button that POSTs to
- * /api/deploy, which fires the Cloudflare Deploy Hook to rebuild + redeploy the
- * static production site from the current published (accp) content.
+ * /api/deploy, which dispatches the GitHub Actions workflow that rebuilds +
+ * redeploys the static production site from the current published (accp) content.
  *
- * Content changes already trigger a rebuild on publish; this is the manual
- * escape hatch (e.g. re-run a failed build, or ship after an infra change).
- * Reviewer-only — the button is hidden for authors and the endpoint enforces
- * the same rule server-side.
+ * This is the ONLY way production ships — publishing content does not deploy on
+ * its own, so editors publish as they go and press this once when the site should
+ * go live. Reviewer-only — the button is hidden for authors and the endpoint
+ * enforces the same rule server-side.
  */
 export const DeployPanel: React.FC = () => {
   const { user } = useAuth()
@@ -57,8 +57,8 @@ export const DeployPanel: React.FC = () => {
       <h1 style={{ marginBottom: 'var(--base)' }}>Deploy to production</h1>
       <p style={{ color: 'var(--theme-elevation-600)', marginBottom: 'calc(var(--base) * 1.5)' }}>
         Rebuild and redeploy the public site (<strong>burojazz.com</strong>) from the current
-        published content. Publishing a page already triggers this automatically — use this button
-        to force a fresh build (e.g. after an infrastructure change or a failed build).
+        published content. Publishing a page does <strong>not</strong> put it live on its own — your
+        published changes only go out to the public site when you press this button.
       </p>
 
       {!canDeploy ? (

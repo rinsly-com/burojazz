@@ -5,13 +5,12 @@ import { isReviewer } from '../access/roles'
 import { triggerDeploy } from '../hooks/triggerStaticDeploy'
 
 /**
- * POST /api/deploy — manually trigger a static production rebuild from the
- * current published (accp) content, without having to (re)publish a document.
+ * POST /api/deploy — trigger a static production rebuild from the current
+ * published (accp) content.
  *
- * Backs the admin "Deploy" view. Reviewer-only, matching who is allowed to
- * publish (the same event that normally triggers a production rebuild). Uses
- * the shared triggerDeploy helper so the manual path and the on-publish hooks
- * hit the exact same Cloudflare Deploy Hook.
+ * Backs the "Deploy now" button in the admin Deploy view, and is the ONLY thing
+ * that deploys production: publishing or editing content just changes what this
+ * build will ship. Reviewer-only, matching who is allowed to publish.
  */
 export const deployHandler: PayloadHandler = async (req: PayloadRequest): Promise<Response> => {
   const user = req.user as User | null

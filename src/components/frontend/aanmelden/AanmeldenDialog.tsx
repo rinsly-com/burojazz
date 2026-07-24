@@ -1,6 +1,8 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useSyncExternalStore } from 'react'
+import { useCallback, useEffect, useSyncExternalStore } from 'react'
+
+import { Modal } from '@/components/frontend/ui/Modal'
 
 import { AanmeldenForm } from './AanmeldenForm'
 
@@ -43,11 +45,10 @@ const isHashOpen = () => window.location.hash === HASH
  * the existing Hero CTAs and the CMS-managed header CTA keep working without a
  * rewrite. The `/aanmelden` page stays a no-JS fallback.
  *
- * Uses a native <dialog> so focus-trapping, Escape-to-close and the backdrop are
- * handled by the platform.
+ * The dialog chrome itself (native <dialog>, backdrop, close button, scroll
+ * lock) lives in the shared `Modal`.
  */
 export function AanmeldenDialog({ privacyHref }: { privacyHref?: string }) {
-  const ref = useRef<HTMLDialogElement>(null)
   const open = useSyncExternalStore(subscribeHash, isHashOpen, () => false)
 
   const closeDialog = useCallback(() => {
@@ -71,54 +72,10 @@ export function AanmeldenDialog({ privacyHref }: { privacyHref?: string }) {
     return () => document.removeEventListener('click', onClick)
   }, [])
 
-  // Sync the native <dialog> element + body scroll lock with the open state.
-  useEffect(() => {
-    const dialog = ref.current
-    if (!dialog) return
-    if (open && !dialog.open) dialog.showModal()
-    if (!open && dialog.open) dialog.close()
-    document.body.style.overflow = open ? 'hidden' : ''
-    return () => {
-      document.body.style.overflow = ''
-    }
-  }, [open])
-
   return (
-    <dialog
-      ref={ref}
-      aria-label="Direct aanmelden"
-      onCancel={(e) => {
-        e.preventDefault()
-        closeDialog()
-      }}
-      onClick={(e) => {
-        // Backdrop click: the dialog element fills the viewport, so a click whose
-        // target is the dialog itself (not its content) is on the backdrop.
-        if (e.target === ref.current) closeDialog()
-      }}
-      className="m-auto w-[min(920px,calc(100vw-2rem))] rounded-3xl bg-white p-0 backdrop:bg-black/50 backdrop:backdrop-blur-sm"
-    >
-      {open && (
-        <div className="relative max-h-[90vh] overflow-y-auto p-5 md:p-8">
-          <button
-            type="button"
-            onClick={closeDialog}
-            aria-label="Sluiten"
-            className="absolute right-4 top-4 z-10 flex size-9 items-center justify-center rounded-full bg-black/5 text-ink transition-colors hover:bg-black/10"
-          >
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-              <path
-                d="M3 3L13 13M13 3L3 13"
-                stroke="currentColor"
-                strokeWidth="1.75"
-                strokeLinecap="round"
-              />
-            </svg>
-          </button>
-          <AanmeldenForm privacyHref={privacyHref} />
-        </div>
-      )}
-    </dialog>
+    <Modal open={open} onClose={closeDialog} label="Direct aanmelden">
+      <AanmeldenForm privacyHref={privacyHref} />
+    </Modal>
   )
 }
 

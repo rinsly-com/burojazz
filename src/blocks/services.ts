@@ -1,6 +1,7 @@
 import type { Block } from 'payload'
 
 import { anchorField } from '../fields/anchor'
+import { basicEditor } from '../fields/basicEditor'
 import { iconField } from '../fields/icon'
 import { link } from '../fields/link'
 import { sectionHeader } from '../fields/sectionHeader'
@@ -62,6 +63,18 @@ export const servicesBlock: Block = {
             },
             { name: 'title', label: { en: 'Title', nl: 'Titel' }, type: 'text' },
             { name: 'description', label: { en: 'Description', nl: 'Beschrijving' }, type: 'text' },
+            {
+              name: 'details',
+              label: { en: 'Read more content', nl: 'Lees meer-inhoud' },
+              type: 'richText',
+              editor: basicEditor,
+              admin: {
+                description: {
+                  en: 'Fill this in to open the full story in a dialog when the visitor clicks the read-more link. Leave empty to have the link navigate to the destination below instead.',
+                  nl: 'Vul dit in om het hele verhaal in een dialoogvenster te openen wanneer de bezoeker op de lees-meer-link klikt. Laat leeg om de link naar de bestemming hieronder te laten navigeren.',
+                },
+              },
+            },
             link({ variant: false }),
           ],
         },

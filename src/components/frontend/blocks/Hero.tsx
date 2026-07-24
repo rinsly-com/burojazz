@@ -22,11 +22,15 @@ export function Hero(props: Props) {
   const description =
     props.header?.intro ??
     'Wij bieden ambulante jeugdhulp en jeugdhulp met verblijf, gericht op behandeling en begeleiding.'
+  const media = resolveMedia(props.image)
   const imageUrl = mediaUrl(props.image, { width: 1600 }) ?? DEFAULT_IMAGE
   // Responsive srcset for the mobile hero photo (the mobile LCP element) so
   // phones fetch a viewport-sized variant instead of the fixed 1600px desktop
   // image. Only CMS media can be transformed; the /public fallback has none.
-  const mobileImageSrcSet = cfImageSrcSet(resolveMedia(props.image)?.url ?? '')
+  const mobileImageSrcSet = cfImageSrcSet(media?.url ?? '')
+  // Apply the CMS focal point (0–100%) as object-position so editors control
+  // the crop framing (cropping itself is done in the browser — see Media.ts).
+  const objectPosition = `${media?.focalX ?? 50}% ${media?.focalY ?? 50}%`
 
   return (
     <section className="relative overflow-hidden bg-white">
@@ -56,7 +60,8 @@ export function Hero(props: Props) {
             {/* Desktop LCP photo. loading=lazy so mobile (where this whole
                 composition is display:none) never fetches this 1600px variant;
                 on desktop it's in the initial viewport, so it still loads —
-                with fetchpriority=high to win the race there. */}
+                with fetchpriority=high to win the race there. object-position
+                comes from the CMS focal point, so editors steer the crop. */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={imageUrl}
@@ -64,6 +69,7 @@ export function Hero(props: Props) {
               loading="lazy"
               fetchPriority="high"
               className="absolute left-1/2 top-1/2 h-[1616px] w-[1581px] max-w-none -translate-x-1/2 -translate-y-1/2 rotate-[30deg] object-cover"
+              style={{ objectPosition }}
             />
             <div className="absolute inset-0 bg-black/[0.03]" />
           </div>
@@ -111,6 +117,7 @@ export function Hero(props: Props) {
             loading="eager"
             fetchPriority="high"
             className="aspect-[4/3] w-full rounded-[40px] object-cover xl:hidden"
+            style={{ objectPosition }}
           />
         </div>
       </div>
