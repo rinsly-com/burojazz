@@ -1,9 +1,4 @@
-import type {
-  CollectionAfterChangeHook,
-  CollectionAfterDeleteHook,
-  GlobalAfterChangeHook,
-  Payload,
-} from 'payload'
+import type { Payload } from 'payload'
 
 /** Outcome of a deploy-hook call, surfaced to the admin Deploy view. */
 export type DeployResult =
@@ -15,9 +10,15 @@ export type DeployResult =
  * Fire a GitHub `repository_dispatch` event that starts the "Deploy production
  * (static)" GitHub Actions workflow (.github/workflows/deploy-prod.yml), which
  * rebuilds + redeploys the static production site from the live accp content.
- * Never throws — a webhook failure must not break the editor's save (the
- * collection/global hooks await this and ignore the result), while the manual
- * /api/deploy endpoint reports the returned status to the admin UI.
+ *
+ * Deploying is a DELIBERATE act: the only caller is POST /api/deploy, behind the
+ * "Deploy now" button in the admin Deploy view. Publishing, editing or deleting
+ * content does not deploy — it only changes what the next build will ship. Do not
+ * re-attach this to collection/global hooks; doing so previously meant every draft
+ * save on a live page and every Header/Footer save kicked off a production build.
+ *
+ * Never throws — the /api/deploy endpoint reports the returned status to the
+ * admin UI instead.
  *
  * Configured via Worker secrets:
  *   DEPLOY_DISPATCH_URL   — https://api.github.com/repos/<owner>/<repo>/dispatches
@@ -65,48 +66,4 @@ export const triggerDeploy = async (payload: Payload, reason: string): Promise<D
     payload.logger.error(`[static-deploy] failed (${reason}): ${message}`)
     return { status: 'failed', message: `Deploy dispatch request failed: ${message}` }
   }
-}
-
-/**
- * Rebuild production whenever a document is published, or when an
- * already-published document changes or is unpublished — i.e. any change that
- * alters what the public (published) site should show.
- */
-export const triggerStaticDeployAfterChange: CollectionAfterChangeHook = async ({
-  collection,
-  doc,
-  previousDoc,
-  req,
-}) => {
-  const isPublished = doc?._status === 'published'
-  const wasPublished = previousDoc?._status === 'published'
-  if (isPublished || wasPublished) {
-    await triggerDeploy(req.payload, `${collection.slug} ${doc?.id} published-change`)
-  }
-  return doc
-}
-
-/**
- * Rebuild production when a global (e.g. header) changes — globals have no
- * draft stage, so every change is immediately part of the published site.
- */
-export const triggerStaticDeployAfterGlobalChange: GlobalAfterChangeHook = async ({
-  doc,
-  global,
-  req,
-}) => {
-  await triggerDeploy(req.payload, `global ${global.slug} changed`)
-  return doc
-}
-
-/** Rebuild production when a published document is deleted. */
-export const triggerStaticDeployAfterDelete: CollectionAfterDeleteHook = async ({
-  collection,
-  doc,
-  req,
-}) => {
-  if (doc?._status === 'published') {
-    await triggerDeploy(req.payload, `${collection.slug} ${doc?.id} deleted`)
-  }
-  return doc
 }

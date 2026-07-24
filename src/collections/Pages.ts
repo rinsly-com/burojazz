@@ -4,10 +4,6 @@ import { slugField } from 'payload'
 import { authenticated, reviewerOnly, isReviewer } from '../access/roles'
 import { pageBlocks } from '../blocks'
 import { enforceWorkflow } from '../hooks/enforceWorkflow'
-import {
-  triggerStaticDeployAfterChange,
-  triggerStaticDeployAfterDelete,
-} from '../hooks/triggerStaticDeploy'
 import type { User } from '@/payload-types'
 
 /**
@@ -16,9 +12,11 @@ import type { User } from '@/payload-types'
  *   Draft → Review → Ready → Published
  *
  * `workflowStatus` tracks the editorial pipeline while the document is a draft;
- * **Published** is Payload's native publish (`_status: published`), which fires
- * the Cloudflare Deploy Hook to rebuild the static production site. Transition
- * and publish rules are enforced server-side by `enforceWorkflow`.
+ * **Published** is Payload's native publish (`_status: published`), which makes
+ * the document part of what the next production build will ship. Publishing does
+ * NOT deploy on its own — production is rebuilt only when someone presses
+ * "Deploy now" in the admin Deploy view (see endpoints/deploy.ts). Transition and
+ * publish rules are enforced server-side by `enforceWorkflow`.
  */
 export const Pages: CollectionConfig = {
   slug: 'pages',
@@ -55,8 +53,6 @@ export const Pages: CollectionConfig = {
   },
   hooks: {
     beforeChange: [enforceWorkflow],
-    afterChange: [triggerStaticDeployAfterChange],
-    afterDelete: [triggerStaticDeployAfterDelete],
   },
   fields: [
     {
