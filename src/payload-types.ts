@@ -319,6 +319,24 @@ export interface ServicesBlock {
               number?: string | null;
               title?: string | null;
               description?: string | null;
+              /**
+               * Fill this in to open the full story in a dialog when the visitor clicks the read-more link. Leave empty to have the link navigate to the destination below instead.
+               */
+              details?: {
+                root: {
+                  type: string;
+                  children: {
+                    type: any;
+                    version: number;
+                    [k: string]: unknown;
+                  }[];
+                  direction: ('ltr' | 'rtl') | null;
+                  format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                  indent: number;
+                  version: number;
+                };
+                [k: string]: unknown;
+              } | null;
               link: {
                 /**
                  * The text shown on the link.
@@ -1172,6 +1190,7 @@ export interface ServicesBlockSelect<T extends boolean = true> {
               number?: T;
               title?: T;
               description?: T;
+              details?: T;
               link?:
                 | T
                 | {
