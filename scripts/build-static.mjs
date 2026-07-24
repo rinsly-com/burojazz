@@ -131,6 +131,12 @@ try {
       ...process.env,
       BUILD_STATIC: 'true',
       CONTENT_SNAPSHOT: snapshotDir,
+      // The static site is served from its own origin (burojazz.com) but has no
+      // API — the aanmelden form must POST cross-origin to the Payload worker.
+      // PAYLOAD_API_URL is server-only, so bridge it into the public var that
+      // Next inlines into the client bundle (see AanmeldenForm's API_BASE).
+      // Empty API_BASE would post same-origin to the static host → 405.
+      NEXT_PUBLIC_PAYLOAD_API_URL: process.env.NEXT_PUBLIC_PAYLOAD_API_URL || API_URL,
       NODE_OPTIONS: `${process.env.NODE_OPTIONS ?? ''} --no-deprecation`.trim(),
     },
   })

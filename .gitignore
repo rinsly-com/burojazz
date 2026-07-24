@@ -60,3 +60,6 @@ node_modules/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+# graphify knowledge graph (local navigation aid; regenerate with `graphify update .`)
+/graphify-out/
