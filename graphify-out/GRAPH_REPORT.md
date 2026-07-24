@@ -1,16 +1,16 @@
-# Graph Report - burojazz  (2026-07-23)
+# Graph Report - burojazz  (2026-07-24)
 
 ## Corpus Check
-- 159 files · ~695,558 words
+- 164 files · ~697,944 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1753 nodes · 2329 edges · 70 communities (63 shown, 7 thin omitted)
+- 1776 nodes · 2375 edges · 79 communities (73 shown, 6 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 24 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `06485d6a`
+- Built from commit: `8d7e9097`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -51,21 +51,27 @@
 - [[_COMMUNITY_Community 33|Community 33]]
 - [[_COMMUNITY_Community 34|Community 34]]
 - [[_COMMUNITY_Community 35|Community 35]]
-- [[_COMMUNITY_Community 36|Community 36]]
 - [[_COMMUNITY_Community 37|Community 37]]
 - [[_COMMUNITY_Community 38|Community 38]]
 - [[_COMMUNITY_Community 39|Community 39]]
-- [[_COMMUNITY_Community 60|Community 60]]
-- [[_COMMUNITY_Community 61|Community 61]]
-- [[_COMMUNITY_Community 62|Community 62]]
-- [[_COMMUNITY_Community 63|Community 63]]
-- [[_COMMUNITY_Community 64|Community 64]]
+- [[_COMMUNITY_Community 40|Community 40]]
+- [[_COMMUNITY_Community 41|Community 41]]
+- [[_COMMUNITY_Community 42|Community 42]]
+- [[_COMMUNITY_Community 43|Community 43]]
+- [[_COMMUNITY_Community 44|Community 44]]
+- [[_COMMUNITY_Community 45|Community 45]]
+- [[_COMMUNITY_Community 46|Community 46]]
 - [[_COMMUNITY_Community 69|Community 69]]
+- [[_COMMUNITY_Community 70|Community 70]]
+- [[_COMMUNITY_Community 71|Community 71]]
+- [[_COMMUNITY_Community 72|Community 72]]
+- [[_COMMUNITY_Community 73|Community 73]]
+- [[_COMMUNITY_Community 78|Community 78]]
 
 ## God Nodes (most connected - your core abstractions)
-1. `Page` - 22 edges
-2. `isReviewer()` - 15 edges
-3. `hrefFor()` - 14 edges
+1. `Page` - 23 edges
+2. `hrefFor()` - 16 edges
+3. `isReviewer()` - 15 edges
 4. `anchorField()` - 13 edges
 5. `Media()` - 13 edges
 6. `Section()` - 13 edges
@@ -94,161 +100,189 @@
 - **Role-based access shared across hooks and UI** — roles_isreviewer, enforceworkflow_enforceworkflow, workflowaction_workflowaction, reviewpanel_reviewpanel [INFERRED 0.85]
 - **Publish event triggers static production rebuild** — enforceworkflow_enforceworkflow, triggerstaticdeploy_triggerstaticdeployafterchange, deployment_deploy_hook_flow [INFERRED 0.80]
 
-## Communities (70 total, 7 thin omitted)
+## Communities (79 total, 6 thin omitted)
 
 ### Community 0 - "Access Control & Collections"
 Cohesion: 0.0
 Nodes (926): AbortController, AccpEnv, AgentMemoryGetSummaryOptions, AgentMemoryGetSummaryResponse, AgentMemoryIncomingMemory, AgentMemoryIngestOptions, AgentMemoryListMemoriesOptions, AgentMemoryListMemoriesResult (+918 more)
 
 ### Community 1 - "Payload Config & Test Suites"
-Cohesion: 0.05
-Nodes (56): Image(), robots(), sitemap(), Headers, JsonLd(), metadata, monaSans, montserrat (+48 more)
+Cohesion: 0.07
+Nodes (47): Image(), robots(), sitemap(), Headers, JsonLd(), metadata, monaSans, montserrat (+39 more)
 
 ### Community 2 - "Admin UI Components"
-Cohesion: 0.05
-Nodes (50): AanmeldenDialog(), AanmeldenForm(), DsmValue, SiblingType, SubmitState, BackButton(), CheckboxField(), Field() (+42 more)
-
-### Community 3 - "Generated Payload Types"
 Cohesion: 0.04
 Nodes (49): Aanmeldingen, AanmeldingenSelect, AanmeldingInstellingen, AanmeldingInstellingenSelect, AboutBlock, AboutBlockSelect, AccordionBlock, AccordionBlockSelect (+41 more)
 
+### Community 3 - "Generated Payload Types"
+Cohesion: 0.14
+Nodes (25): aboutBlock, accordionBlock, buttonRowBlock, complaintsBlock, contactPersonsBlock, coreValuesBlock, heroBlock, pageBlocks (+17 more)
+
 ### Community 4 - "API Routes & Cloudflare Runtime"
-Cohesion: 0.13
-Nodes (26): aboutBlock, accordionBlock, buttonRowBlock, complaintsBlock, contactPersonsBlock, coreValuesBlock, heroBlock, pageBlocks (+18 more)
+Cohesion: 0.07
+Nodes (21): importMap, Comment, CommentsPanel(), Ref, DeployNavLink(), IconModule, IconSelector(), SUGGESTED (+13 more)
 
 ### Community 5 - "Editorial Workflow & Roles"
-Cohesion: 0.07
-Nodes (20): importMap, Comment, CommentsPanel(), Ref, DeployNavLink(), IconModule, IconSelector(), SUGGESTED (+12 more)
+Cohesion: 0.12
+Nodes (22): About(), Props, Accordion(), Props, ALIGN, ButtonRow(), Props, CoreValues() (+14 more)
 
 ### Community 6 - "E2E Auth & Fixtures"
 Cohesion: 0.07
-Nodes (16): Media, Pages, GET, OPTIONS, POST, adminOrigins, cloudflareLogger, corsOrigins (+8 more)
+Nodes (19): Media, Pages, AanmeldingInstellingen, Footer, Header, GET, OPTIONS, POST (+11 more)
 
 ### Community 7 - "Payload REST Catch-all Route"
-Cohesion: 0.13
-Nodes (23): Props, uploadUrl(), CardData, DEFAULT_CARDS, DEFAULT_TABS, Props, ServiceCard(), Services() (+15 more)
+Cohesion: 0.1
+Nodes (22): ServiceCard(), Social(), FALLBACK_INFO, FALLBACK_MENU, FALLBACK_SOCIALS, FooterLink(), LinkItem, Props (+14 more)
 
 ### Community 8 - "Static Deploy Architecture"
-Cohesion: 0.13
-Nodes (19): About(), Props, Accordion(), Props, ALIGN, ButtonRow(), Props, Props (+11 more)
-
-### Community 9 - "Static Build Script"
 Cohesion: 0.12
 Nodes (26): Admin Panel e2e test suite, API integration test suite, Comments collection, Frontend e2e test suite, RootLayout (frontend), login helper, Media collection, OpenNext Cloudflare config (+18 more)
 
-### Community 10 - "Published Pages Rendering"
+### Community 9 - "Static Build Script"
 Cohesion: 0.16
-Nodes (17): isReviewer(), canPublishPages(), DeployPanel(), PanelState, DeployView(), LABELS, ReviewPanel(), WorkflowAction() (+9 more)
+Nodes (19): Hero(), Props, uploadUrl(), InstagramPhone(), Post, SCREEN, Props, Photos (+11 more)
+
+### Community 10 - "Published Pages Rendering"
+Cohesion: 0.08
+Nodes (24): 1. Authenticate wrangler (interactive — run yourself), 2. Create the accp D1 database, 3. Create migrations, 4. Cloudflare Workers Build — accp (code deploy), 5. Create the production Deploy Hook + static build, 5. The production static build, 6. Wire the deploy hook into accp, 6. Wire the dispatch credentials into accp (+16 more)
 
 ### Community 11 - "Database Migrations"
 Cohesion: 0.15
 Nodes (20): critical, dirname, Finding, findings, result, schema, applyStatement(), diffSchemas() (+12 more)
 
 ### Community 12 - "Next.js Config"
-Cohesion: 0.16
-Nodes (18): Hero(), InstagramPhone(), Post, SCREEN, Props, Social(), Photos, SocialParallax() (+10 more)
+Cohesion: 0.14
+Nodes (16): CardData, DEFAULT_CARDS, DEFAULT_TABS, Props, Services(), CardData, CMSServiceCard, ServiceCard() (+8 more)
 
 ### Community 13 - "Static Export Mode"
-Cohesion: 0.09
-Nodes (22): 1. Authenticate wrangler (interactive — run yourself), 2. Create the accp D1 database, 3. Create migrations, 4. Cloudflare Workers Build — accp (code deploy), 5. Create the production Deploy Hook + static build, 6. Wire the deploy hook into accp, code:block1 (push to main ───► Workers Build ───► deploy accp (Payload + ), code:bash (pnpm wrangler login) (+14 more)
+Cohesion: 0.15
+Nodes (13): DsmValue, SiblingType, SubmitState, BackButton(), CheckboxField(), Field(), InputProps, PlusIcon() (+5 more)
 
 ### Community 14 - "Frontend Root Layout"
-Cohesion: 0.18
-Nodes (12): adminFieldOnly(), adminOnly(), authenticated(), hasRole(), isAdmin(), isAuthenticated(), reviewerOnly(), Role (+4 more)
+Cohesion: 0.15
+Nodes (12): isReviewer(), canPublishPages(), DeployPanel(), PanelState, DeployView(), LABELS, ReviewPanel(), WorkflowAction() (+4 more)
 
 ### Community 15 - "ESLint Config"
-Cohesion: 0.16
-Nodes (12): CONTACT_PEOPLE, CORE_VALUE_ICONS, footerData, headerData(), Layout, PayloadInstance, repairOrphanedVersions(), run() (+4 more)
+Cohesion: 0.12
+Nodes (13): adapterRequire, assertAfter, dangling, db, dirname, { drizzle }, migrationsDir, notNull (+5 more)
 
 ### Community 16 - "Frontend E2E Test"
+Cohesion: 0.17
+Nodes (12): CONTACT_PEOPLE, CORE_VALUE_ICONS, footerData(), headerData(), Layout, PayloadInstance, repairOrphanedVersions(), run() (+4 more)
+
+### Community 17 - "Authenticated Access"
 Cohesion: 0.15
 Nodes (11): Complaints(), ContactCard(), FALLBACK_STEPS, PillData, Props, uploadUrl(), ComplaintsStepper(), Props (+3 more)
 
-### Community 17 - "Authenticated Access"
-Cohesion: 0.13
-Nodes (12): adapterRequire, assertAfter, dangling, db, dirname, { drizzle }, migrationsDir, notNull (+4 more)
-
 ### Community 18 - "Vitest Setup"
-Cohesion: 0.16
-Nodes (11): CoreValues(), FALLBACK_VALUES, ICONS, IconSpec, isHighlight(), normalize(), Props, SLOTS (+3 more)
-
-### Community 19 - "Next Env Types"
 Cohesion: 0.15
 Nodes (11): ContactPersons(), DEFAULT_PEOPLE, OBJECT_POSITION, PersonCard(), PHOTOS, Props, Icon(), IconProps (+3 more)
+
+### Community 19 - "Next Env Types"
+Cohesion: 0.18
+Nodes (10): FALLBACK_VALUES, ICONS, IconSpec, isHighlight(), normalize(), Props, SLOTS, ValueChip() (+2 more)
 
 ### Community 20 - "Playwright Config"
 Cohesion: 0.17
 Nodes (8): backupDir, DYNAMIC_ROUTES, EXCLUDED, fetchJson(), root, savedRouteSrc, snapshotContent(), snapshotDir
 
 ### Community 21 - "OpenNext Config"
+Cohesion: 0.27
+Nodes (12): labelFor(), AanmeldingDoc, buildAanmeldingConfirmation(), buildAanmeldingEmail(), cloudflareEmailAdapter(), esc(), getEmailBinding(), nl2() (+4 more)
+
+### Community 22 - "My-Route Handler"
+Cohesion: 0.21
+Nodes (8): Aanmeldingen, OPTIONAL_SELECT_FIELDS, SUBMITTABLE_FIELDS, DSM_OPTIONS, Option, PROBLEMATIEK_OPTIONS, SIBLING_TYPE_OPTIONS, VORM_VAN_HULP_OPTIONS
+
+### Community 23 - "Community 23"
 Cohesion: 0.19
 Nodes (13): CommentsPanel, Role model (author/reviewer/admin), Editorial state machine (Draft/Review/Ready/Published), enforceWorkflow, ReviewPanel, adminFieldOnly access helper, adminOnly access helper, hasRole (+5 more)
 
-### Community 22 - "My-Route Handler"
+### Community 24 - "Community 24"
+Cohesion: 0.24
+Nodes (9): adminFieldOnly(), adminOnly(), hasRole(), isAdmin(), isAuthenticated(), reviewerOnly(), Role, Comments (+1 more)
+
+### Community 25 - "Community 25"
 Cohesion: 0.17
 Nodes (11): 1. Instagram account, 2. Meta app + token, 3. Provision Cloudflare (accp worker), 4. Enable it in the CMS, code:bash (# a. create the KV namespace, then paste the returned id int), code:bash (curl https://accp.burojazz.com/api/instagram/latest), How it works, Instagram "latest post" integration (+3 more)
 
-### Community 23 - "Community 23"
+### Community 26 - "Community 26"
 Cohesion: 0.25
 Nodes (8): dashboardArtifact, editViewArtifact, listViewArtifact, login(), LoginOptions, cleanupTestUser(), seedTestUser(), testUser
 
-### Community 24 - "Community 24"
-Cohesion: 0.29
-Nodes (9): instagramLatestHandler(), getKV(), getLatestInstagramPost(), getToken(), InstagramPost, KVNamespace, maybeRefreshToken(), MediaNode (+1 more)
-
-### Community 25 - "Community 25"
-Cohesion: 0.18
-Nodes (10): Clone, Collections, Development, Docker, Docker (Optional), How it works, Payload Blank Template, Questions (+2 more)
-
-### Community 26 - "Community 26"
-Cohesion: 0.22
-Nodes (7): code:sql (INSERT INTO `__new_header_nav_items`("_order", "_parent_id",), Expected, Local mitigation (this repo), Reproduction, Summary, Upstream bug report draft: `migrate:create` generates a data-corrupting copy statement (SQLite/D1), Why this is severe
+### Community 27 - "Community 27"
+Cohesion: 0.38
+Nodes (6): authenticated(), deployHandler(), triggerDeploy(), triggerStaticDeployAfterChange(), triggerStaticDeployAfterDelete(), triggerStaticDeployAfterGlobalChange()
 
 ### Community 28 - "Community 28"
 Cohesion: 0.29
-Nodes (6): DEFAULT_ITEM_ICONS, DEFAULT_ITEMS, Props, VisionMission(), AccordionItem, VisionMissionAccordion()
+Nodes (9): instagramLatestHandler(), getKV(), getLatestInstagramPost(), getToken(), InstagramPost, KVNamespace, maybeRefreshToken(), MediaNode (+1 more)
 
 ### Community 29 - "Community 29"
-Cohesion: 0.25
-Nodes (7): Core Web Vitals, Failing diagnostics (score < 0.9), Lighthouse — https://accp.burojazz.com (mobile), Previous run, Root causes, Scores, Top opportunities
+Cohesion: 0.22
+Nodes (10): AanmeldenData, EMAIL_FIELDS, EMPTY_AANMELDING, Errors, isBlank(), isEmail(), REQUIRED_BY_STEP, SiblingRow (+2 more)
 
 ### Community 30 - "Community 30"
-Cohesion: 0.29
-Nodes (6): DELETE, GET, OPTIONS, PATCH, POST, PUT
+Cohesion: 0.18
+Nodes (10): Clone, Collections, Development, Docker, Docker (Optional), How it works, Payload Blank Template, Questions (+2 more)
 
 ### Community 31 - "Community 31"
-Cohesion: 0.29
-Nodes (6): Core Web Vitals, Failing diagnostics (score < 0.9), Lighthouse — https://www.burojazz.nl (mobile), Previous run, Scores, Top opportunities
+Cohesion: 0.25
+Nodes (6): AanmeldenForm(), metadata, body, fetchMock, fillStep1(), setInput()
 
 ### Community 32 - "Community 32"
-Cohesion: 0.29
-Nodes (6): Core Web Vitals, Failing diagnostics (score < 0.9), Lighthouse — https://www.burojazz.nl (desktop), Previous run, Scores, Top opportunities
+Cohesion: 0.25
+Nodes (3): AanmeldenDialog(), Modal(), ModalProps
 
 ### Community 33 - "Community 33"
-Cohesion: 0.29
-Nodes (6): Core Web Vitals, Failing diagnostics (score < 0.9), Lighthouse — https://prod.burojazz.com (desktop), Previous run, Scores, Top opportunities
+Cohesion: 0.22
+Nodes (7): code:sql (INSERT INTO `__new_header_nav_items`("_order", "_parent_id",), Expected, Local mitigation (this repo), Reproduction, Summary, Upstream bug report draft: `migrate:create` generates a data-corrupting copy statement (SQLite/D1), Why this is severe
 
 ### Community 34 - "Community 34"
 Cohesion: 0.29
-Nodes (6): Core Web Vitals, Failing diagnostics (score < 0.9), Lighthouse — https://accp.burojazz.com (desktop), Previous run, Scores, Top opportunities
+Nodes (6): DEFAULT_ITEM_ICONS, DEFAULT_ITEMS, Props, VisionMission(), AccordionItem, VisionMissionAccordion()
 
 ### Community 35 - "Community 35"
+Cohesion: 0.25
+Nodes (7): Core Web Vitals, Failing diagnostics (score < 0.9), Lighthouse — https://accp.burojazz.com (mobile), Previous run, Root causes, Scores, Top opportunities
+
+### Community 37 - "Community 37"
+Cohesion: 0.29
+Nodes (6): DELETE, GET, OPTIONS, PATCH, POST, PUT
+
+### Community 38 - "Community 38"
+Cohesion: 0.29
+Nodes (6): Core Web Vitals, Failing diagnostics (score < 0.9), Lighthouse — https://www.burojazz.nl (mobile), Previous run, Scores, Top opportunities
+
+### Community 39 - "Community 39"
+Cohesion: 0.29
+Nodes (6): Core Web Vitals, Failing diagnostics (score < 0.9), Lighthouse — https://www.burojazz.nl (desktop), Previous run, Scores, Top opportunities
+
+### Community 40 - "Community 40"
+Cohesion: 0.29
+Nodes (6): Core Web Vitals, Failing diagnostics (score < 0.9), Lighthouse — https://prod.burojazz.com (desktop), Previous run, Scores, Top opportunities
+
+### Community 41 - "Community 41"
+Cohesion: 0.29
+Nodes (6): Core Web Vitals, Failing diagnostics (score < 0.9), Lighthouse — https://accp.burojazz.com (desktop), Previous run, Scores, Top opportunities
+
+### Community 42 - "Community 42"
 Cohesion: 0.29
 Nodes (7): Publish-triggered Cloudflare Deploy Hook flow, Headless CMS to static site architecture, Three-environment topology (dev/accp/production), docker-compose MongoDB dev service, triggerDeploy, triggerStaticDeployAfterChange, triggerStaticDeployAfterDelete
 
-### Community 36 - "Community 36"
+### Community 43 - "Community 43"
 Cohesion: 0.5
 Nodes (3): dirname, __filename, nextConfig
 
-### Community 37 - "Community 37"
+### Community 44 - "Community 44"
 Cohesion: 0.5
 Nodes (3): Claude Code, Database migrations (D1/SQLite), graphify
 
-### Community 38 - "Community 38"
+### Community 45 - "Community 45"
 Cohesion: 0.5
 Nodes (3): Answer, Q: How does a publish event in the editorial workflow propagate to a rebuilt static production site?, Source Nodes
 
-### Community 39 - "Community 39"
+### Community 46 - "Community 46"
 Cohesion: 0.67
 Nodes (4): Stash-and-restore server routes for static export, Static site build script, BUILD_STATIC export mode, Next.js config
 
@@ -257,9 +291,9 @@ Nodes (4): Stash-and-restore server routes for static export, Static site build 
   docs/DEPLOYMENT.md · relation: references
 
 ## Knowledge Gaps
-- **1216 isolated node(s):** `config`, `__BaseEnv_CloudflareEnv`, `Env`, `CloudflareEnv`, `StringifyValues` (+1211 more)
+- **1220 isolated node(s):** `config`, `__BaseEnv_CloudflareEnv`, `Env`, `CloudflareEnv`, `StringifyValues` (+1215 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **7 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **6 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
@@ -267,14 +301,14 @@ _Questions this graph is uniquely positioned to answer:_
 - **What is the exact relationship between `Three-environment topology (dev/accp/production)` and `docker-compose MongoDB dev service`?**
   _Edge tagged AMBIGUOUS (relation: references) - confidence is low._
 - **Why does `Headers` connect `Payload Config & Test Suites` to `Access Control & Collections`?**
-  _High betweenness centrality (0.325) - this node is a cross-community bridge._
+  _High betweenness centrality (0.328) - this node is a cross-community bridge._
 - **What connects `config`, `__BaseEnv_CloudflareEnv`, `Env` to the rest of the system?**
-  _1216 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _1220 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Access Control & Collections` be split into smaller, more focused modules?**
   _Cohesion score 0.0 - nodes in this community are weakly interconnected._
 - **Should `Payload Config & Test Suites` be split into smaller, more focused modules?**
-  _Cohesion score 0.05 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.07 - nodes in this community are weakly interconnected._
 - **Should `Admin UI Components` be split into smaller, more focused modules?**
-  _Cohesion score 0.05 - nodes in this community are weakly interconnected._
-- **Should `Generated Payload Types` be split into smaller, more focused modules?**
   _Cohesion score 0.04 - nodes in this community are weakly interconnected._
+- **Should `Generated Payload Types` be split into smaller, more focused modules?**
+  _Cohesion score 0.14 - nodes in this community are weakly interconnected._
