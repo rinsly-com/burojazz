@@ -1,14 +1,17 @@
 'use client'
 
 import React, { useCallback } from 'react'
+import { formatAdminURL } from 'payload/shared'
 import {
   Button,
   FormSubmit,
   useAuth,
+  useConfig,
   useDocumentInfo,
   useForm,
   useFormFields,
   useFormModified,
+  useLocale,
 } from '@payloadcms/ui'
 
 import type { User } from '@/payload-types'
@@ -25,12 +28,37 @@ import { isReviewer } from '../access/roles'
  *
  * The same rules are enforced server-side by enforceWorkflow. The separate
  * "Save draft" button still saves without advancing the stage.
+ *
+ * Advancing a stage must save the edits as a DRAFT VERSION, never as the live
+ * row. Payload only treats a submit as a draft save when the request URL carries
+ * `draft=true` (see `isSavingDraft` in payload's collections/operations/
+ * utilities/update.js) — the edit form's default action does not. Without it a
+ * `_status: 'draft'` override rewrites the published row, silently UNPUBLISHING
+ * the page: it then drops out of `where[_status][equals]=published` and vanishes
+ * from production on the next deploy, purely because someone started working on
+ * it. So the two stage transitions post to an explicit draft URL, mirroring
+ * Payload's own SaveDraftButton. Publishing keeps the default action, since it
+ * is meant to write the live row.
  */
 export const WorkflowAction: React.FC = () => {
   const { submit } = useForm()
   const { user } = useAuth()
-  const { id } = useDocumentInfo()
+  const { id, collectionSlug } = useDocumentInfo()
   const modified = useFormModified()
+  const {
+    config: {
+      routes: { api },
+    },
+  } = useConfig()
+  const { code: locale } = useLocale()
+
+  const draftAction = React.useMemo(() => {
+    if (!collectionSlug || !id) return undefined
+    return formatAdminURL({
+      apiRoute: api,
+      path: `/${collectionSlug}/${id}?locale=${locale}&depth=0&fallback-locale=null&draft=true`,
+    })
+  }, [api, collectionSlug, id, locale])
 
   const workflowStatus =
     useFormFields(([fields]) => fields?.workflowStatus?.value as string | undefined) ?? 'draft'
@@ -38,13 +66,28 @@ export const WorkflowAction: React.FC = () => {
 
   const reviewer = isReviewer(user as User | null)
 
-  const go = useCallback(
-    (overrides: Record<string, unknown>, skipValidation = true) =>
+  /**
+   * Advance the stage, storing the edits as a draft version so the currently
+   * published content stays live (and keeps shipping) until someone publishes.
+   * On a brand-new doc there is no id yet, so there is nothing published to
+   * protect and the default action is correct.
+   */
+  const advance = useCallback(
+    (overrides: Record<string, unknown>) =>
       () => {
-        void submit({ overrides, skipValidation })
+        void submit({
+          ...(draftAction ? { action: draftAction, method: 'PATCH' } : {}),
+          overrides,
+          skipValidation: true,
+        })
       },
-    [submit],
+    [submit, draftAction],
   )
+
+  /** Publish: promotes the draft to the live row, so no draft=true here. */
+  const publish = useCallback(() => {
+    void submit({ overrides: { _status: 'published' }, skipValidation: false })
+  }, [submit])
 
   const disabled = (label: string, reason: string) => (
     <span title={reason} style={{ display: 'inline-flex' }}>
@@ -62,7 +105,7 @@ export const WorkflowAction: React.FC = () => {
   if (workflowStatus === 'ready') {
     if (!reviewer) return disabled('Awaiting publish', 'A reviewer will publish this.')
     return (
-      <FormSubmit buttonStyle="primary" onClick={go({ _status: 'published' }, false)}>
+      <FormSubmit buttonStyle="primary" onClick={publish}>
         Publish changes
       </FormSubmit>
     )
@@ -73,7 +116,7 @@ export const WorkflowAction: React.FC = () => {
     return (
       <FormSubmit
         buttonStyle="primary"
-        onClick={go({ _status: 'draft', workflowStatus: 'ready' })}
+        onClick={advance({ _status: 'draft', workflowStatus: 'ready' })}
       >
         Approve (mark Ready)
       </FormSubmit>
@@ -84,7 +127,7 @@ export const WorkflowAction: React.FC = () => {
   return (
     <FormSubmit
       buttonStyle="primary"
-      onClick={go({ _status: 'draft', workflowStatus: 'review' })}
+      onClick={advance({ _status: 'draft', workflowStatus: 'review' })}
     >
       Submit for review
     </FormSubmit>
