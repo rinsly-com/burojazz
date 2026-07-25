@@ -3,6 +3,18 @@
 This project uses the Payload CMS skill at `.claude/skills/payload/`.
 Start with `.claude/skills/payload/SKILL.md` for a quick reference, then see `.claude/skills/payload/reference/` for detailed docs.
 
+## Testing (read `.ai/TESTING.md`)
+
+**Every bug you encounter or fix gets a unit test, in the same commit — no bug is
+fixed until a test fails without the fix.** Run the mutation check: re-introduce
+the bug and confirm the new test goes red, then restore. A regression test that
+passes against the broken code certifies a bug as fixed and is worse than none.
+
+Default to `tests/unit/*.unit.spec.ts` (`pnpm test:unit`, ~1s, no I/O) — the int
+suite boots Payload + D1 and currently does not start locally, so coverage that
+lives only there is coverage you cannot run. See `.ai/TESTING.md` for the
+procedure, what is unit-testable here, conventions, and the incident log.
+
 ## Database migrations (D1/SQLite)
 
 After `payload migrate:create`, ALWAYS run `pnpm lint:migrations` and review any
