@@ -70,8 +70,8 @@ export const servicesBlock: Block = {
               editor: basicEditor,
               admin: {
                 description: {
-                  en: 'Fill this in to open the full story in a dialog when the visitor clicks the read-more link. Leave empty to have the link navigate to the destination below instead.',
-                  nl: 'Vul dit in om het hele verhaal in een dialoogvenster te openen wanneer de bezoeker op de lees-meer-link klikt. Laat leeg om de link naar de bestemming hieronder te laten navigeren.',
+                  en: 'The full story, shown in a dialog when the visitor clicks the read-more link. Leave empty and the dialog shows the short description above instead — the link below is only followed when it has a destination and this field is empty.',
+                  nl: 'Het hele verhaal, getoond in een dialoogvenster wanneer de bezoeker op de lees-meer-link klikt. Laat leeg en het dialoogvenster toont de korte beschrijving hierboven — de link hieronder wordt alleen gevolgd als die een bestemming heeft én dit veld leeg is.',
                 },
               },
             },

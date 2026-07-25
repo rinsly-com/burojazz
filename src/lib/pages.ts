@@ -17,6 +17,20 @@ import { readSnapshot } from './contentSnapshot'
  */
 const PRODUCTION_BUILD = process.env.BUILD_STATIC === 'true'
 
+/**
+ * `draft=true` reads Payload's versions table, so it silently omits any page that
+ * has no version rows yet (e.g. one seeded or migrated before drafts existed).
+ * Such a page then 404s in preview while it is live on production — the inverse
+ * of what preview is for. Both preview helpers therefore fall back to the plain
+ * (published) row, which is what these two helpers do.
+ */
+const mergeBySlug = (preferred: Page[], fallback: Page[]): Page[] => {
+  const bySlug = new Map<string, Page>()
+  for (const page of fallback) bySlug.set(page.slug, page)
+  for (const page of preferred) bySlug.set(page.slug, page)
+  return [...bySlug.values()]
+}
+
 async function fetchPages(query: string): Promise<Page[]> {
   // Resolve the origin BEFORE the try: apiOrigin() reads headers() on the worker,
   // and the dynamic-server bailout that triggers must propagate (not be swallowed
@@ -47,8 +61,13 @@ export async function getRenderablePages(): Promise<Page[]> {
   }
 
   // Preview: the latest version of every page (draft or published), so editors
-  // see their edits regardless of workflow status.
-  return fetchPages('draft=true&limit=200&depth=0')
+  // see their edits regardless of workflow status. Pages with no version rows
+  // come from the plain list (see mergeBySlug).
+  const [drafts, live] = await Promise.all([
+    fetchPages('draft=true&limit=200&depth=0'),
+    fetchPages('limit=200&depth=0'),
+  ])
+  return mergeBySlug(drafts, live)
 }
 
 export async function getRenderablePageBySlug(slug: string): Promise<Page | null> {
@@ -66,7 +85,11 @@ export async function getRenderablePageBySlug(slug: string): Promise<Page | null
     const preview = await fetchPages(
       `draft=true&where[slug][equals]=${encoded}&limit=1&depth=1`,
     )
-    return preview[0] ?? null
+    if (preview[0]) return preview[0]
+    // No version rows for this page — fall back to its live row so a published
+    // page is never a 404 in preview (see mergeBySlug).
+    const live = await fetchPages(`where[slug][equals]=${encoded}&limit=1&depth=1`)
+    return live[0] ?? null
   }
 
   const published = await fetchPages(

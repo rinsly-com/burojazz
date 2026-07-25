@@ -1,7 +1,7 @@
 import type { Block } from 'payload'
 
 import { anchorField } from '../fields/anchor'
-import { link } from '../fields/link'
+import { link, navLinkFields } from '../fields/link'
 import { sectionHeader } from '../fields/sectionHeader'
 
 export const vacanciesBlock: Block = {
@@ -38,6 +38,31 @@ export const vacanciesBlock: Block = {
         },
         { name: 'text', label: { en: 'Text', nl: 'Tekst' }, type: 'textarea' },
         link({ variant: false }),
+      ],
+    },
+    {
+      name: 'openApplication',
+      label: { en: 'Open application line', nl: 'Open sollicitatie-regel' },
+      type: 'group',
+      admin: {
+        description: {
+          en: 'The line under the vacancy cards inviting an unsolicited application.',
+          nl: 'De regel onder de vacaturekaarten die uitnodigt tot een open sollicitatie.',
+        },
+      },
+      fields: [
+        {
+          name: 'text',
+          label: { en: 'Text before the link', nl: 'Tekst vóór de link' },
+          type: 'text',
+          admin: {
+            description: {
+              en: 'The sentence shown before the link.',
+              nl: 'De zin die vóór de link wordt getoond.',
+            },
+          },
+        },
+        ...navLinkFields({ requiredLabel: false }),
       ],
     },
     anchorField(),

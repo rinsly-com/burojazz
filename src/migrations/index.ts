@@ -20,6 +20,7 @@ import * as migration_20260723_180741_footer_socials from './20260723_180741_foo
 import * as migration_20260723_181955_social_instagram_live from './20260723_181955_social_instagram_live';
 import * as migration_20260724_175542_footer_nav_links from './20260724_175542_footer_nav_links';
 import * as migration_20260724_181033_service_card_details from './20260724_181033_service_card_details';
+import * as migration_20260724_184140_vacancies_open_application from './20260724_184140_vacancies_open_application';
 
 export const migrations = [
   {
@@ -130,6 +131,11 @@ export const migrations = [
   {
     up: migration_20260724_181033_service_card_details.up,
     down: migration_20260724_181033_service_card_details.down,
-    name: '20260724_181033_service_card_details'
+    name: '20260724_181033_service_card_details',
+  },
+  {
+    up: migration_20260724_184140_vacancies_open_application.up,
+    down: migration_20260724_184140_vacancies_open_application.down,
+    name: '20260724_184140_vacancies_open_application'
   },
 ];

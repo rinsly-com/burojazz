@@ -113,6 +113,16 @@ function ServiceCard({
 const DETAILS_TITLE_ID = 'service-details-title'
 
 /**
+ * Whether a card's read-more opens the dialog instead of navigating. Cards
+ * carry read-more content (`details`) far more often than a real destination,
+ * so the dialog is the default: only a card with an actual link target and no
+ * read-more content navigates away.
+ */
+function opensDialog(card: CardData): boolean {
+  return Boolean(card.detailsNode) || hrefFor(card.link) === '#'
+}
+
+/**
  * Interactive tab switcher for the Services block. Clicking a tab pill shows
  * that tab's service cards; clicking the read-more link of a card that has
  * `details` rich text opens it in a dialog. Client component (owns the
@@ -164,7 +174,7 @@ export function ServicesTabs({ tabs }: { tabs: TabData[] }) {
             key={card.id ?? i}
             card={card}
             index={i}
-            onOpenDetails={card.detailsNode ? () => setOpenCard(i) : undefined}
+            onOpenDetails={opensDialog(card) ? () => setOpenCard(i) : undefined}
           />
         ))}
       </div>
@@ -192,8 +202,10 @@ export function ServicesTabs({ tabs }: { tabs: TabData[] }) {
                 {detailsCard.title ?? ''}
               </h2>
             </div>
+            {/* Until an editor fills the card's read-more rich text, show the
+                short card description so the dialog is never empty. */}
             <div className="flex flex-col gap-[1.6em] text-sm font-medium leading-[1.6] text-ink [&_a]:text-brand [&_a]:underline">
-              {detailsCard.detailsNode}
+              {detailsCard.detailsNode ?? <p>{detailsCard.description ?? ''}</p>}
             </div>
           </div>
         )}

@@ -320,7 +320,7 @@ export interface ServicesBlock {
               title?: string | null;
               description?: string | null;
               /**
-               * Fill this in to open the full story in a dialog when the visitor clicks the read-more link. Leave empty to have the link navigate to the destination below instead.
+               * The full story, shown in a dialog when the visitor clicks the read-more link. Leave empty and the dialog shows the short description above instead — the link below is only followed when it has a destination and this field is empty.
                */
               details?: {
                 root: {
@@ -767,6 +767,33 @@ export interface VacanciesBlock {
         id?: string | null;
       }[]
     | null;
+  /**
+   * The line under the vacancy cards inviting an unsolicited application.
+   */
+  openApplication?: {
+    /**
+     * The sentence shown before the link.
+     */
+    text?: string | null;
+    /**
+     * The text shown on the link.
+     */
+    label?: string | null;
+    /**
+     * Link to a page on this site (follows the page if its address changes) or to an external web address.
+     */
+    type?: ('internal' | 'external') | null;
+    page?: (number | null) | Page;
+    /**
+     * Full web address, including https://
+     */
+    url?: string | null;
+    /**
+     * Optional. Scroll to a section on the selected page. Give the target section an Anchor ID for a readable link.
+     */
+    anchor?: string | null;
+    newTab?: boolean | null;
+  };
   /**
    * Optional. Gives this section an id so a menu item can scroll to it (e.g. “over-ons”). Use lowercase letters, numbers and dashes.
    */
@@ -1430,6 +1457,17 @@ export interface VacanciesBlockSelect<T extends boolean = true> {
               newTab?: T;
             };
         id?: T;
+      };
+  openApplication?:
+    | T
+    | {
+        text?: T;
+        label?: T;
+        type?: T;
+        page?: T;
+        url?: T;
+        anchor?: T;
+        newTab?: T;
       };
   anchor?: T;
   id?: T;
