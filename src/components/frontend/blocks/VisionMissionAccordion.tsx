@@ -65,7 +65,7 @@ export function VisionMissionAccordion({ items }: { items: AccordionItem[] }) {
                 style={{ gridTemplateRows: isOpen ? '1fr' : '0fr' }}
               >
                 <div className="overflow-hidden">
-                  <div className="px-6 pb-6 text-sm leading-[1.6] font-medium text-white [&_a]:underline [&_p]:mt-[1em] [&_p:first-child]:mt-0">
+                  <div className="rich-text [--rt-accent:currentColor] [--rt-heading:currentColor] px-6 pb-6 text-sm leading-[1.6] font-medium text-white">
                     {item.body}
                   </div>
                 </div>

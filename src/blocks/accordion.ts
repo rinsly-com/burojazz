@@ -1,7 +1,7 @@
 import type { Block } from 'payload'
 
 import { anchorField } from '../fields/anchor'
-import { basicEditor } from '../fields/basicEditor'
+import { textEditor } from '../fields/textEditor'
 import { sectionHeader } from '../fields/sectionHeader'
 
 export const accordionBlock: Block = {
@@ -25,7 +25,7 @@ export const accordionBlock: Block = {
       admin: { initCollapsed: true },
       fields: [
         { name: 'title', label: { en: 'Title', nl: 'Titel' }, type: 'text', required: true },
-        { name: 'body', label: { en: 'Body', nl: 'Tekst' }, type: 'richText', editor: basicEditor },
+        { name: 'body', label: { en: 'Body', nl: 'Tekst' }, type: 'richText', editor: textEditor },
       ],
     },
     anchorField(),

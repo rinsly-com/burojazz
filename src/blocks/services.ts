@@ -1,7 +1,7 @@
 import type { Block } from 'payload'
 
 import { anchorField } from '../fields/anchor'
-import { basicEditor } from '../fields/basicEditor'
+import { textEditor } from '../fields/textEditor'
 import { iconField } from '../fields/icon'
 import { link } from '../fields/link'
 import { sectionHeader } from '../fields/sectionHeader'
@@ -67,7 +67,7 @@ export const servicesBlock: Block = {
               name: 'details',
               label: { en: 'Read more content', nl: 'Lees meer-inhoud' },
               type: 'richText',
-              editor: basicEditor,
+              editor: textEditor,
               admin: {
                 description: {
                   en: 'The full story, shown in a dialog when the visitor clicks the read-more link. Leave empty and the dialog shows the short description above instead — the link below is only followed when it has a destination and this field is empty.',

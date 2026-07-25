@@ -1,7 +1,7 @@
 import type { Block } from 'payload'
 
 import { anchorField } from '../fields/anchor'
-import { basicEditor } from '../fields/basicEditor'
+import { textEditor } from '../fields/textEditor'
 import { linkGroup } from '../fields/link'
 import { sectionHeader } from '../fields/sectionHeader'
 
@@ -26,7 +26,7 @@ export const aboutBlock: Block = {
         },
       },
     },
-    { name: 'body', label: { en: 'Body', nl: 'Tekst' }, type: 'richText', editor: basicEditor },
+    { name: 'body', label: { en: 'Body', nl: 'Tekst' }, type: 'richText', editor: textEditor },
     {
       name: 'email',
       label: { en: 'Email', nl: 'E-mail' },
