@@ -6,22 +6,31 @@ architecture on Cloudflare.
 | Environment    | What runs                                    | Database      | How it deploys                                  |
 | -------------- | -------------------------------------------- | ------------- | ----------------------------------------------- |
 | **dev**        | Full Payload app (Next.js on Node)           | Local D1 mock | `pnpm dev`                                       |
-| **accp**       | Full Payload CMS (admin + API) on a Worker   | Cloudflare D1 | Auto on push to `main` (Cloudflare Workers Build) |
-| **production** | **Fully static HTML** — no runtime, no DB    | none          | Cloudflare Deploy Hook, fired when content is published |
+| **accp**       | Full Payload CMS (admin + API) on a Worker   | Cloudflare D1 | Auto on push to `develop` |
+| **production** | **Fully static HTML** — no runtime, no DB    | none          | Auto on push to `main`, plus the CMS "Deploy now" button |
 
 - **accp** is the editor environment and the default preview. Editors log into
   the Payload admin, author content, and move it `draft → in review → published`.
 - **production** is a static export (`out/`) of the public frontend, built by
   fetching **published** content from accp's API and served from Cloudflare's
-  edge (Workers Static Assets). Publishing content on accp triggers the rebuild.
+  edge (Workers Static Assets).
+
+**Branch → environment:** `develop` deploys accp, `main` deploys production.
+Always merge `develop → main`; never push code straight to `main`, or production
+runs ahead of the CMS/API whose content it snapshots at build time.
+
+Content is a separate axis from code: publishing a page does **not** deploy, it
+only decides what the next build ships. Editors release it with **Deploy now**,
+which is also how a content-only release happens with no code change.
 
 ```
- push to main ───► Workers Build ───► deploy accp (Payload + D1)
+ push to develop ──► Actions: Deploy ACCP ──► deploy accp (Payload + D1)
                                             │
- editor clicks Publish ─► Payload afterChange hook ─► POST Deploy Hook
+ merge develop → main ─► Actions: Deploy production (static)
+ editor clicks Deploy now ─► POST /api/deploy ─► repository_dispatch
                                             │
                                             ▼
-                              Workers Build (production)
+                              Deploy production (static)
                               pnpm run build:static  (fetches published
                               content from accp API) ─► deploy out/ (static)
 ```
@@ -92,7 +101,8 @@ Commit the generated `src/migrations/`.
 In the Cloudflare dashboard → Workers & Pages → **Create → Connect to Git**,
 select this repo and configure:
 
-- **Production branch:** `main`
+- **Production branch:** `develop` (accp is the staging line — see the branch
+  mapping at the top)
 - **Build command:** `pnpm run deploy` (runs migrations then builds+deploys)
 - **Deploy command:** *(leave blank — `deploy:app` deploys)*
 - **Environment variables:**
@@ -100,7 +110,7 @@ select this repo and configure:
   - `PAYLOAD_SECRET = <openssl rand -hex 32>` (mark as a secret)
 - **D1 binding:** `D1` → `burojazz-accp`
 
-Every push to `main` now migrates + deploys accp.
+Every push to `develop` now migrates + deploys accp.
 
 ### 5. The production static build
 
@@ -109,17 +119,17 @@ The static site deploys via `pnpm run deploy:static` (which runs
 the **Deploy production (static)** GitHub Actions workflow
 (`.github/workflows/deploy-prod.yml`).
 
-Production is deployed **deliberately** — never automatically. The only triggers
-are:
+Triggers:
 
+- a push to **`main`** — i.e. merging `develop`, after it has been exercised on
+  accp;
 - the **Deploy now** button in the CMS admin Deploy view, which POSTs
   `/api/deploy` and fires a GitHub `repository_dispatch` (`deploy-static`);
 - a manual run from the Actions tab (`workflow_dispatch`).
 
-Publishing, editing or deleting content does **not** deploy. It only changes what
-the next build will ship, so an editor can publish several pages and then deploy
-once. Merges to `main` deploy accp only; prod picks that code up on the next
-deploy.
+Publishing, editing or deleting content does **not** deploy on its own. It only
+changes what the next build will ship, so an editor can publish several pages and
+then release them together with **Deploy now**.
 
 ### 6. Wire the dispatch credentials into accp
 
