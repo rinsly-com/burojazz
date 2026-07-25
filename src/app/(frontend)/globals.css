@@ -14,6 +14,143 @@ html {
   scroll-behavior: smooth;
 }
 
+/* ---------------------------------------------------------------------------
+   Rich text output (CMS lexical values — see src/fields/textEditor.ts).
+
+   Tailwind's preflight resets exactly the things an editor can produce:
+   `h1..h6 { font-size: inherit; font-weight: inherit }` and
+   `ol, ul { list-style: none; margin: 0; padding: 0 }`. So without these rules a
+   heading renders as body text and a bulleted list loses its markers entirely —
+   the feature appears to do nothing.
+
+   Sizes are in `em`, so one class works for both the small body copy (About,
+   accordion, service dialog) and the wider Rich text block; each caller keeps
+   owning the base font size and colour.
+   --------------------------------------------------------------------------- */
+.rich-text {
+  /* Colours are variables so a caller on a coloured panel can retint them —
+     e.g. the vision/mission accordion sits on brand teal, where a teal link or
+     a black heading would be unreadable. */
+  --rt-accent: var(--color-brand);
+  --rt-heading: var(--color-ink);
+}
+
+/* Vertical rhythm. `.payload-richtext` is the wrapper Payload's own renderer
+   adds unless the caller passes `disableContainer`, so the rhythm has to work
+   one level down too — otherwise the only "sibling" is that single wrapper and
+   nothing gets spaced. */
+.rich-text > * + *,
+.rich-text > .payload-richtext > * + * {
+  margin-top: 1em;
+}
+
+.rich-text :is(h2, h3, h4) {
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: 0.01em;
+  color: var(--rt-heading);
+  margin-top: 1.8em;
+}
+
+.rich-text h2 {
+  font-size: 1.6em;
+}
+.rich-text h3 {
+  font-size: 1.3em;
+}
+.rich-text h4 {
+  font-size: 1.1em;
+}
+
+/* No leading gap when the value opens with a heading. */
+.rich-text :is(h2, h3, h4):first-child {
+  margin-top: 0;
+}
+
+.rich-text :is(ul, ol) {
+  padding-inline-start: 1.4em;
+}
+.rich-text ul {
+  list-style: disc;
+}
+.rich-text ul ul {
+  list-style: circle;
+}
+.rich-text ol {
+  list-style: decimal;
+}
+.rich-text ol ol {
+  list-style: lower-alpha;
+}
+.rich-text li + li {
+  margin-top: 0.35em;
+}
+.rich-text li::marker {
+  color: var(--rt-accent);
+}
+/* Nested lists sit tight against their parent item. */
+.rich-text li > :is(ul, ol) {
+  margin-top: 0.35em;
+}
+
+/* Checklists. Payload's converter already emits a real, readonly
+   `<input type="checkbox">` plus a `<label>` per item (and a trailing `<br>`),
+   so there is nothing to draw — style the input and lay the row out. Adding a
+   ::before box here would render a second, fake checkbox beside the real one. */
+.rich-text ul.list-check {
+  padding-inline-start: 0;
+}
+.rich-text li[role='checkbox'] {
+  display: flex;
+  align-items: baseline;
+  gap: 0.55em;
+}
+.rich-text li[role='checkbox'] input[type='checkbox'] {
+  accent-color: var(--rt-accent);
+  width: 1em;
+  height: 1em;
+  flex: none;
+  translate: 0 0.15em;
+}
+/* The converter appends a <br> inside each item; as a flex child it would add
+   an empty column. */
+.rich-text li[role='checkbox'] br {
+  display: none;
+}
+.rich-text li[role='checkbox'][aria-checked='true'] label {
+  text-decoration: line-through;
+  opacity: 0.65;
+}
+
+.rich-text blockquote {
+  border-inline-start: 3px solid var(--rt-accent);
+  padding-inline-start: 1em;
+  font-style: italic;
+}
+
+.rich-text hr {
+  border: 0;
+  border-top: 1px solid color-mix(in srgb, var(--color-ink) 15%, transparent);
+  margin-block: 2em;
+}
+
+.rich-text a {
+  color: var(--rt-accent);
+  text-decoration: underline;
+}
+
+.rich-text strong {
+  font-weight: 700;
+}
+
+.rich-text code {
+  font-family: ui-monospace, monospace;
+  font-size: 0.9em;
+  padding: 0.1em 0.35em;
+  border-radius: 0.25em;
+  background: color-mix(in srgb, var(--color-ink) 8%, transparent);
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

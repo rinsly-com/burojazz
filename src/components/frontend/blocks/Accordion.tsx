@@ -45,7 +45,7 @@ export function Accordion({ header, items }: Props) {
               </span>
             </summary>
             {item.body && (
-              <div className="px-6 pb-6 text-sm leading-relaxed text-ink/90">
+              <div className="rich-text px-6 pb-6 text-sm leading-relaxed text-ink/90">
                 <RichText data={item.body} disableContainer />
               </div>
             )}

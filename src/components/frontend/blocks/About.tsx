@@ -69,7 +69,7 @@ export function About(props: Props) {
                 {title}
               </h2>
             )}
-            <div className="flex max-w-[549px] flex-col gap-[1.6em] text-sm leading-[1.6] font-medium text-ink [&_a]:text-brand [&_a]:underline">
+            <div className="rich-text max-w-[549px] text-sm leading-[1.6] font-medium text-ink">
               {props.body ? (
                 <RichText data={props.body} disableContainer />
               ) : (
