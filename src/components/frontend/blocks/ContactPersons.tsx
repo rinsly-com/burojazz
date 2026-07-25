@@ -4,6 +4,7 @@ import { Eyebrow } from '@/components/frontend/ui/Eyebrow'
 import { Icon } from '@/components/frontend/ui/Icon'
 import { Media, resolveMedia, type MediaResource } from '@/components/frontend/ui/Media'
 import { Section } from '@/components/frontend/ui/Section'
+import { cmsText } from '@rinsly-com/site-core'
 
 type Props = Extract<NonNullable<Page['layout']>[number], { blockType: 'contactPersons' }>
 
@@ -101,23 +102,27 @@ function PersonCard({
  * with a portrait fading into the card and phone/mail roundels.
  */
 export function ContactPersons(props: Props) {
-  const eyebrow = props.header?.eyebrow ?? 'Kom in contact'
-  const title = props.header?.title ?? 'Jouw contactpersonen'
-  const subtitle = props.header?.subtitle ?? 'Wij staan altijd voor u klaar.'
+  const eyebrow = cmsText(props.header?.eyebrow, 'Kom in contact')
+  const title = cmsText(props.header?.title, 'Jouw contactpersonen')
+  const subtitle = cmsText(props.header?.subtitle, 'Wij staan altijd voor u klaar.')
   const people = props.people?.length ? props.people : DEFAULT_PEOPLE
 
   return (
     <Section py="py-16 md:py-[120px]">
       <div className="flex flex-col items-center gap-12 md:gap-20">
         <div className="flex flex-col items-center gap-6 text-center">
-          <span className="inline-flex items-center gap-2.5 rounded-pill bg-brand/5 px-3 py-2.5 text-brand">
-            <Icon name={props.header?.icon} fallback="IconUsers" size={14} className="shrink-0" />
-            <Eyebrow className="leading-none">{eyebrow}</Eyebrow>
-          </span>
-          <h2 className="max-w-[700px] text-[28px] font-semibold leading-[1.2] tracking-[0.02em] text-black md:text-[40px]">
-            {title}
-          </h2>
-          <p className="max-w-[549px] text-sm font-medium text-ink">{subtitle}</p>
+          {eyebrow && (
+            <span className="inline-flex items-center gap-2.5 rounded-pill bg-brand/5 px-3 py-2.5 text-brand">
+              <Icon name={props.header?.icon} fallback="IconUsers" size={14} className="shrink-0" />
+              <Eyebrow className="leading-none">{eyebrow}</Eyebrow>
+            </span>
+          )}
+          {title && (
+            <h2 className="max-w-[700px] text-[28px] font-semibold leading-[1.2] tracking-[0.02em] text-black md:text-[40px]">
+              {title}
+            </h2>
+          )}
+          {subtitle && <p className="max-w-[549px] text-sm font-medium text-ink">{subtitle}</p>}
         </div>
 
         <div className="flex w-full flex-col items-center justify-center gap-6 md:flex-row md:flex-wrap md:items-stretch">
@@ -134,7 +139,7 @@ export function ContactPersons(props: Props) {
               <PersonCard
                 key={p.id || `${p.name}-${i}`}
                 name={p.name ?? DEFAULT_PEOPLE[i % DEFAULT_PEOPLE.length].name}
-                role={p.role ?? 'Bestuurder'}
+                role={cmsText(p.role, 'Bestuurder')}
                 photo={p.photo}
                 phone={p.phone ?? null}
                 email={p.email ?? null}

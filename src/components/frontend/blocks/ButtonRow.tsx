@@ -20,7 +20,7 @@ export function ButtonRow({ buttons, alignment }: Props) {
     <Section className="py-8 md:py-12">
       <Buttons
         buttons={buttons}
-        className={`flex flex-wrap items-center gap-6 ${ALIGN[alignment ?? 'left']}`}
+        className={`flex flex-wrap items-center gap-6 ${ALIGN[alignment || 'left']}`}
       />
     </Section>
   )

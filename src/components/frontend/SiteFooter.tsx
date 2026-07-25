@@ -3,6 +3,7 @@ import { hrefFor, type LinkFields } from '@/components/frontend/ui/CMSLink'
 import { Icon } from '@/components/frontend/ui/Icon'
 import { Media } from '@/components/frontend/ui/Media'
 import type { Footer } from '@/payload-types'
+import { cmsText } from '@rinsly-com/site-core'
 
 type Props = {
   footer: Footer | null
@@ -83,17 +84,17 @@ function ColumnHeading({ children }: { children: string }) {
  * fading "BURO J.A.Z.Z." wordmark above the copyright line.
  */
 export function SiteFooter({ footer }: Props) {
-  const tagline = footer?.tagline ?? 'J.A.Z.Z. – Jeugdhulp en Ambulante Zorg met Zorgzaamheid.'
-  const email = footer?.email ?? 'contact@burojazz.nl'
-  const phone = footer?.phone ?? '+31 6 55202233'
-  const address = footer?.address ?? 'Vlasakker 24, 3417 XT, Montfoort'
+  const tagline = cmsText(footer?.tagline, 'J.A.Z.Z. – Jeugdhulp en Ambulante Zorg met Zorgzaamheid.')
+  const email = cmsText(footer?.email, 'contact@burojazz.nl')
+  const phone = cmsText(footer?.phone, '+31 6 55202233')
+  const address = cmsText(footer?.address, 'Vlasakker 24, 3417 XT, Montfoort')
   // Show the street on its own line and the rest below (split on the first comma).
   const [addressStreet, ...addressRest] = address.split(',')
   const addressCity = addressRest.join(',').trim()
   const menuItems = footer?.menuItems?.length ? footer.menuItems : FALLBACK_MENU
   const infoLinks = footer?.infoLinks?.length ? footer.infoLinks : FALLBACK_INFO
   const copyright =
-    footer?.copyright ?? 'Copyright © Buro J.A.Z.Z. 2026 –– Alle rechten voorbehouden.'
+    cmsText(footer?.copyright, 'Copyright © Buro J.A.Z.Z. 2026 –– Alle rechten voorbehouden.')
   const socials: SocialItem[] = footer?.socials?.length
     ? footer.socials.flatMap((s) => {
         const platform = s.platform ? SOCIAL_PLATFORMS[s.platform] : undefined
@@ -117,7 +118,7 @@ export function SiteFooter({ footer }: Props) {
                 fit="contain"
                 className="size-[71px]"
               />
-              <p className="text-sm font-medium leading-[1.4] tracking-[-0.01em]">{tagline}</p>
+              {tagline && <p className="text-sm font-medium leading-[1.4] tracking-[-0.01em]">{tagline}</p>}
             </div>
 
             {/* Link columns */}
@@ -126,6 +127,7 @@ export function SiteFooter({ footer }: Props) {
               <div className="flex flex-col gap-4">
                 <ColumnHeading>Contact</ColumnHeading>
                 <ul className="flex flex-col gap-3.5">
+                  {email && (
                   <li>
                     <a
                       href={`mailto:${email}`}
@@ -135,6 +137,8 @@ export function SiteFooter({ footer }: Props) {
                       {email}
                     </a>
                   </li>
+                  )}
+                  {phone && (
                   <li>
                     <a
                       href={`tel:${phone.replace(/\s+/g, '')}`}
@@ -144,6 +148,8 @@ export function SiteFooter({ footer }: Props) {
                       {phone}
                     </a>
                   </li>
+                  )}
+                  {address && (
                   <li className="flex items-start gap-2 text-sm font-medium leading-[1.4] tracking-[-0.01em]">
                     <Icon fallback="IconMapPin" size={24} stroke={1.5} className="shrink-0" />
                     <span className="flex flex-col">
@@ -151,6 +157,7 @@ export function SiteFooter({ footer }: Props) {
                       {addressCity && <span>{addressCity}</span>}
                     </span>
                   </li>
+                  )}
                 </ul>
               </div>
 
@@ -219,7 +226,7 @@ export function SiteFooter({ footer }: Props) {
           >
             BURO J.A.Z.Z.
           </p>
-          <p className="pb-6 text-center text-sm font-medium leading-[1.5]">{copyright}</p>
+          {copyright && <p className="pb-6 text-center text-sm font-medium leading-[1.5]">{copyright}</p>}
         </div>
       </div>
     </footer>

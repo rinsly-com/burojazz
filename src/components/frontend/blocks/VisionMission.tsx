@@ -7,6 +7,7 @@ import { Eyebrow } from '@/components/frontend/ui/Eyebrow'
 import { Icon } from '@/components/frontend/ui/Icon'
 import { Media } from '@/components/frontend/ui/Media'
 import { Section } from '@/components/frontend/ui/Section'
+import { cmsText } from '@rinsly-com/site-core'
 
 type Props = Extract<NonNullable<Page['layout']>[number], { blockType: 'visionMission' }>
 
@@ -32,6 +33,7 @@ const DEFAULT_ITEM_ICONS = ['IconStar', 'IconHeartHandshake']
  * and the Lexical renderer stay out of the client bundle.
  */
 export function VisionMission(props: Props) {
+  const eyebrow = cmsText(props.header?.eyebrow, 'Visie en missie')
   const title = props.header?.title ?? DEFAULT_TITLE
   const rawItems = props.items && props.items.length > 0 ? props.items : DEFAULT_ITEMS
   const items = rawItems.map((item, i) => {
@@ -63,12 +65,14 @@ export function VisionMission(props: Props) {
         <div className="flex w-full flex-col items-start gap-6 lg:max-w-[568px] lg:shrink-0">
           <span className="inline-flex items-center justify-center gap-2.5 rounded-pill bg-brand/5 px-3 py-2.5 text-brand">
             <Icon name={props.header?.icon} fallback="IconRocket" size={14} />
-            <Eyebrow>{props.header?.eyebrow ?? 'Visie en missie'}</Eyebrow>
+            {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
           </span>
 
-          <h2 className="font-sans text-[28px] leading-[1.2] font-semibold tracking-[0.02em] text-black md:text-[40px]">
-            {title}
-          </h2>
+          {title && (
+            <h2 className="font-sans text-[28px] leading-[1.2] font-semibold tracking-[0.02em] text-black md:text-[40px]">
+              {title}
+            </h2>
+          )}
 
           <VisionMissionAccordion items={items} />
         </div>

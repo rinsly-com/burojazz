@@ -3,6 +3,7 @@ import { Buttons } from '@/components/frontend/ui/CMSLink'
 import { mediaUrl, resolveMedia } from '@/components/frontend/ui/Media'
 import { cfImageSrcSet } from '@/lib/image'
 import type { Page } from '@/payload-types'
+import { cmsText } from '@rinsly-com/site-core'
 
 type Props = Extract<NonNullable<Page['layout']>[number], { blockType: 'hero' }>
 
@@ -17,8 +18,8 @@ const IMAGE_ALT = 'Begeleider en jongere tijdens een bokstraining'
  * Server component — decorative shapes are CSS/images.
  */
 export function Hero(props: Props) {
-  const title = props.header?.title ?? 'BURO J.A.Z.Z.'
-  const subtitle = props.header?.subtitle ?? 'Jeugdhulp en Ambulante Zorg met Zorgzaamheid'
+  const title = cmsText(props.header?.title, 'BURO J.A.Z.Z.')
+  const subtitle = cmsText(props.header?.subtitle, 'Jeugdhulp en Ambulante Zorg met Zorgzaamheid')
   const description =
     props.header?.intro ??
     'Wij bieden ambulante jeugdhulp en jeugdhulp met verblijf, gericht op behandeling en begeleiding.'
