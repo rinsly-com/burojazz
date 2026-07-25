@@ -69,10 +69,17 @@ describe('the fixed-frame regression', () => {
     // Identified by its counter-rotation: the only image inside the tilted
     // panel. (Matching any <img> here would find the decorative blob instead,
     // which stayed in cqw and would hide the regression.)
-    const imgs = Array.from(renderHero().querySelectorAll('[aria-hidden="true"] img'))
-    const photo = imgs.find((el) => el.className.includes('rotate-[30deg]'))
+    const imgs = Array.from(
+      renderHero().querySelectorAll<HTMLElement>('[aria-hidden="true"] img'),
+    )
+    const photo = imgs.find((el) => el.style.transform?.includes('rotate(30deg)'))
     expect(photo, 'the counter-rotated hero photo should be rendered').toBeDefined()
+
+    // Its size and pan depend on the focal crop, so they are an inline style
+    // rather than Tailwind classes — assert cqw there, and no px anywhere.
     expect(photo!.className).not.toMatch(/\b[wh]-\[\d+px\]/)
-    expect(photo!.className).toMatch(/cqw\]/)
+    expect(photo!.style.width).toMatch(/cqw$/)
+    expect(photo!.style.height).toMatch(/cqw$/)
+    expect(photo!.style.transform).toMatch(/cqw/)
   })
 })
