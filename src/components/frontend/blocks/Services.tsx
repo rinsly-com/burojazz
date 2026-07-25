@@ -7,6 +7,7 @@ import { Section } from '@/components/frontend/ui/Section'
 import { hasRichTextContent } from '@/lib/richText'
 
 import { ServicesTabs, type TabData } from './ServicesTabs'
+import { cmsText } from '@rinsly-com/site-core'
 
 type Props = Extract<NonNullable<Page['layout']>[number], { blockType: 'services' }>
 
@@ -116,7 +117,7 @@ const DEFAULT_TABS: TabData[] = [
  * tab switching is handled by the client ServicesTabs component.
  */
 export function Services(props: Props) {
-  const eyebrow = props.header?.eyebrow ?? 'Hulpverleningsvormen'
+  const eyebrow = cmsText(props.header?.eyebrow, 'Hulpverleningsvormen')
   const title =
     props.header?.title ??
     'Ambulante jeugdhulp en verblijf, gericht op behandeling en begeleiding.'
@@ -143,13 +144,17 @@ export function Services(props: Props) {
   return (
     <Section py="py-16 md:py-[120px]" className="flex flex-col items-center gap-12 md:gap-20">
       <div className="flex max-w-[700px] flex-col items-center gap-6">
-        <div className="inline-flex items-center gap-2.5 rounded-pill bg-brand/5 px-3 py-2.5 text-brand">
-          <Icon name={props.header?.icon} fallback="IconDiamond" size={14} />
-          <Eyebrow>{eyebrow}</Eyebrow>
-        </div>
-        <h2 className="text-center text-[28px] font-semibold leading-[1.2] tracking-[0.02em] text-black md:text-[40px]">
-          {title}
-        </h2>
+        {eyebrow && (
+          <div className="inline-flex items-center gap-2.5 rounded-pill bg-brand/5 px-3 py-2.5 text-brand">
+            <Icon name={props.header?.icon} fallback="IconDiamond" size={14} />
+            <Eyebrow>{eyebrow}</Eyebrow>
+          </div>
+        )}
+        {title && (
+          <h2 className="text-center text-[28px] font-semibold leading-[1.2] tracking-[0.02em] text-black md:text-[40px]">
+            {title}
+          </h2>
+        )}
       </div>
       <ServicesTabs tabs={renderedTabs} />
     </Section>

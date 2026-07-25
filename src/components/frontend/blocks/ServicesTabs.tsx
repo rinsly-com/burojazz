@@ -7,6 +7,7 @@ import type { Page } from '@/payload-types'
 import { ArrowIcon } from '@/components/frontend/ui/ArrowIcon'
 import { hrefFor, type LinkFields } from '@/components/frontend/ui/CMSLink'
 import { Modal } from '@/components/frontend/ui/Modal'
+import { cmsText } from '@rinsly-com/site-core'
 
 type ServicesBlock = Extract<NonNullable<Page['layout']>[number], { blockType: 'services' }>
 /** A service card as stored in the CMS — the source of the `details` shape. */
@@ -83,7 +84,7 @@ function ServiceCard({
         </div>
         {onOpenDetails ? (
           <button type="button" onClick={onOpenDetails} className={`self-start ${READ_MORE_CLASSES}`}>
-            {card.link?.label ?? 'Lees verder'}
+            {cmsText(card.link?.label, 'Lees verder')}
             <ArrowIcon />
           </button>
         ) : (
@@ -93,7 +94,7 @@ function ServiceCard({
             rel={card.link?.newTab ? 'noopener noreferrer' : undefined}
             className={READ_MORE_CLASSES}
           >
-            {card.link?.label ?? 'Lees verder'}
+            {cmsText(card.link?.label, 'Lees verder')}
             <ArrowIcon />
           </Link>
         )}

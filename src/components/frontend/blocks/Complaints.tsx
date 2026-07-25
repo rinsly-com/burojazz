@@ -4,6 +4,7 @@ import { ComplaintsStepper, type Step } from '@/components/frontend/blocks/Compl
 import { Icon } from '@/components/frontend/ui/Icon'
 import { Media } from '@/components/frontend/ui/Media'
 import { Section } from '@/components/frontend/ui/Section'
+import { cmsText } from '@rinsly-com/site-core'
 
 type Props = Extract<NonNullable<Page['layout']>[number], { blockType: 'complaints' }>
 
@@ -130,8 +131,8 @@ function ContactCard({ contact }: { contact: NonNullable<Props['contact']> }) {
  * stays out of the client bundle (matching VisionMission).
  */
 export function Complaints(props: Props) {
-  const eyebrow = props.header?.eyebrow ?? 'Stap voor stap'
-  const title = props.header?.title ?? 'Klachtenregeling'
+  const eyebrow = cmsText(props.header?.eyebrow, 'Stap voor stap')
+  const title = cmsText(props.header?.title, 'Klachtenregeling')
   const intro =
     props.header?.intro ??
     'Hieronder de klachtenprocedure Wkkgz in het kort. Op de achterzijde vindt u meer toelichting.'
