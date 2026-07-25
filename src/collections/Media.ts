@@ -31,5 +31,22 @@ export const Media: CollectionConfig = {
     // point (just stored focalX/focalY %, no image processing) and the frontend
     // applies it as CSS object-position (see components/frontend/ui/Media.tsx).
     focalPoint: true,
+    // Actually disable the crop tool. The comment above was the intent, but
+    // without this flag Payload defaults `crop` to true and still renders the
+    // Crop tab — where `if (cropData && sharp)` silently does nothing on the
+    // Worker, so the crop appeared to save and never applied.
+    crop: false,
+    // Saving a focal point makes Payload re-fetch the original file (see
+    // shouldReupload in payload/dist/uploads/generateFileData.js), and because
+    // the R2 adapter sets disableLocalStorage it goes through getExternalFile.
+    // That uses Payload's SSRF-guarded safeFetch, which imports `node:dns`
+    // lookup + undici's Agent — neither exists in workerd. The throw surfaced
+    // as a FileRetrievalError, which is why image settings could not be changed
+    // on accp while working fine locally (Node has both).
+    //
+    // Safe to skip here: this code path only ever fetches the document's own
+    // `/api/media/file/<filename>` URL resolved against the incoming request's
+    // origin. No user-supplied URL reaches it — `pasteURL` is not enabled.
+    skipSafeFetch: true,
   },
 }
