@@ -8,6 +8,7 @@ import { Eyebrow } from '@/components/frontend/ui/Eyebrow'
 import { Icon } from '@/components/frontend/ui/Icon'
 import { Media } from '@/components/frontend/ui/Media'
 import { Section } from '@/components/frontend/ui/Section'
+import { cmsText } from '@rinsly-com/site-core'
 
 type Props = Extract<NonNullable<Page['layout']>[number], { blockType: 'about' }>
 
@@ -23,9 +24,9 @@ const DEFAULT_BODY_P2 =
  * eyebrow pill + title + body copy + CTAs right. Stacks on mobile.
  */
 export function About(props: Props) {
-  const eyebrow = props.header?.eyebrow ?? 'Wie wij zijn'
+  const eyebrow = cmsText(props.header?.eyebrow, 'Wie wij zijn')
   const title = props.header?.title ?? DEFAULT_TITLE
-  const email = props.email ?? 'contact@burojazz.nl'
+  const email = cmsText(props.email, 'contact@burojazz.nl')
 
   return (
     <Section id="wie-wij-zijn" py="py-16 md:pt-28 md:pb-36">
@@ -57,13 +58,17 @@ export function About(props: Props) {
         {/* Text column */}
         <div className="flex flex-col items-start gap-10 lg:gap-12">
           <div className="flex flex-col items-start gap-6">
-            <div className="inline-flex items-center gap-2.5 rounded-pill bg-brand/5 px-3 py-2.5 text-brand">
-              <Icon name={props.header?.icon} fallback="IconUsers" size={14} />
-              <Eyebrow>{eyebrow}</Eyebrow>
-            </div>
-            <h2 className="max-w-[568px] font-sans text-[28px] leading-[1.2] font-semibold tracking-[0.02em] text-black sm:text-[32px] lg:text-[40px]">
-              {title}
-            </h2>
+            {eyebrow && (
+              <div className="inline-flex items-center gap-2.5 rounded-pill bg-brand/5 px-3 py-2.5 text-brand">
+                <Icon name={props.header?.icon} fallback="IconUsers" size={14} />
+                <Eyebrow>{eyebrow}</Eyebrow>
+              </div>
+            )}
+            {title && (
+              <h2 className="max-w-[568px] font-sans text-[28px] leading-[1.2] font-semibold tracking-[0.02em] text-black sm:text-[32px] lg:text-[40px]">
+                {title}
+              </h2>
+            )}
             <div className="flex max-w-[549px] flex-col gap-[1.6em] text-sm leading-[1.6] font-medium text-ink [&_a]:text-brand [&_a]:underline">
               {props.body ? (
                 <RichText data={props.body} disableContainer />

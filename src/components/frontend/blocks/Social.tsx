@@ -9,6 +9,7 @@ import { Eyebrow } from '@/components/frontend/ui/Eyebrow'
 import { Icon } from '@/components/frontend/ui/Icon'
 import { Media, mediaUrl } from '@/components/frontend/ui/Media'
 import { Section } from '@/components/frontend/ui/Section'
+import { cmsText } from '@rinsly-com/site-core'
 
 type Props = Extract<NonNullable<Page['layout']>[number], { blockType: 'social' }>
 
@@ -19,8 +20,9 @@ type Props = Extract<NonNullable<Page['layout']>[number], { blockType: 'social' 
  * "Kijk achter de schermen!" and a teal @buro.jazz Instagram badge.
  */
 export function Social(props: Props) {
-  const title = props.header?.title ?? 'Samen in verbinding, ook online'
-  const handle = props.handle ?? '@buro.jazz'
+  const title = cmsText(props.header?.title, 'Samen in verbinding, ook online')
+  const eyebrow = cmsText(props.header?.eyebrow, 'Social Media')
+  const handle = cmsText(props.handle, '@buro.jazz')
   const subtitle =
     props.header?.subtitle ??
     'We delen inzichten, verhalen en inspiratie uit onze dagelijkse praktijk.'
@@ -47,12 +49,14 @@ export function Social(props: Props) {
         <div className="relative z-10 mx-auto flex max-w-[700px] flex-col items-center gap-6 text-center">
           <div className="inline-flex items-center gap-2.5 rounded-pill bg-brand/5 px-3 py-2.5 text-brand">
             <Icon name={props.header?.icon} fallback="IconBrandInstagram" size={14} />
-            <Eyebrow className="leading-none">{props.header?.eyebrow ?? 'Social Media'}</Eyebrow>
+            {eyebrow && <Eyebrow className="leading-none">{eyebrow}</Eyebrow>}
           </div>
-          <h2 className="font-semibold text-[28px] leading-[1.2] tracking-[0.02em] text-black md:text-[40px]">
-            {title}
-          </h2>
-          <p className="max-w-[549px] text-sm font-medium text-ink">{subtitle}</p>
+          {title && (
+            <h2 className="font-semibold text-[28px] leading-[1.2] tracking-[0.02em] text-black md:text-[40px]">
+              {title}
+            </h2>
+          )}
+          {subtitle && <p className="max-w-[549px] text-sm font-medium text-ink">{subtitle}</p>}
         </div>
 
         {/* Collage */}
@@ -95,7 +99,7 @@ export function Social(props: Props) {
                 className="size-[60px] shrink-0"
               />
               <span className="flex min-w-0 flex-1 flex-col gap-1.5">
-                <span className="text-[20px] font-bold leading-normal text-white">{handle}</span>
+                {handle && <span className="text-[20px] font-bold leading-normal text-white">{handle}</span>}
                 <span className="flex items-center gap-2.5 text-sm font-medium text-white">
                   {linkLabel}
                   <ArrowIcon />

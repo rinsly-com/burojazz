@@ -7,6 +7,7 @@ import { hrefFor, type LinkFields } from '@/components/frontend/ui/CMSLink'
 import { Eyebrow } from '@/components/frontend/ui/Eyebrow'
 import { Icon } from '@/components/frontend/ui/Icon'
 import { Section } from '@/components/frontend/ui/Section'
+import { cmsText } from '@rinsly-com/site-core'
 
 type Props = Extract<NonNullable<Page['layout']>[number], { blockType: 'vacancies' }>
 
@@ -71,8 +72,9 @@ function Tag({ icon, label }: { icon: 'location' | 'clock'; label: string }) {
  * Cards are white with a hairline border and turn teal on hover (group-hover).
  */
 export function Vacancies(props: Props) {
-  const title = props.header?.title ?? 'Word onderdeel van ons team'
-  const intro = props.header?.intro ?? 'Samen aan de missie en visie van Buro J.A.Z.Z werken'
+  const title = cmsText(props.header?.title, 'Word onderdeel van ons team')
+  const eyebrow = cmsText(props.header?.eyebrow, 'Vacatures')
+  const intro = cmsText(props.header?.intro, 'Samen aan de missie en visie van Buro J.A.Z.Z werken')
   const cards = props.cards && props.cards.length > 0 ? props.cards : FALLBACK_CARDS
 
   // Open-application line. `hrefFor` yields '#' when no destination is set, in
@@ -89,20 +91,22 @@ export function Vacancies(props: Props) {
       <div className="flex flex-col items-center gap-6 text-center">
         <span className="inline-flex items-center gap-2.5 rounded-pill bg-brand/5 px-3 py-2.5 text-brand">
           <Icon name={props.header?.icon} fallback="IconBriefcase" size={14} className="shrink-0" />
-          <Eyebrow>{props.header?.eyebrow ?? 'Vacatures'}</Eyebrow>
+          {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
         </span>
-        <h2 className="max-w-[700px] text-3xl font-semibold leading-[1.2] tracking-[0.02em] text-black md:text-[40px]">
-          {title}
-        </h2>
-        <p className="max-w-[549px] text-sm font-medium text-ink">{intro}</p>
+        {title && (
+          <h2 className="max-w-[700px] text-3xl font-semibold leading-[1.2] tracking-[0.02em] text-black md:text-[40px]">
+            {title}
+          </h2>
+        )}
+        {intro && <p className="max-w-[549px] text-sm font-medium text-ink">{intro}</p>}
       </div>
 
       {/* Cards */}
       <div className="mx-auto mt-12 flex w-full max-w-[951px] flex-col gap-6 md:mt-20">
         {cards.map((card, i) => {
           const cardTitle = card.title ?? FALLBACK_CARDS[i % FALLBACK_CARDS.length].title
-          const location = card.location ?? 'Montfoort'
-          const hours = card.hours ?? 'Voltijd of deeltijd'
+          const location = cmsText(card.location, 'Montfoort')
+          const hours = cmsText(card.hours, 'Voltijd of deeltijd')
           const text = card.text ?? FALLBACK_CARDS[i % FALLBACK_CARDS.length].text
           const linkLabel = card.link?.label || 'Bekijk vacature'
           const linkUrl = hrefFor(card.link)
@@ -142,8 +146,8 @@ export function Vacancies(props: Props) {
               {/* Content */}
               <div className="relative flex min-w-0 flex-1 flex-col items-start gap-4 p-6 md:px-0 md:py-8">
                 <div className="flex flex-wrap items-center gap-3 md:gap-5">
-                  <Tag icon="location" label={location} />
-                  <Tag icon="clock" label={hours} />
+                  {location && <Tag icon="location" label={location} />}
+                  {hours && <Tag icon="clock" label={hours} />}
                 </div>
                 <h3 className="text-lg font-bold leading-6 tracking-[-0.01em] text-[#000135] transition-colors group-hover:text-white md:text-xl">
                   {cardTitle}

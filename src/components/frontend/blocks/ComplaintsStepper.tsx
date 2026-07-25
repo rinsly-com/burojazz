@@ -184,12 +184,14 @@ export function ComplaintsStepper({
         >
           <span className="inline-flex items-center gap-2.5 rounded-pill bg-brand/5 px-3 py-2.5 text-brand">
             {eyebrowIcon}
-            <span className="text-sm font-medium text-brand">{eyebrow}</span>
+            {eyebrow && <span className="text-sm font-medium text-brand">{eyebrow}</span>}
           </span>
-          <h2 className="font-sans text-3xl font-semibold leading-[1.2] tracking-[0.02em] text-black md:text-[40px]">
-            {title}
-          </h2>
-          <p className="whitespace-pre-line text-sm font-medium text-ink">{intro}</p>
+          {title && (
+            <h2 className="font-sans text-3xl font-semibold leading-[1.2] tracking-[0.02em] text-black md:text-[40px]">
+              {title}
+            </h2>
+          )}
+          {intro && <p className="whitespace-pre-line text-sm font-medium text-ink">{intro}</p>}
         </div>
 
         {/* Stepper rail (desktop only): pill centred beside the active card. */}

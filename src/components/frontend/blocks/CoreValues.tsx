@@ -3,6 +3,7 @@ import { Eyebrow } from '@/components/frontend/ui/Eyebrow'
 import { Icon } from '@/components/frontend/ui/Icon'
 import { Media, mediaUrl } from '@/components/frontend/ui/Media'
 import { Section } from '@/components/frontend/ui/Section'
+import { cmsText } from '@rinsly-com/site-core'
 
 type Props = Extract<NonNullable<Page['layout']>[number], { blockType: 'coreValues' }>
 
@@ -102,7 +103,8 @@ function ValueChip({ value }: { value: ValueItem }) {
  * screens fall back to a wrapped row of chips led by the logo tile.
  */
 export function CoreValues(props: Props) {
-  const title = props.header?.title ?? 'Dit zijn onze kernwaarden'
+  const title = cmsText(props.header?.title, 'Dit zijn onze kernwaarden')
+  const eyebrow = cmsText(props.header?.eyebrow, 'Over ons')
   const rawValues: ValueItem[] = props.values?.length
     ? props.values.map((v) => ({
         label: v.label ?? '',
@@ -128,11 +130,13 @@ export function CoreValues(props: Props) {
         <div className="flex flex-col items-center gap-6 text-center">
           <div className="inline-flex items-center gap-2.5 rounded-pill bg-brand/5 px-3 py-2.5 text-brand">
             <Icon name={props.header?.icon} fallback="IconHeart" size={14} />
-            <Eyebrow>{props.header?.eyebrow ?? 'Over ons'}</Eyebrow>
+            {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
           </div>
-          <h2 className="font-sans text-3xl font-semibold tracking-[-0.8px] text-ink md:text-[40px] md:leading-[1.2]">
-            {title}
-          </h2>
+          {title && (
+            <h2 className="font-sans text-3xl font-semibold tracking-[-0.8px] text-ink md:text-[40px] md:leading-[1.2]">
+              {title}
+            </h2>
+          )}
         </div>
 
         {/* Small screens: logo tile first, then wrapped chips */}
