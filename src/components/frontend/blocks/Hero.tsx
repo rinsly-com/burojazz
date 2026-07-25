@@ -34,10 +34,17 @@ export function Hero(props: Props) {
 
   return (
     <section className="relative overflow-hidden bg-white">
-      {/* Decorative desktop background: composition anchored to the 1512px design frame. */}
+      {/* Decorative desktop background, laid out on the 1512px design frame.
+          Every offset below is in `cqw` — a percentage of THIS container's
+          width — so the whole composition scales proportionally once the
+          viewport drops under 1512 instead of being cropped at the edges. That
+          matters because the photo enters from the right: a centred fixed-width
+          frame lost ~106px off the right at 1300px, which is exactly where the
+          subject stands. At >= 1512 the container caps out and the numbers
+          resolve back to the design's pixel values. */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-y-0 left-1/2 hidden w-[1512px] -translate-x-1/2 xl:block"
+        className="pointer-events-none absolute inset-y-0 left-1/2 hidden w-full max-w-[1512px] -translate-x-1/2 @container xl:block"
       >
         {/* Soft blurred teal blob, bottom-left */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -45,18 +52,18 @@ export function Hero(props: Props) {
           src="/images/header-hero/blob-ellipse.svg"
           alt=""
           loading="lazy"
-          className="absolute left-[-452px] top-[266px] size-[1020px] max-w-none"
+          className="absolute left-[-29.8942cqw] top-[17.5926cqw] size-[67.4603cqw] max-w-none"
         />
         {/* Giant rotated white rounded rect with soft shadow (the diagonal white plane) */}
-        <div className="absolute left-[-194px] top-[-540px] flex h-[1393px] w-[1824px] items-center justify-center">
-          <div className="h-[905px] w-[1615px] shrink-0 rotate-[-19.56deg] rounded-[210px] bg-white shadow-[0px_9px_26.9px_0px_rgba(0,0,0,0.12)]" />
+        <div className="absolute left-[-12.8307cqw] top-[-35.7143cqw] flex h-[92.1296cqw] w-[120.6349cqw] items-center justify-center">
+          <div className="h-[59.8545cqw] w-[106.8122cqw] shrink-0 rotate-[-19.56deg] rounded-[13.8889cqw] bg-white shadow-[0px_9px_26.9px_0px_rgba(0,0,0,0.12)]" />
         </div>
         {/* Main photo, right side (from the CMS Hero image). The frame is
             rotated -30° so it reads as a tilted panel, but the image itself is
             counter-rotated +30° (net upright) and object-cover, so the photo
             stays horizontal and fills the frame instead of being cropped askew. */}
-        <div className="absolute left-[818px] top-[-168px] flex h-[1616px] w-[1581px] items-center justify-center">
-          <div className="relative h-[1217px] w-[1122px] shrink-0 rotate-[-30deg] overflow-hidden rounded-photo">
+        <div className="absolute left-[54.1005cqw] top-[-11.1111cqw] flex h-[106.8783cqw] w-[104.5635cqw] items-center justify-center">
+          <div className="relative h-[80.4894cqw] w-[74.2063cqw] shrink-0 rotate-[-30deg] overflow-hidden rounded-[5.291cqw]">
             {/* Desktop LCP photo. loading=lazy so mobile (where this whole
                 composition is display:none) never fetches this 1600px variant;
                 on desktop it's in the initial viewport, so it still loads —
@@ -68,7 +75,7 @@ export function Hero(props: Props) {
               alt=""
               loading="lazy"
               fetchPriority="high"
-              className="absolute left-1/2 top-1/2 h-[1616px] w-[1581px] max-w-none -translate-x-1/2 -translate-y-1/2 rotate-[30deg] object-cover"
+              className="absolute left-1/2 top-1/2 h-[106.8783cqw] w-[104.5635cqw] max-w-none -translate-x-1/2 -translate-y-1/2 rotate-[30deg] object-cover"
               style={{ objectPosition }}
             />
             <div className="absolute inset-0 bg-black/[0.03]" />
