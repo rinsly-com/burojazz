@@ -4,6 +4,12 @@ name: Deploy ACCP (CMS)
 # accp.burojazz.com. "pnpm run deploy" migrates the accp D1 (lint:migrations
 # first) then builds + deploys via opennextjs-cloudflare.
 #
+# Branch → environment: `develop` is the staging line and deploys HERE, so work
+# is exercised on accp before it reaches the public site. `main` deploys
+# production (see deploy-prod.yml). Always merge develop → main, never push code
+# straight to main: production would then run ahead of the CMS/API that the
+# static build snapshots its content from.
+#
 # Self-contained (inlined) copy of the fleet pipeline. Canonical source:
 # rinsly-com/rinsly-template/.github/workflows/site-deploy.yml — kept in sync by
 # the fleet tooling. (Inlined rather than referenced because GitHub's private
@@ -11,7 +17,7 @@ name: Deploy ACCP (CMS)
 
 on:
   push:
-    branches: [main]
+    branches: [develop]
   workflow_dispatch:
 
 concurrency:
