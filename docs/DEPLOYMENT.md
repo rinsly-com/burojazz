@@ -102,31 +102,39 @@ select this repo and configure:
 
 Every push to `main` now migrates + deploys accp.
 
-### 5. Create the production Deploy Hook + static build
+### 5. The production static build
 
 The static site deploys via `pnpm run deploy:static` (which runs
-`build:static` then `wrangler deploy --config wrangler.static.jsonc`).
+`build:static` then `wrangler deploy --config wrangler.static.jsonc`), driven by
+the **Deploy production (static)** GitHub Actions workflow
+(`.github/workflows/deploy-prod.yml`).
 
-Set up a second Workers Build (or a scheduled/hook-triggered build) for the
-static site with:
+Production is deployed **deliberately** — never automatically. The only triggers
+are:
 
-- **Build command:** `pnpm run deploy:static`
-- **Environment variables:**
-  - `PAYLOAD_API_URL = https://<your-accp-worker-url>` (so the build fetches
-    published content from accp)
-- **Trigger:** a **Deploy Hook** (Settings → Builds → Deploy Hooks). Copy the
-  hook URL.
+- the **Deploy now** button in the CMS admin Deploy view, which POSTs
+  `/api/deploy` and fires a GitHub `repository_dispatch` (`deploy-static`);
+- a manual run from the Actions tab (`workflow_dispatch`).
 
-### 6. Wire the deploy hook into accp
+Publishing, editing or deleting content does **not** deploy. It only changes what
+the next build will ship, so an editor can publish several pages and then deploy
+once. Merges to `main` deploy accp only; prod picks that code up on the next
+deploy.
 
-Set the hook URL as a secret on the accp Worker so publishing triggers a rebuild:
+### 6. Wire the dispatch credentials into accp
+
+So the Deploy button can reach GitHub, set a token with `contents: write` on this
+repo as a secret on the accp Worker:
 
 ```bash
-pnpm wrangler secret put CLOUDFLARE_DEPLOY_HOOK_URL --env accp
-# paste the Deploy Hook URL from step 5
+pnpm wrangler secret put DEPLOY_DISPATCH_TOKEN --env accp
 ```
 
-(Or add it as an environment variable on the accp Workers Build.)
+`DEPLOY_DISPATCH_URL` is already set as a plain var in `wrangler.jsonc`
+(`https://api.github.com/repos/<owner>/<repo>/dispatches`); override
+`DEPLOY_DISPATCH_EVENT` only if you rename the workflow's event type. With either
+the URL or token missing (e.g. local dev) the deploy call is skipped and the
+admin UI says so instead of failing.
 
 ---
 
@@ -136,7 +144,9 @@ pnpm wrangler secret put CLOUDFLARE_DEPLOY_HOOK_URL --env accp
 | --------------------------- | ---------------- | ---------------------------------------------- |
 | `PAYLOAD_SECRET`            | accp             | Signs Payload auth tokens                      |
 | `CLOUDFLARE_ENV`            | accp build       | Selects the `accp` wrangler environment        |
-| `CLOUDFLARE_DEPLOY_HOOK_URL`| accp (secret)    | Publishing content triggers the prod rebuild   |
+| `DEPLOY_DISPATCH_URL`       | accp (var)       | GitHub dispatches endpoint the Deploy button POSTs to |
+| `DEPLOY_DISPATCH_TOKEN`     | accp (secret)    | GitHub token (`contents: write`) for that dispatch |
+| `DEPLOY_DISPATCH_EVENT`     | accp (optional)  | Dispatch event type (default `deploy-static`)  |
 | `PAYLOAD_API_URL`           | prod build       | accp API origin the static build fetches from  |
 | `NEXT_PUBLIC_PAYLOAD_API_URL`| prod build      | accp API origin the aanmelden form POSTs to (browser) |
 | `FRONTEND_URL`              | accp             | CORS/CSRF allow-list for the static site origin(s), comma-separated |

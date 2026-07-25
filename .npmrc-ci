@@ -1,0 +1,7 @@
+; CI-only npm user config for private GitHub Packages (@rinsly-com/site-core).
+; Point pnpm at this file with NPM_CONFIG_USERCONFIG=.npmrc-ci in the build env.
+; pnpm ignores ${ENV} auth tokens in a PROJECT .npmrc but DOES expand them in a
+; USER config — so this stays token-free and safe to commit. Set NODE_AUTH_TOKEN
+; (a read:packages PAT) as a build secret.
+@rinsly-com:registry=https://npm.pkg.github.com
+//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}

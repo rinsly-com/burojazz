@@ -18,6 +18,16 @@ import { VisionMission } from '@/components/frontend/blocks/VisionMission'
 type Block = NonNullable<Page['layout']>[number]
 
 /**
+ * SiteHeader is `fixed` over the page, so the first section has to start below
+ * it. The Hero carries its own generous top padding (it is designed to sit
+ * *under* the floating pill); every other block would render behind the header,
+ * so it gets exactly the header's height as top padding — its own vertical
+ * padding then supplies the visual gap. Height: mobile 16 + 12 + 48 + 12 + 16,
+ * md 21 + 16 + 56 + 16 + 21 (wrapper py + pill p + logo, see SiteHeader).
+ */
+const HEADER_CLEARANCE = 'pt-[104px] md:pt-[130px]'
+
+/**
  * Typed block dispatcher: maps each Payload block slug to its section
  * component. Unknown block types render nothing (forward compatible).
  */
@@ -55,6 +65,10 @@ function RenderBlock({ block }: { block: Block }) {
 export function RenderBlocks({ layout }: { layout: Page['layout'] }) {
   if (!layout || layout.length === 0) return null
 
+  // Pages that don't open with a hero need their first block pushed clear of
+  // the fixed header (e.g. a rich text block as the first section).
+  const clearHeader = layout[0]?.blockType !== 'hero'
+
   return (
     <>
       {layout.map((block, index) => {
@@ -64,9 +78,10 @@ export function RenderBlocks({ layout }: { layout: Page['layout'] }) {
         // no Anchor ID is set). No scroll offset — onepager menu links land with
         // the section's top flush against the top of the viewport.
         const id = block.anchor?.trim().replace(/^#+/, '') || block.id || undefined
-        if (!id) return <RenderBlock key={key} block={block} />
+        const className = index === 0 && clearHeader ? HEADER_CLEARANCE : undefined
+        if (!id && !className) return <RenderBlock key={key} block={block} />
         return (
-          <div key={key} id={id}>
+          <div key={key} id={id} className={className}>
             <RenderBlock block={block} />
           </div>
         )

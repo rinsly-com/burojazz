@@ -23,14 +23,10 @@
     // https://developers.cloudflare.com/workers/configuration/compatibility-flags/#global-fetch-strictly-public
     "global_fetch_strictly_public",
   ],
-  // Custom domain for the accp CMS. Cloudflare manages the DNS + cert for this
-  // hostname and routes it to this worker.
-  "routes": [
-    {
-      "pattern": "accp.burojazz.com",
-      "custom_domain": true,
-    },
-  ],
+  // Custom domain (accp.burojazz.com) is attached to this worker in the
+  // Cloudflare dashboard (Worker → Settings → Domains & Routes), NOT here — so CI
+  // deploys with an account-scoped token don't need zone (Workers Routes) perms.
+  // wrangler deploy only updates the worker script; the domain binding persists.
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS",
@@ -58,7 +54,7 @@
   "send_email": [
     {
       "name": "AANMELDING_EMAIL",
-      "destination_address": "rinseschaeffer@gmail.com",
+      "destination_address": "aanmelden@burojazz.nl",
     },
     {
       "name": "AANMELDING_CONFIRM_EMAIL",
@@ -69,9 +65,13 @@
   // destination above) + the From addresses shown on outgoing mail. Swap to a
   // shared team mailbox once real @burojazz.com mailboxes exist.
   "vars": {
-    "AANMELDING_NOTIFY_TO": "rinseschaeffer@gmail.com",
+    "AANMELDING_NOTIFY_TO": "aanmelden@burojazz.nl",
     "EMAIL_FROM_ADDRESS": "aanmeldingen@burojazz.com",
     "EMAIL_CONFIRM_FROM_ADDRESS": "aanmelding@noreply.burojazz.com",
+    // GitHub repository_dispatch endpoint the CMS "Deploy" button POSTs to (see
+    // src/hooks/triggerStaticDeploy.ts). Non-secret. The paired
+    // DEPLOY_DISPATCH_TOKEN is a Worker SECRET (never stored here).
+    "DEPLOY_DISPATCH_URL": "https://api.github.com/repos/rinsly-com/burojazz/dispatches",
   },
   // Media storage. Originals are stored in R2 and served by this worker at
   // /api/media/file/<filename>; payload.config.ts activates the R2 storage
@@ -85,4 +85,19 @@
   "r2_buckets": [
     { "binding": "R2", "bucket_name": "burojazz-accp" },
   ],
+  // Instagram "latest post" integration (src/lib/instagram.ts). DISABLED until
+  // provisioned: with no INSTAGRAM_KV binding the social block simply falls back
+  // to the static phone mockup, and the worker deploys cleanly. A placeholder
+  // namespace id here would make `wrangler deploy` fail, so the binding stays
+  // commented out until the real id exists.
+  //
+  // TO ENABLE (one-time — see docs/INSTAGRAM.md):
+  //   1. wrangler kv namespace create INSTAGRAM_KV   → paste the returned id below
+  //   2. uncomment the kv_namespaces block
+  //   3. seed the token once the Meta app is authorized:
+  //      wrangler kv key put --binding=INSTAGRAM_KV "ig:token" "<long-lived-token>" --remote
+  //   (Alternatively set an INSTAGRAM_ACCESS_TOKEN secret; KV takes precedence.)
+  // "kv_namespaces": [
+  //   { "binding": "INSTAGRAM_KV", "id": "<KV_NAMESPACE_ID>" },
+  // ],
 }

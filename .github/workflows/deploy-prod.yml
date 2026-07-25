@@ -1,0 +1,61 @@
+name: Deploy production (static)
+
+# The public production site (burojazz worker) is a fully static export of the
+# published content, snapshotted from the live accp CMS API at build time.
+#
+# Prod is deployed DELIBERATELY, never on a code merge or a content change — so
+# features can be tested on accp first. It's triggered ONLY by the CMS "Deploy
+# now" button (repository_dispatch), or a manual run from the Actions tab. (Code
+# merges to main auto-deploy accp via deploy-accp.yml; the prod build then picks
+# up that code the next time someone deploys.)
+#
+# Self-contained (inlined) copy of the fleet pipeline. Canonical source:
+# rinsly-com/rinsly-template/.github/workflows/site-deploy.yml — kept in sync by
+# the fleet tooling.
+
+run-name: Deploy prod — ${{ github.event.client_payload.reason || github.event_name }}
+
+on:
+  repository_dispatch:
+    types: [deploy-static]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-burojazz-prod
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  packages: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Set up Node.js + GitHub Packages auth
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@rinsly-com'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.PACKAGES_TOKEN || github.token }}
+
+      - name: Build + deploy (static)
+        run: pnpm run deploy:static
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          PAYLOAD_SECRET: ${{ secrets.PAYLOAD_SECRET }}
+          PAYLOAD_API_URL: https://accp.burojazz.com
+          NODE_AUTH_TOKEN: ${{ secrets.PACKAGES_TOKEN || github.token }}

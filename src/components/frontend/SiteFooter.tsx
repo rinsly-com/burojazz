@@ -1,5 +1,5 @@
-import Link from 'next/link'
-
+import { AnchorLink } from '@/components/frontend/ui/AnchorLink'
+import { hrefFor, type LinkFields } from '@/components/frontend/ui/CMSLink'
 import { Icon } from '@/components/frontend/ui/Icon'
 import { Media } from '@/components/frontend/ui/Media'
 import type { Footer } from '@/payload-types'
@@ -8,50 +8,67 @@ type Props = {
   footer: Footer | null
 }
 
-type LinkItem = { label?: string | null; url?: string | null; id?: string | null }
+/** Footer link lists use the same shared link fields as the header nav. */
+type LinkItem = LinkFields & { id?: string | null }
 
+/** The site is a onepager, so the fallback menu scrolls to home page sections. */
 const FALLBACK_MENU: LinkItem[] = [
-  { label: 'Home', url: '/' },
-  { label: 'Hulpverleningsvormen', url: '/hulpverleningsvormen' },
-  { label: 'Over ons', url: '/over-ons' },
-  { label: 'Klachtregeling', url: '/klachtregeling' },
-  { label: 'Vacatures', url: '/vacatures' },
-  { label: 'Contact', url: '/contact' },
+  { label: 'Home', type: 'external', url: '/' },
+  { label: 'Hulpverleningsvormen', type: 'external', url: '/#hulpverleningsvormen' },
+  { label: 'Over ons', type: 'external', url: '/#over-ons' },
+  { label: 'Klachtregeling', type: 'external', url: '/#klachtregeling' },
+  { label: 'Vacatures', type: 'external', url: '/#vacatures' },
+  { label: 'Contact', type: 'external', url: '/contact' },
 ]
 
 const FALLBACK_INFO: LinkItem[] = [
   { label: 'KvK: 85863025' },
   { label: 'AGB: 90091069' },
-  { label: 'Algemene voorwaarden', url: '/algemene-voorwaarden' },
-  { label: 'Privacyverklaring', url: '/privacyverklaring' },
-  { label: 'Cookies', url: '/cookies' },
-  { label: 'Certificaat', url: '/certificaat' },
+  { label: 'Algemene voorwaarden', type: 'external', url: '/algemene-voorwaarden' },
+  { label: 'Privacyverklaring', type: 'external', url: '/privacyverklaring' },
+  { label: 'Cookies', type: 'external', url: '/cookies' },
+  { label: 'Certificaat', type: 'external', url: '/certificaat' },
 ]
 
-const SOCIALS = [
-  { name: 'Instagram', href: 'https://www.instagram.com/', icon: '/images/footer/social-1.svg' },
-  { name: 'LinkedIn', href: 'https://www.linkedin.com/', icon: '/images/footer/social-2.svg' },
-  { name: 'Facebook', href: 'https://www.facebook.com/', icon: '/images/footer/social-3.svg' },
+/** Icon + display name per platform. The CMS stores only the platform + URL;
+ *  the icon follows the platform so editors never manage icon assets. */
+const SOCIAL_PLATFORMS = {
+  instagram: { name: 'Instagram', icon: '/images/footer/social-1.svg' },
+  linkedin: { name: 'LinkedIn', icon: '/images/footer/social-2.svg' },
+  facebook: { name: 'Facebook', icon: '/images/footer/social-3.svg' },
+} as const
+
+type SocialItem = { name: string; href: string; icon: string }
+
+/** Shown when the Footer global has no socials configured yet. */
+const FALLBACK_SOCIALS: SocialItem[] = [
+  { name: 'Instagram', href: 'https://www.instagram.com/', icon: SOCIAL_PLATFORMS.instagram.icon },
+  { name: 'LinkedIn', href: 'https://www.linkedin.com/', icon: SOCIAL_PLATFORMS.linkedin.icon },
+  { name: 'Facebook', href: 'https://www.facebook.com/', icon: SOCIAL_PLATFORMS.facebook.icon },
 ]
 
+/**
+ * One footer link. `hrefFor` resolves the CMS link (internal page + optional
+ * section, or an external URL) and returns `'#'` when nothing is set — those
+ * entries are plain text lines (e.g. the KvK / AGB numbers), not links.
+ */
 function FooterLink({ item }: { item: LinkItem }) {
   const label = item.label ?? ''
   if (!label) return null
-  if (item.url) {
+  const href = hrefFor(item)
+  const className = 'text-sm font-medium leading-[1.16] tracking-[-0.01em] text-white'
+  if (href !== '#') {
     return (
-      <Link
-        href={item.url}
-        className="text-sm font-medium leading-[1.16] tracking-[-0.01em] text-white transition-opacity hover:opacity-80"
+      <AnchorLink
+        href={href}
+        newTab={item.newTab ?? false}
+        className={`${className} transition-opacity hover:opacity-80`}
       >
         {label}
-      </Link>
+      </AnchorLink>
     )
   }
-  return (
-    <span className="text-sm font-medium leading-[1.16] tracking-[-0.01em] text-white">
-      {label}
-    </span>
-  )
+  return <span className={className}>{label}</span>
 }
 
 function ColumnHeading({ children }: { children: string }) {
@@ -77,6 +94,13 @@ export function SiteFooter({ footer }: Props) {
   const infoLinks = footer?.infoLinks?.length ? footer.infoLinks : FALLBACK_INFO
   const copyright =
     footer?.copyright ?? 'Copyright © Buro J.A.Z.Z. 2026 –– Alle rechten voorbehouden.'
+  const socials: SocialItem[] = footer?.socials?.length
+    ? footer.socials.flatMap((s) => {
+        const platform = s.platform ? SOCIAL_PLATFORMS[s.platform] : undefined
+        if (!platform || !s.url) return []
+        return [{ name: platform.name, href: s.url, icon: platform.icon }]
+      })
+    : FALLBACK_SOCIALS
 
   return (
     <footer className="overflow-hidden bg-brand text-white">
@@ -172,10 +196,12 @@ export function SiteFooter({ footer }: Props) {
 
           {/* Social icons */}
           <div className="flex items-center gap-3">
-            {SOCIALS.map((social) => (
+            {socials.map((social) => (
               <a
                 key={social.name}
                 href={social.href}
+                target="_blank"
+                rel="noopener noreferrer"
                 aria-label={social.name}
                 className="flex size-12 items-center justify-center rounded-full bg-white/20 transition-colors hover:bg-white/30"
               >

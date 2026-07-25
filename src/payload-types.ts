@@ -319,6 +319,24 @@ export interface ServicesBlock {
               number?: string | null;
               title?: string | null;
               description?: string | null;
+              /**
+               * The full story, shown in a dialog when the visitor clicks the read-more link. Leave empty and the dialog shows the short description above instead — the link below is only followed when it has a destination and this field is empty.
+               */
+              details?: {
+                root: {
+                  type: string;
+                  children: {
+                    type: any;
+                    version: number;
+                    [k: string]: unknown;
+                  }[];
+                  direction: ('ltr' | 'rtl') | null;
+                  format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                  indent: number;
+                  version: number;
+                };
+                [k: string]: unknown;
+              } | null;
               link: {
                 /**
                  * The text shown on the link.
@@ -674,6 +692,10 @@ export interface SocialBlock {
     newTab?: boolean | null;
   };
   /**
+   * Show the most recent Instagram post on the phone screen (requires the Instagram integration). When off, the "Phone in hand" image below is shown as-is.
+   */
+  instagramLive?: boolean | null;
+  /**
    * The photos in the collage, by position. Leave a slot empty to use the default photo.
    */
   photos?: {
@@ -745,6 +767,33 @@ export interface VacanciesBlock {
         id?: string | null;
       }[]
     | null;
+  /**
+   * The line under the vacancy cards inviting an unsolicited application.
+   */
+  openApplication?: {
+    /**
+     * The sentence shown before the link.
+     */
+    text?: string | null;
+    /**
+     * The text shown on the link.
+     */
+    label?: string | null;
+    /**
+     * Link to a page on this site (follows the page if its address changes) or to an external web address.
+     */
+    type?: ('internal' | 'external') | null;
+    page?: (number | null) | Page;
+    /**
+     * Full web address, including https://
+     */
+    url?: string | null;
+    /**
+     * Optional. Scroll to a section on the selected page. Give the target section an Anchor ID for a readable link.
+     */
+    anchor?: string | null;
+    newTab?: boolean | null;
+  };
   /**
    * Optional. Gives this section an id so a menu item can scroll to it (e.g. “over-ons”). Use lowercase letters, numbers and dashes.
    */
@@ -1168,6 +1217,7 @@ export interface ServicesBlockSelect<T extends boolean = true> {
               number?: T;
               title?: T;
               description?: T;
+              details?: T;
               link?:
                 | T
                 | {
@@ -1360,6 +1410,7 @@ export interface SocialBlockSelect<T extends boolean = true> {
         anchor?: T;
         newTab?: T;
       };
+  instagramLive?: T;
   photos?:
     | T
     | {
@@ -1406,6 +1457,17 @@ export interface VacanciesBlockSelect<T extends boolean = true> {
               newTab?: T;
             };
         id?: T;
+      };
+  openApplication?:
+    | T
+    | {
+        text?: T;
+        label?: T;
+        type?: T;
+        page?: T;
+        url?: T;
+        anchor?: T;
+        newTab?: T;
       };
   anchor?: T;
   id?: T;
@@ -1649,18 +1711,60 @@ export interface Footer {
    */
   menuItems?:
     | {
-        label?: string | null;
+        /**
+         * The text shown on the link.
+         */
+        label: string;
+        /**
+         * Link to a page on this site (follows the page if its address changes) or to an external web address.
+         */
+        type?: ('internal' | 'external') | null;
+        page?: (number | null) | Page;
+        /**
+         * Full web address, including https://
+         */
         url?: string | null;
+        /**
+         * Optional. Scroll to a section on the selected page. Give the target section an Anchor ID for a readable link.
+         */
+        anchor?: string | null;
+        newTab?: boolean | null;
         id?: string | null;
       }[]
     | null;
   /**
-   * Secondary links such as privacy statement and terms (second column).
+   * Secondary links such as privacy statement and terms (second column). Leave the destination empty for plain text entries (e.g. a Chamber of Commerce number).
    */
   infoLinks?:
     | {
-        label?: string | null;
+        /**
+         * The text shown on the link.
+         */
+        label: string;
+        /**
+         * Link to a page on this site (follows the page if its address changes) or to an external web address.
+         */
+        type?: ('internal' | 'external') | null;
+        page?: (number | null) | Page;
+        /**
+         * Full web address, including https://
+         */
         url?: string | null;
+        /**
+         * Optional. Scroll to a section on the selected page. Give the target section an Anchor ID for a readable link.
+         */
+        anchor?: string | null;
+        newTab?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Social media buttons shown in the footer. The icon follows the chosen platform.
+   */
+  socials?:
+    | {
+        platform: 'instagram' | 'linkedin' | 'facebook';
+        url: string;
         id?: string | null;
       }[]
     | null;
@@ -1727,13 +1831,28 @@ export interface FooterSelect<T extends boolean = true> {
     | T
     | {
         label?: T;
+        type?: T;
+        page?: T;
         url?: T;
+        anchor?: T;
+        newTab?: T;
         id?: T;
       };
   infoLinks?:
     | T
     | {
         label?: T;
+        type?: T;
+        page?: T;
+        url?: T;
+        anchor?: T;
+        newTab?: T;
+        id?: T;
+      };
+  socials?:
+    | T
+    | {
+        platform?: T;
         url?: T;
         id?: T;
       };

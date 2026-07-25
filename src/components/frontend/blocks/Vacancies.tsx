@@ -1,6 +1,7 @@
 import Link from 'next/link'
 
 import type { Page } from '@/payload-types'
+import { AnchorLink } from '@/components/frontend/ui/AnchorLink'
 import { ArrowIcon } from '@/components/frontend/ui/ArrowIcon'
 import { hrefFor, type LinkFields } from '@/components/frontend/ui/CMSLink'
 import { Eyebrow } from '@/components/frontend/ui/Eyebrow'
@@ -42,6 +43,13 @@ const CARD_IMAGES = [
   '/images/vacancies/card-3.jpg',
 ]
 
+/** Copy for the open-application line when the CMS leaves the group empty. */
+const OPEN_APPLICATION = {
+  text: 'Lijkt het jouw leuk om bij ons te komen werken? Stuur een',
+  label: 'open sollicitatie',
+  href: '#contact',
+}
+
 function Tag({ icon, label }: { icon: 'location' | 'clock'; label: string }) {
   return (
     <span
@@ -66,6 +74,14 @@ export function Vacancies(props: Props) {
   const title = props.header?.title ?? 'Word onderdeel van ons team'
   const intro = props.header?.intro ?? 'Samen aan de missie en visie van Buro J.A.Z.Z werken'
   const cards = props.cards && props.cards.length > 0 ? props.cards : FALLBACK_CARDS
+
+  // Open-application line. `hrefFor` yields '#' when no destination is set, in
+  // which case we keep pointing at the contact section.
+  const openApp = props.openApplication
+  const openText = openApp?.text?.trim() || OPEN_APPLICATION.text
+  const openLabel = openApp?.label?.trim() || OPEN_APPLICATION.label
+  const openHrefFromCMS = hrefFor(openApp)
+  const openHref = openHrefFromCMS === '#' ? OPEN_APPLICATION.href : openHrefFromCMS
 
   return (
     <Section id="vacatures" py="py-16 md:py-[120px]">
@@ -152,14 +168,15 @@ export function Vacancies(props: Props) {
 
         {/* Open application hint */}
         <p className="flex flex-wrap items-center justify-center gap-1.5 py-6 text-center text-base font-medium tracking-[-0.01em] text-[#000135]">
-          Lijkt het jouw leuk om bij ons te komen werken? Stuur een{' '}
-          <Link
-            href="#contact"
+          {openText}{' '}
+          <AnchorLink
+            href={openHref}
+            newTab={openApp?.newTab ?? false}
             className="inline-flex items-center gap-1.5 text-brand transition-colors hover:text-[#3fadb7]"
           >
-            open sollicitatie
+            {openLabel}
             <ArrowIcon />
-          </Link>
+          </AnchorLink>
         </p>
       </div>
     </Section>
