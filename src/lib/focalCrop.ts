@@ -11,20 +11,25 @@
  * focal Y did nothing at all. The About image is the same bug mirrored (0px
  * horizontal, 72px vertical) — there focal X is the dead one.
  *
- * The fix is to zoom slightly past the minimal cover so both axes have room to
- * move, then offset the image by the focal point ourselves instead of leaning on
- * `object-position`. Extra zoom is unavoidable: panning needs overflow, and
- * preserving the image's aspect ratio means both axes zoom together.
+ * The fix is to zoom past the minimal cover so both axes have room to move,
+ * then offset the image by the focal point ourselves instead of leaning on
+ * `object-position`. Extra zoom is unavoidable — panning needs overflow, and
+ * preserving the image's aspect ratio means both axes zoom together — but it
+ * is only taken when the focal point actually asks for it: each axis wants
+ * slack in proportion to how far its focal is from centre, so a centred focal
+ * point renders an exact, unzoomed cover.
  *
  * All results are ratios relative to the box, so the same numbers drive a
  * fixed-px box (the desktop hero frame) and a fluid one (the mobile photo).
  */
 
 /**
- * How much room to pan, as a fraction of the box, on the axis that cover would
- * otherwise leave with none. 0.2 lets the focal point move the image by 10% of
- * the box either way, at the cost of showing 20% less of the photo. Raise for
- * more framing freedom, lower to keep more of the image visible.
+ * The MAXIMUM extra zoom, as a fraction of the box, reached only when a focal
+ * axis is pushed all the way to an edge (0 or 100). A centred focal takes no
+ * extra zoom at all; in between the zoom grows linearly with the focal's
+ * distance from centre. 0.2 means an edge focal shows up to 20% less of the
+ * photo. Raise for more framing freedom, lower to keep more of the image
+ * visible.
  */
 const MIN_PAN = 0.2
 
@@ -81,10 +86,18 @@ export function focalCrop({
   let widthRatio = mediaAspect >= boxAspect ? mediaAspect / boxAspect : 1
   let heightRatio = mediaAspect >= boxAspect ? 1 : boxAspect / mediaAspect
 
-  // Zoom past cover until BOTH axes have pan room. One scale for both, so the
-  // image never distorts.
-  const wanted = 1 + Math.max(0, minPan)
-  const zoom = Math.max(1, wanted / widthRatio, wanted / heightRatio)
+  // Zoom past cover only as far as the focal point actually needs: each axis
+  // wants pan room in proportion to how far its focal sits from centre, so a
+  // centred focal point keeps the exact cover and takes no zoom at all. One
+  // scale for both axes, so the image never distorts.
+  const pan = Math.max(0, minPan)
+  const deviationX = Math.abs(50 - clampFocal(focalX)) / 50
+  const deviationY = Math.abs(50 - clampFocal(focalY)) / 50
+  const zoom = Math.max(
+    1,
+    (1 + pan * deviationX) / widthRatio,
+    (1 + pan * deviationY) / heightRatio,
+  )
   widthRatio *= zoom
   heightRatio *= zoom
 

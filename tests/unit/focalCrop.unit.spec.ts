@@ -48,16 +48,51 @@ describe('the dead-axis regression', () => {
   it.each([
     ['hero', HERO],
     ['About', ABOUT],
-  ])('gives %s pan room on both axes at once', (_label, box) => {
-    const { widthRatio, heightRatio } = focalCrop({ ...box, focalX: 50, focalY: 50 })
+  ])('gives %s pan room on both axes when both focals are off-centre', (_label, box) => {
+    const { widthRatio, heightRatio } = focalCrop({ ...box, focalX: 10, focalY: 90 })
     expect(widthRatio).toBeGreaterThan(1)
     expect(heightRatio).toBeGreaterThan(1)
   })
 
-  it('moves the image proportionally between the extremes', () => {
-    const quarter = focalCrop({ ...HERO, focalY: 25 })
-    const top = focalCrop({ ...HERO, focalY: 0 })
-    expect(quarter.offsetYRatio).toBeCloseTo(top.offsetYRatio / 2, 10)
+  it('moves the image monotonically further as the focal approaches the edge', () => {
+    const [top, quarter, centre] = [0, 25, 50].map(
+      (focalY) => focalCrop({ ...HERO, focalY }).offsetYRatio,
+    )
+    expect(centre).toBe(0)
+    expect(quarter).toBeGreaterThan(centre)
+    expect(top).toBeGreaterThan(quarter)
+  })
+})
+
+describe('the forced-zoom regression', () => {
+  // The zoom exists only to give the focal point pan room, so an image whose
+  // focal point is centred (or unset) must render an exact cover — the fixed
+  // 20% zoom made every hero photo look blown up regardless of the focal.
+  it.each([
+    ['a centred focal point', { focalX: 50, focalY: 50 }],
+    ['an unset focal point', {}],
+  ])('renders an exact unzoomed cover for %s', (_label, focal) => {
+    const crop = focalCrop({ ...HERO, ...focal })
+    // The hero photo is relatively wider than its box, so cover overflows
+    // horizontally by exactly the aspect difference and fits height exactly.
+    expect(crop.widthRatio).toBeCloseTo(HERO.mediaAspect / HERO.boxAspect, 10)
+    expect(crop.heightRatio).toBeCloseTo(1, 10)
+  })
+
+  it('zooms less for a mild focal than for an edge focal', () => {
+    const mild = focalCrop({ ...HERO, focalY: 40 })
+    const edge = focalCrop({ ...HERO, focalY: 0 })
+    expect(mild.heightRatio).toBeGreaterThan(1)
+    expect(mild.heightRatio).toBeLessThan(edge.heightRatio)
+  })
+
+  it('takes no extra zoom when natural cover slack already covers the demand', () => {
+    // The hero's cover overflows ~8.3% horizontally. A mildly off-centre focal
+    // X (deviation 0.3 → 6% wanted slack) fits inside that, so the image pans
+    // without any zoom past plain cover.
+    const crop = focalCrop({ ...HERO, focalX: 35, focalY: 50 })
+    expect(crop.widthRatio).toBeCloseTo(HERO.mediaAspect / HERO.boxAspect, 10)
+    expect(crop.offsetXRatio).toBeGreaterThan(0)
   })
 })
 

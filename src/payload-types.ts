@@ -737,6 +737,10 @@ export interface VacanciesBlock {
   };
   cards?:
     | {
+        /**
+         * Photo shown on the left of the card.
+         */
+        image?: (number | null) | Media;
         title?: string | null;
         location?: string | null;
         /**
@@ -1442,6 +1446,7 @@ export interface VacanciesBlockSelect<T extends boolean = true> {
   cards?:
     | T
     | {
+        image?: T;
         title?: T;
         location?: T;
         hours?: T;
