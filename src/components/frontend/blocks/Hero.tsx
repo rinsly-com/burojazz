@@ -46,9 +46,11 @@ export function Hero(props: Props) {
   // Apply the CMS focal point so editors control the crop framing (the crop
   // itself is done in the browser — see Media.tsx). NOT via `object-position`:
   // that only pans on the axis where cover overflows, which left the hero's
-  // focal Y doing nothing at all. `focalCrop` zooms just past cover so both
-  // axes can move; with no known image dimensions it returns a plain centred
-  // cover, i.e. exactly what the /public fallback image did before.
+  // focal Y doing nothing at all. `focalCrop` zooms past cover — only as far
+  // as the focal point's distance from centre demands, so a centred focal is
+  // a plain unzoomed cover — so both axes can move; with no known image
+  // dimensions it also returns a plain centred cover, i.e. exactly what the
+  // /public fallback image did before.
   const focal = { focalX: media?.focalX, focalY: media?.focalY }
   const mediaAspect = (media?.width ?? 0) / (media?.height ?? 0)
 
@@ -83,7 +85,7 @@ export function Hero(props: Props) {
       (mobileCrop.offsetXRatio / mobileCrop.widthRatio) * 100
     }%, ${(mobileCrop.offsetYRatio / mobileCrop.heightRatio) * 100}%)`,
   }
-  // The photo now renders wider than its box (that's what makes panning
+  // The photo can render wider than its box (that's what makes panning
   // possible), so `sizes` has to describe the zoomed width or the browser
   // picks a variant that is too small for this — the mobile LCP — image.
   const mobileSizes = `(min-width: 768px) ${Math.round(704 * mobileCrop.widthRatio)}px, ${Math.round(
