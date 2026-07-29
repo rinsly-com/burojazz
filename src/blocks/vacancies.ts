@@ -23,6 +23,18 @@ export const vacanciesBlock: Block = {
       type: 'array',
       admin: { initCollapsed: true },
       fields: [
+        {
+          name: 'image',
+          label: { en: 'Photo', nl: 'Foto' },
+          type: 'upload',
+          relationTo: 'media',
+          admin: {
+            description: {
+              en: 'Photo shown on the left of the card.',
+              nl: 'Foto die links op de kaart wordt getoond.',
+            },
+          },
+        },
         { name: 'title', label: { en: 'Title', nl: 'Titel' }, type: 'text' },
         { name: 'location', label: { en: 'Location', nl: 'Locatie' }, type: 'text' },
         {

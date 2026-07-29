@@ -6,6 +6,7 @@ import { ArrowIcon } from '@/components/frontend/ui/ArrowIcon'
 import { hrefFor, type LinkFields } from '@/components/frontend/ui/CMSLink'
 import { Eyebrow } from '@/components/frontend/ui/Eyebrow'
 import { Icon } from '@/components/frontend/ui/Icon'
+import { Media, type MediaResource } from '@/components/frontend/ui/Media'
 import { Section } from '@/components/frontend/ui/Section'
 import { cmsText } from '@rinsly-com/site-core'
 
@@ -17,6 +18,7 @@ const FALLBACK_CARDS: {
   hours: string
   text: string
   link?: LinkFields
+  image?: MediaResource
 }[] = [
   {
     title: 'Ambulant Jeugd- en Gezinshulpverlener (m/v)',
@@ -135,11 +137,12 @@ export function Vacancies(props: Props) {
 
               {/* Photo */}
               <div className="relative h-48 shrink-0 sm:h-56 md:h-auto md:w-60">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={CARD_IMAGES[i % CARD_IMAGES.length]}
+                <Media
+                  resource={card.image}
+                  fallbackSrc={CARD_IMAGES[i % CARD_IMAGES.length]}
                   alt=""
-                  className="absolute inset-0 h-full w-full rounded-2xl object-cover"
+                  sizes="(min-width: 768px) 240px, 100vw"
+                  className="absolute inset-0 h-full w-full rounded-2xl"
                 />
               </div>
 
