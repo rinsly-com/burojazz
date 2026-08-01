@@ -72,32 +72,15 @@ describe('the fixed-frame regression', () => {
     const photos = Array.from(
       renderHero().querySelectorAll<HTMLElement>('[aria-hidden="true"] img'),
     ).filter((el) => el.style.transform?.includes('rotate(30deg)'))
-    expect(photos, 'both hero photo variants should be rendered').toHaveLength(2)
+    // One photo, one fetch: the visible-region cover scales continuously with
+    // the viewport (heroDesktopPhoto.ts), so no breakpoint variants exist.
+    expect(photos, 'the counter-rotated hero photo should be rendered').toHaveLength(1)
 
-    for (const photo of photos) {
-      // Size and pan depend on the focal crop, so they are an inline style
-      // rather than Tailwind classes — assert fluid units, no fixed-px class.
-      expect(photo.className).not.toMatch(/\b[wh]-\[\d+px\]/)
-      expect(photo.style.width).toMatch(/cqw|vw/)
-      expect(photo.style.transform).toMatch(/cqw/)
-    }
-  })
-
-  it('switches between the two photo variants at the 1920px breakpoint', () => {
-    // Below 1920px the photo covers only the card's on-screen slice (the
-    // design framing); from 1920px the whole card is visible and the photo
-    // must cover its full rotated bounding box. Exactly one variant may be
-    // visible at a time, switched by viewport width.
-    const photos = Array.from(
-      renderHero().querySelectorAll<HTMLElement>('[aria-hidden="true"] img'),
-    ).filter((el) => el.style.transform?.includes('rotate(30deg)'))
-
-    const near = photos.find((el) => el.className.includes('min-[1920px]:hidden'))
-    const wide = photos.find((el) => el.className.includes('min-[1920px]:block'))
-    expect(near, 'the <1920px variant should be rendered').toBeDefined()
-    expect(wide, 'the ≥1920px variant should be rendered').toBeDefined()
-    expect(wide!.className).toMatch(/\bhidden\b/)
-    // Same src — the browser must fetch the image once, not twice.
-    expect(near!.getAttribute('src')).toBe(wide!.getAttribute('src'))
+    const photo = photos[0]
+    // Size and pan depend on the focal crop, so they are an inline style
+    // rather than Tailwind classes — assert fluid units, no fixed-px class.
+    expect(photo.className).not.toMatch(/\b[wh]-\[\d+px\]/)
+    expect(photo.style.width).toMatch(/cqw|vw/)
+    expect(photo.style.transform).toMatch(/cqw/)
   })
 })

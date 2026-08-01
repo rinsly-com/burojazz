@@ -1,23 +1,31 @@
 import type { CSSProperties } from 'react'
 
-import { MIN_PAN, clampFocal, focalCrop } from './focalCrop'
+import { MIN_PAN, clampFocal } from './focalCrop'
 
 /**
  * Sizing for the desktop hero photo — the upright image inside the 30°-tilted
- * card. Two regimes, switched at `min-[1920px]` in Hero.tsx:
+ * card. The photo covers the card's VISIBLE region: horizontally from the
+ * card's on-screen left edge to the viewport's right edge — capped at the
+ * card's own right edge — and vertically the section's 888px min-height.
  *
- * NEAR (viewport < 1920px): only a slice of the tilted card is on screen, so
- * the photo covers just that visible region — from the card's on-screen left
- * edge to the viewport's right edge. This matches the design mock, where both
- * subjects of the photo are visible. Covering the card's full rotated bounding
- * box here (the WIDE rule) would force the photo to be ≥104.56cqw wide while
- * the visible slice is only ~46cqw — showing at most ~44% of the photo, which
- * reads as a heavy zoom no upload or focal point can undo.
+ * That one rule spans every viewport smoothly:
+ * - ~1512px: the region is ~46cqw wide, so the photo renders small enough to
+ *   show the design framing (both subjects in view). Covering the card's full
+ *   rotated bounding box instead (104.56cqw) would cap the visible share of
+ *   the photo at ~44% of its width — a heavy zoom no upload, crop, or focal
+ *   point could undo.
+ * - 1512px → ~3286px: the region's right edge follows the viewport, so the
+ *   photo grows linearly (½px per viewport px) — no breakpoint, no snap.
+ * - ≥ ~3286px: the region has reached the card's right edge (158.66cqw) and
+ *   the photo has converged to exactly full-card coverage; the whole tilted
+ *   card is on screen and stays covered. (The card's rightmost tip sits at
+ *   y≈886, just inside the 888px region; its lower half is clipped by the
+ *   section's overflow.)
  *
- * WIDE (viewport ≥ 1920px): the whole tilted card fits on screen, so the photo
- * must cover its full rotated bounding box or the card's right side would show
- * an empty plane. That coverage is intrinsically more zoomed-in; it is the
- * price of the card being fully visible.
+ * The region's width depends on the viewport, so the cover math is emitted as
+ * CSS calc()/min()/max() instead of resolved numbers. The same focal rules as
+ * `focalCrop` apply: pan within the slack, zooming only as far as the focal
+ * point's distance from centre demands.
  *
  * All cqw values live on the 1512px design frame (the hero's @container).
  */
@@ -26,7 +34,7 @@ import { MIN_PAN, clampFocal, focalCrop } from './focalCrop'
 export const DESKTOP_PHOTO_BOX = { width: 104.5635, height: 106.8783 }
 /** Where the placement box sits in the composition (cqw). */
 const BOX_POS = { left: 54.1005, top: -11.1111 }
-/** The card/box centre — the anchor both photo variants are panned from. */
+/** The card/box centre — the anchor the photo is panned from. */
 const BOX_CENTER = {
   x: BOX_POS.left + DESKTOP_PHOTO_BOX.width / 2,
   y: BOX_POS.top + DESKTOP_PHOTO_BOX.height / 2,
@@ -47,53 +55,17 @@ export type DesktopPhotoInput = {
 
 const usableAspect = (a: number) => (Number.isFinite(a) && a > 0 ? a : DEFAULT_ASPECT)
 
-/**
- * WIDE variant (≥1920px): cover the card's whole rotated bounding box.
- * `focalCrop` supplies the (focal-demand-driven) zoom and pan, in cqw so the
- * whole composition scales together.
- */
-export function widePhotoStyle({ mediaAspect, focalX, focalY }: DesktopPhotoInput): CSSProperties {
-  const crop = focalCrop({
-    boxAspect: DESKTOP_PHOTO_BOX.width / DESKTOP_PHOTO_BOX.height,
-    mediaAspect,
-    focalX,
-    focalY,
-  })
-  return {
-    width: `${DESKTOP_PHOTO_BOX.width * crop.widthRatio}cqw`,
-    height: `${DESKTOP_PHOTO_BOX.height * crop.heightRatio}cqw`,
-    // The pan is applied AFTER the counter-rotation, so it runs along the
-    // photo's own axes (up/down on screen) rather than the tilted card's.
-    transform: [
-      'translate(-50%, -50%)',
-      'rotate(30deg)',
-      `translate(${DESKTOP_PHOTO_BOX.width * crop.offsetXRatio}cqw, ${
-        DESKTOP_PHOTO_BOX.height * crop.offsetYRatio
-      }cqw)`,
-    ].join(' '),
-  }
-}
-
-/**
- * NEAR variant (<1920px): cover only the visible region of the card —
- * horizontally from the card's on-screen left edge (54.1cqw) to the viewport's
- * right edge, vertically the section's 888px min-height from its top.
- *
- * The region's width depends on the viewport (`(100vw + 100cqw) / 2` is the
- * container-relative x of the viewport's right edge), so the cover math is
- * emitted as CSS calc()/max() instead of resolved numbers. The same focal
- * rules as `focalCrop` apply: pan within the slack, zooming only as far as the
- * focal point's distance from centre demands.
- */
-export function nearPhotoStyle({ mediaAspect, focalX, focalY }: DesktopPhotoInput): CSSProperties {
+export function desktopPhotoStyle({ mediaAspect, focalX, focalY }: DesktopPhotoInput): CSSProperties {
   const a = usableAspect(mediaAspect)
   const kx = (50 - clampFocal(focalX)) / 50
   const ky = (50 - clampFocal(focalY)) / 50
   const zoom = 1 + MIN_PAN * Math.max(Math.abs(kx), Math.abs(ky))
 
-  // Visible-region width: (100vw + 100cqw)/2 - left. Both people in the design
-  // photo fit because this is ~46cqw at 1512 instead of the box's 104.56cqw.
-  const boxW = `50vw - ${(BOX_POS.left - 50).toFixed(4)}cqw`
+  // Visible-region width: from the card's left edge to the viewport's right
+  // edge — (100vw + 100cqw)/2 in container coordinates — capped at the card's
+  // right edge. The cap is what makes ultrawide seamless: the region tracks
+  // the viewport until it spans the whole card, converging on full coverage.
+  const boxW = `min(50vw - ${(BOX_POS.left - 50).toFixed(4)}cqw, ${DESKTOP_PHOTO_BOX.width}cqw)`
   // Cover: wide enough for the region, tall enough for the section.
   const coverW = `max(${boxW}, ${(SECTION_MIN_H * a).toFixed(2)}px)`
 
