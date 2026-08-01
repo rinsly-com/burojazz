@@ -4,6 +4,7 @@ import { Button } from '@/components/frontend/ui/Button'
 import { Buttons } from '@/components/frontend/ui/CMSLink'
 import { mediaUrl, resolveMedia } from '@/components/frontend/ui/Media'
 import { focalCrop } from '@/lib/focalCrop'
+import { nearPhotoStyle, widePhotoStyle } from '@/lib/heroDesktopPhoto'
 import { cfImageSrcSet } from '@/lib/image'
 import type { Page } from '@/payload-types'
 import { cmsText } from '@rinsly-com/site-core'
@@ -13,13 +14,6 @@ type Props = Extract<NonNullable<Page['layout']>[number], { blockType: 'hero' }>
 const DEFAULT_IMAGE = '/images/header-hero/photo-2.jpg'
 const IMAGE_ALT = 'Begeleider en jongere tijdens een bokstraining'
 
-/**
- * The desktop photo's box — the tilted frame's rotated bounding box — in `cqw`,
- * matching the composition below (1581x1616 on the 1512px design frame). Both
- * values are percentages of the same container width, so their ratio is still
- * the box's real aspect.
- */
-const DESKTOP_PHOTO_BOX = { width: 104.5635, height: 106.8783 }
 /** The mobile photo's box, matching its `aspect-[4/3]` wrapper. */
 const MOBILE_PHOTO_ASPECT = 4 / 3
 
@@ -54,26 +48,12 @@ export function Hero(props: Props) {
   const focal = { focalX: media?.focalX, focalY: media?.focalY }
   const mediaAspect = (media?.width ?? 0) / (media?.height ?? 0)
 
-  const desktopCrop = focalCrop({
-    boxAspect: DESKTOP_PHOTO_BOX.width / DESKTOP_PHOTO_BOX.height,
-    mediaAspect,
-    ...focal,
-  })
-  const desktopPhotoStyle: CSSProperties = {
-    width: `${DESKTOP_PHOTO_BOX.width * desktopCrop.widthRatio}cqw`,
-    height: `${DESKTOP_PHOTO_BOX.height * desktopCrop.heightRatio}cqw`,
-    // The pan is applied AFTER the counter-rotation, so it runs along the
-    // photo's own axes (up/down on screen) rather than the tilted frame's.
-    // In cqw as well, so panning scales with the composition instead of
-    // becoming a proportionally bigger shift on narrow viewports.
-    transform: [
-      'translate(-50%, -50%)',
-      'rotate(30deg)',
-      `translate(${DESKTOP_PHOTO_BOX.width * desktopCrop.offsetXRatio}cqw, ${
-        DESKTOP_PHOTO_BOX.height * desktopCrop.offsetYRatio
-      }cqw)`,
-    ].join(' '),
-  }
+  // Two desktop variants, switched at min-[1920px] (see heroDesktopPhoto.ts):
+  // below it the photo covers only the on-screen slice of the tilted card so
+  // the framing matches the design; from 1920px up the whole card is visible
+  // and the photo has to cover its full rotated bounding box instead.
+  const desktopNearStyle = nearPhotoStyle({ mediaAspect, ...focal })
+  const desktopWideStyle = widePhotoStyle({ mediaAspect, ...focal })
 
   const mobileCrop = focalCrop({ boxAspect: MOBILE_PHOTO_ASPECT, mediaAspect, ...focal })
   const mobilePhotoStyle: CSSProperties = {
@@ -127,17 +107,26 @@ export function Hero(props: Props) {
             {/* Desktop LCP photo. loading=lazy so mobile (where this whole
                 composition is display:none) never fetches this 1600px variant;
                 on desktop it's in the initial viewport, so it still loads —
-                with fetchpriority=high to win the race there. Its size and pan
-                come from the CMS focal point via `desktopPhotoStyle`, in cqw so
-                they scale with the composition. */}
+                with fetchpriority=high to win the race there. Two variants of
+                the same image, switched at min-[1920px] (one src, one fetch):
+                sizing and pan come from the CMS focal point via
+                heroDesktopPhoto.ts. */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={imageUrl}
               alt=""
               loading="lazy"
               fetchPriority="high"
-              className="absolute left-1/2 top-1/2 max-w-none object-cover"
-              style={desktopPhotoStyle}
+              className="absolute left-1/2 top-1/2 max-w-none object-cover min-[1920px]:hidden"
+              style={desktopNearStyle}
+            />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={imageUrl}
+              alt=""
+              loading="lazy"
+              className="absolute left-1/2 top-1/2 hidden max-w-none object-cover min-[1920px]:block"
+              style={desktopWideStyle}
             />
             <div className="absolute inset-0 bg-black/[0.03]" />
           </div>
