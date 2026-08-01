@@ -31,7 +31,7 @@
  * photo. Raise for more framing freedom, lower to keep more of the image
  * visible.
  */
-const MIN_PAN = 0.2
+export const MIN_PAN = 0.2
 
 export type FocalCropInput = {
   /** The visible window's width / height. */
@@ -66,7 +66,7 @@ const usable = (n: number) => Number.isFinite(n) && n > 0
  * bad 0 rather than a missing value. (`Number(null)` is 0, hence the explicit
  * null check.)
  */
-const clampFocal = (value: number | null | undefined) => {
+export const clampFocal = (value: number | null | undefined) => {
   if (value === null || value === undefined) return 50
   const n = Number(value)
   return Number.isFinite(n) ? Math.min(100, Math.max(0, n)) : 50
