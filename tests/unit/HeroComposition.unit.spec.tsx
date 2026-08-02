@@ -66,13 +66,21 @@ describe('the fixed-frame regression', () => {
     // The <img> covering the tilted panel was sized 1581x1616 in fixed px. Left
     // alone, the panel would shrink while the photo did not — zooming further
     // in at exactly the narrow widths that were already too tight.
-    // Identified by its counter-rotation: the only image inside the tilted
+    // Identified by its counter-rotation: the only images inside the tilted
     // panel. (Matching any <img> here would find the decorative blob instead,
     // which stayed in cqw and would hide the regression.)
-    const imgs = Array.from(renderHero().querySelectorAll('[aria-hidden="true"] img'))
-    const photo = imgs.find((el) => el.className.includes('rotate-[30deg]'))
-    expect(photo, 'the counter-rotated hero photo should be rendered').toBeDefined()
-    expect(photo!.className).not.toMatch(/\b[wh]-\[\d+px\]/)
-    expect(photo!.className).toMatch(/cqw\]/)
+    const photos = Array.from(
+      renderHero().querySelectorAll<HTMLElement>('[aria-hidden="true"] img'),
+    ).filter((el) => el.style.transform?.includes('rotate(30deg)'))
+    // One photo, one fetch: the visible-region cover scales continuously with
+    // the viewport (heroDesktopPhoto.ts), so no breakpoint variants exist.
+    expect(photos, 'the counter-rotated hero photo should be rendered').toHaveLength(1)
+
+    const photo = photos[0]
+    // Size and pan depend on the focal crop, so they are an inline style
+    // rather than Tailwind classes — assert fluid units, no fixed-px class.
+    expect(photo.className).not.toMatch(/\b[wh]-\[\d+px\]/)
+    expect(photo.style.width).toMatch(/cqw|vw/)
+    expect(photo.style.transform).toMatch(/cqw/)
   })
 })

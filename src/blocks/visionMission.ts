@@ -1,7 +1,7 @@
 import type { Block } from 'payload'
 
 import { anchorField } from '../fields/anchor'
-import { basicEditor } from '../fields/basicEditor'
+import { textEditor } from '../fields/textEditor'
 import { iconField } from '../fields/icon'
 import { sectionHeader } from '../fields/sectionHeader'
 
@@ -43,7 +43,7 @@ export const visionMissionBlock: Block = {
           },
         }),
         { name: 'heading', label: { en: 'Heading', nl: 'Kop' }, type: 'text' },
-        { name: 'body', label: { en: 'Body', nl: 'Tekst' }, type: 'richText', editor: basicEditor },
+        { name: 'body', label: { en: 'Body', nl: 'Tekst' }, type: 'richText', editor: textEditor },
       ],
     },
     anchorField(),

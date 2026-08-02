@@ -21,6 +21,7 @@ import * as migration_20260723_181955_social_instagram_live from './20260723_181
 import * as migration_20260724_175542_footer_nav_links from './20260724_175542_footer_nav_links';
 import * as migration_20260724_181033_service_card_details from './20260724_181033_service_card_details';
 import * as migration_20260724_184140_vacancies_open_application from './20260724_184140_vacancies_open_application';
+import * as migration_20260729_164929_vacancy_card_image from './20260729_164929_vacancy_card_image';
 
 export const migrations = [
   {
@@ -136,6 +137,11 @@ export const migrations = [
   {
     up: migration_20260724_184140_vacancies_open_application.up,
     down: migration_20260724_184140_vacancies_open_application.down,
-    name: '20260724_184140_vacancies_open_application'
+    name: '20260724_184140_vacancies_open_application',
+  },
+  {
+    up: migration_20260729_164929_vacancy_card_image.up,
+    down: migration_20260729_164929_vacancy_card_image.down,
+    name: '20260729_164929_vacancy_card_image'
   },
 ];

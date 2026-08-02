@@ -189,7 +189,10 @@ export function ServicesTabs({ tabs }: { tabs: TabData[] }) {
       >
         {detailsCard && (
           <div className="flex flex-col gap-6 pr-10">
-            <div className="flex items-start gap-4">
+            {/* items-center, not items-start: the icon sits in a fixed 60px
+                circle while the title is 1–3 lines, so top-aligning left the
+                title riding high against the circle. */}
+            <div className="flex items-center gap-4">
               <div
                 className="flex size-[60px] shrink-0 items-center justify-center rounded-full bg-brand/10 text-brand"
                 aria-hidden="true"
@@ -205,7 +208,7 @@ export function ServicesTabs({ tabs }: { tabs: TabData[] }) {
             </div>
             {/* Until an editor fills the card's read-more rich text, show the
                 short card description so the dialog is never empty. */}
-            <div className="flex flex-col gap-[1.6em] text-sm font-medium leading-[1.6] text-ink [&_a]:text-brand [&_a]:underline">
+            <div className="rich-text text-sm font-medium leading-[1.6] text-ink">
               {detailsCard.detailsNode ?? <p>{detailsCard.description ?? ''}</p>}
             </div>
           </div>

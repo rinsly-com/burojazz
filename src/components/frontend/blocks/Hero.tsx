@@ -1,6 +1,10 @@
+import type { CSSProperties } from 'react'
+
 import { Button } from '@/components/frontend/ui/Button'
 import { Buttons } from '@/components/frontend/ui/CMSLink'
 import { mediaUrl, resolveMedia } from '@/components/frontend/ui/Media'
+import { focalCrop } from '@/lib/focalCrop'
+import { desktopPhotoStyle } from '@/lib/heroDesktopPhoto'
 import { cfImageSrcSet } from '@/lib/image'
 import type { Page } from '@/payload-types'
 import { cmsText } from '@rinsly-com/site-core'
@@ -9,6 +13,9 @@ type Props = Extract<NonNullable<Page['layout']>[number], { blockType: 'hero' }>
 
 const DEFAULT_IMAGE = '/images/header-hero/photo-2.jpg'
 const IMAGE_ALT = 'Begeleider en jongere tijdens een bokstraining'
+
+/** The mobile photo's box, matching its `aspect-[4/3]` wrapper. */
+const MOBILE_PHOTO_ASPECT = 4 / 3
 
 /**
  * Hero section: huge teal "BURO J.A.Z.Z." wordmark, subtitle, description and
@@ -29,9 +36,40 @@ export function Hero(props: Props) {
   // phones fetch a viewport-sized variant instead of the fixed 1600px desktop
   // image. Only CMS media can be transformed; the /public fallback has none.
   const mobileImageSrcSet = cfImageSrcSet(media?.url ?? '')
-  // Apply the CMS focal point (0–100%) as object-position so editors control
-  // the crop framing (cropping itself is done in the browser — see Media.ts).
-  const objectPosition = `${media?.focalX ?? 50}% ${media?.focalY ?? 50}%`
+
+  // Apply the CMS focal point so editors control the crop framing (the crop
+  // itself is done in the browser — see Media.tsx). NOT via `object-position`:
+  // that only pans on the axis where cover overflows, which left the hero's
+  // focal Y doing nothing at all. `focalCrop` zooms past cover — only as far
+  // as the focal point's distance from centre demands, so a centred focal is
+  // a plain unzoomed cover — so both axes can move; with no known image
+  // dimensions it also returns a plain centred cover, i.e. exactly what the
+  // /public fallback image did before.
+  const focal = { focalX: media?.focalX, focalY: media?.focalY }
+  const mediaAspect = (media?.width ?? 0) / (media?.height ?? 0)
+
+  // The desktop photo covers only the on-screen slice of the tilted card, so
+  // the framing matches the design; the slice tracks the viewport's right
+  // edge and converges smoothly on full-card coverage on ultrawide screens
+  // (see heroDesktopPhoto.ts).
+  const desktopStyle = desktopPhotoStyle({ mediaAspect, ...focal })
+
+  const mobileCrop = focalCrop({ boxAspect: MOBILE_PHOTO_ASPECT, mediaAspect, ...focal })
+  const mobilePhotoStyle: CSSProperties = {
+    width: `${mobileCrop.widthRatio * 100}%`,
+    height: `${mobileCrop.heightRatio * 100}%`,
+    // `translate()` percentages resolve against the IMAGE's own size, so the
+    // box-relative offsets are converted before use.
+    transform: `translate(-50%, -50%) translate(${
+      (mobileCrop.offsetXRatio / mobileCrop.widthRatio) * 100
+    }%, ${(mobileCrop.offsetYRatio / mobileCrop.heightRatio) * 100}%)`,
+  }
+  // The photo can render wider than its box (that's what makes panning
+  // possible), so `sizes` has to describe the zoomed width or the browser
+  // picks a variant that is too small for this — the mobile LCP — image.
+  const mobileSizes = `(min-width: 768px) ${Math.round(704 * mobileCrop.widthRatio)}px, ${Math.round(
+    100 * mobileCrop.widthRatio,
+  )}vw`
 
   return (
     <section className="relative overflow-hidden bg-white">
@@ -68,16 +106,16 @@ export function Hero(props: Props) {
             {/* Desktop LCP photo. loading=lazy so mobile (where this whole
                 composition is display:none) never fetches this 1600px variant;
                 on desktop it's in the initial viewport, so it still loads —
-                with fetchpriority=high to win the race there. object-position
-                comes from the CMS focal point, so editors steer the crop. */}
+                with fetchpriority=high to win the race there. Sizing and pan
+                come from the CMS focal point via heroDesktopPhoto.ts. */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={imageUrl}
               alt=""
               loading="lazy"
               fetchPriority="high"
-              className="absolute left-1/2 top-1/2 h-[106.8783cqw] w-[104.5635cqw] max-w-none -translate-x-1/2 -translate-y-1/2 rotate-[30deg] object-cover"
-              style={{ objectPosition }}
+              className="absolute left-1/2 top-1/2 max-w-none object-cover"
+              style={desktopStyle}
             />
             <div className="absolute inset-0 bg-black/[0.03]" />
           </div>
@@ -116,17 +154,19 @@ export function Hero(props: Props) {
           {/* Mobile/tablet photo (replaces the rotated desktop composition).
               This is the mobile LCP element, so it loads eagerly with
               fetchpriority=high and a viewport-sized srcset. */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={imageUrl}
-            srcSet={mobileImageSrcSet}
-            sizes={mobileImageSrcSet ? '(min-width: 768px) 704px, 100vw' : undefined}
-            alt={IMAGE_ALT}
-            loading="eager"
-            fetchPriority="high"
-            className="aspect-[4/3] w-full rounded-[40px] object-cover xl:hidden"
-            style={{ objectPosition }}
-          />
+          <div className="relative aspect-[4/3] w-full overflow-hidden rounded-[40px] xl:hidden">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={imageUrl}
+              srcSet={mobileImageSrcSet}
+              sizes={mobileImageSrcSet ? mobileSizes : undefined}
+              alt={IMAGE_ALT}
+              loading="eager"
+              fetchPriority="high"
+              className="absolute left-1/2 top-1/2 max-w-none object-cover"
+              style={mobilePhotoStyle}
+            />
+          </div>
         </div>
       </div>
     </section>

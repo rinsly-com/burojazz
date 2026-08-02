@@ -12,12 +12,18 @@ export function RichTextBlock({ content, width }: Props) {
 
   return (
     <Section className="py-12 md:py-16">
+      {/* `rich-text` (globals.css) styles the CMS output: headings, lists,
+          quotes, rules. The prose-* classes that used to be here did nothing —
+          this project has no @tailwindcss/typography plugin installed. */}
       <div
-        className={`prose-headings:font-semibold prose-a:text-brand text-sm leading-relaxed text-ink/90 ${
+        className={`rich-text text-sm leading-relaxed text-ink/90 ${
           width === 'wide' ? '' : 'mx-auto max-w-3xl'
         }`}
       >
-        <RichText data={content} />
+        {/* disableContainer: without it the renderer adds its own wrapper div,
+            which would sit between `.rich-text` and the content. Every other
+            caller on the site already disables it. */}
+        <RichText data={content} disableContainer />
       </div>
     </Section>
   )
