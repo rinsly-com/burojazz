@@ -6,7 +6,7 @@ async function loadWith(apiUrl: string | undefined) {
   vi.resetModules()
   if (apiUrl === undefined) vi.stubEnv('PAYLOAD_API_URL', '')
   else vi.stubEnv('PAYLOAD_API_URL', apiUrl)
-  return import('@/lib/image')
+  return import('@rinsly-com/site-core/lib/image')
 }
 
 afterEach(() => {
