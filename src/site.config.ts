@@ -8,7 +8,12 @@ type Localized = { nl: string; en: string }
 
 export const siteConfig = {
   name: 'Buro J.A.Z.Z.',
-  url: (process.env.NEXT_PUBLIC_SITE_URL || 'https://burojazz.com').replace(/\/+$/, ''),
+  // The live site is served from burojazz.nl; burojazz.com 301-redirects there.
+  // This value is the site's identity, not just a link: it drives the canonical
+  // tag, the sitemap, Open Graph, and the domain the admin's availability panel
+  // asks the uptime monitor about. Naming the redirecting domain here made all
+  // four point at an address the site does not actually serve from.
+  url: (process.env.NEXT_PUBLIC_SITE_URL || 'https://burojazz.nl').replace(/\/+$/, ''),
   themeColor: '#51c2cc',
   // The square brand mark, the same asset the site header renders.
   // (Was '/logo.svg', which does not exist in public/.)
@@ -22,12 +27,14 @@ export const siteConfig = {
     } as Localized,
   },
   // Origins allowed to call the accp worker's API cross-origin (CORS/CSRF) —
-  // chiefly the public static site POSTing the "Direct aanmelden" form. The
-  // live site is served from burojazz.nl (burojazz.com 301-redirects there), so
-  // both apex and www must be listed; `url` (burojazz.com) is added implicitly,
-  // and the accp origin itself is listed for admin-side requests.
+  // chiefly the public static site POSTing the "Direct aanmelden" form. `url`
+  // (burojazz.nl) is added implicitly; www and the accp origin are listed for
+  // the same reason they always were. burojazz.com stays listed even though it
+  // only redirects: dropping it would silently narrow CORS as a side effect of
+  // a canonical-domain fix, and a redirect that is ever made a proxy would then
+  // fail in a way nobody would connect back to this line.
   extraOrigins: [
-    'https://burojazz.nl',
+    'https://burojazz.com',
     'https://www.burojazz.nl',
     'https://accp.burojazz.com',
   ] as string[],
