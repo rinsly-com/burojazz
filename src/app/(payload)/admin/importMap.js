@@ -1,6 +1,6 @@
 import { ReviewPanel as ReviewPanel_176db3e0d68114a4f1814b2462895ab6 } from '../../../components/ReviewPanel'
 import { SlugField as SlugField_2b8867833a34864a02ddf429b0728a40 } from '@payloadcms/next/client'
-import { WorkflowStatusCell as WorkflowStatusCell_cdaec1b9f132f671a211d3c27f28abfa } from '../../../components/WorkflowStatusCell'
+import { WorkflowStatusCell as WorkflowStatusCell_f080d585fcf30ba912897804a22f2f48 } from '../../../components/RinslyAdmin'
 import { SectionSelect as SectionSelect_5f64c19b5fc37aa6b07bd058f4036ca8 } from '../../../components/SectionSelect'
 import { IconSelector as IconSelector_0d40708c7ce43bde1d3e0df1b230c52c } from '../../../components/IconSelector'
 import { RscEntryLexicalCell as RscEntryLexicalCell_44fe37237e0ebf4470c9990d8cb7b07e } from '@payloadcms/richtext-lexical/rsc'
@@ -31,14 +31,16 @@ import { MetaTitleComponent as MetaTitleComponent_a8a977ebc872c5d5ea7ee689724c08
 import { MetaDescriptionComponent as MetaDescriptionComponent_a8a977ebc872c5d5ea7ee689724c0860 } from '@payloadcms/plugin-seo/client'
 import { MetaImageComponent as MetaImageComponent_a8a977ebc872c5d5ea7ee689724c0860 } from '@payloadcms/plugin-seo/client'
 import { PreviewComponent as PreviewComponent_a8a977ebc872c5d5ea7ee689724c0860 } from '@payloadcms/plugin-seo/client'
-import { WorkflowAction as WorkflowAction_e8c4e60d7213efc5103de81a43b3895d } from '../../../components/WorkflowAction'
-import { TotpNavLink as TotpNavLink_3eac456c969beca2d499479aae53d595 } from '../../../components/TotpAuth'
+import { WorkflowAction as WorkflowAction_f080d585fcf30ba912897804a22f2f48 } from '../../../components/RinslyAdmin'
+import { AdminIcon as AdminIcon_f080d585fcf30ba912897804a22f2f48 } from '../../../components/RinslyAdmin'
+import { AdminLogo as AdminLogo_f080d585fcf30ba912897804a22f2f48 } from '../../../components/RinslyAdmin'
+import { TotpNavLink as TotpNavLink_f080d585fcf30ba912897804a22f2f48 } from '../../../components/RinslyAdmin'
 import { DeployNavLink as DeployNavLink_49051cef4f4f73eec296efbbf5e2838c } from '../../../components/DeployNavLink'
-import { AnalyticsPanel as AnalyticsPanel_71cc5ad6f30b06ab26deec6ee09e3575 } from '../../../components/AnalyticsPanel'
-import { TotpGate as TotpGate_3eac456c969beca2d499479aae53d595 } from '../../../components/TotpAuth'
+import { AnalyticsPanel as AnalyticsPanel_f080d585fcf30ba912897804a22f2f48 } from '../../../components/RinslyAdmin'
+import { TotpGate as TotpGate_f080d585fcf30ba912897804a22f2f48 } from '../../../components/RinslyAdmin'
 import { R2ClientUploadHandler as R2ClientUploadHandler_85cc02ed84006fcc91d3aff39dda669d } from '@payloadcms/storage-r2/client'
-import { TotpLoginView as TotpLoginView_3eac456c969beca2d499479aae53d595 } from '../../../components/TotpAuth'
-import { TotpSetupView as TotpSetupView_3eac456c969beca2d499479aae53d595 } from '../../../components/TotpAuth'
+import { TotpLoginView as TotpLoginView_f080d585fcf30ba912897804a22f2f48 } from '../../../components/RinslyAdmin'
+import { TotpSetupView as TotpSetupView_f080d585fcf30ba912897804a22f2f48 } from '../../../components/RinslyAdmin'
 import { DeployView as DeployView_703d11826258ff65bac24c5c38c83090 } from '../../../components/DeployView'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 
@@ -46,7 +48,7 @@ import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } f
 export const importMap = {
   "/components/ReviewPanel#ReviewPanel": ReviewPanel_176db3e0d68114a4f1814b2462895ab6,
   "@payloadcms/next/client#SlugField": SlugField_2b8867833a34864a02ddf429b0728a40,
-  "/components/WorkflowStatusCell#WorkflowStatusCell": WorkflowStatusCell_cdaec1b9f132f671a211d3c27f28abfa,
+  "/components/RinslyAdmin#WorkflowStatusCell": WorkflowStatusCell_f080d585fcf30ba912897804a22f2f48,
   "/components/SectionSelect#SectionSelect": SectionSelect_5f64c19b5fc37aa6b07bd058f4036ca8,
   "/components/IconSelector#IconSelector": IconSelector_0d40708c7ce43bde1d3e0df1b230c52c,
   "@payloadcms/richtext-lexical/rsc#RscEntryLexicalCell": RscEntryLexicalCell_44fe37237e0ebf4470c9990d8cb7b07e,
@@ -77,14 +79,16 @@ export const importMap = {
   "@payloadcms/plugin-seo/client#MetaDescriptionComponent": MetaDescriptionComponent_a8a977ebc872c5d5ea7ee689724c0860,
   "@payloadcms/plugin-seo/client#MetaImageComponent": MetaImageComponent_a8a977ebc872c5d5ea7ee689724c0860,
   "@payloadcms/plugin-seo/client#PreviewComponent": PreviewComponent_a8a977ebc872c5d5ea7ee689724c0860,
-  "/components/WorkflowAction#WorkflowAction": WorkflowAction_e8c4e60d7213efc5103de81a43b3895d,
-  "/components/TotpAuth#TotpNavLink": TotpNavLink_3eac456c969beca2d499479aae53d595,
+  "/components/RinslyAdmin#WorkflowAction": WorkflowAction_f080d585fcf30ba912897804a22f2f48,
+  "/components/RinslyAdmin#AdminIcon": AdminIcon_f080d585fcf30ba912897804a22f2f48,
+  "/components/RinslyAdmin#AdminLogo": AdminLogo_f080d585fcf30ba912897804a22f2f48,
+  "/components/RinslyAdmin#TotpNavLink": TotpNavLink_f080d585fcf30ba912897804a22f2f48,
   "/components/DeployNavLink#DeployNavLink": DeployNavLink_49051cef4f4f73eec296efbbf5e2838c,
-  "/components/AnalyticsPanel#AnalyticsPanel": AnalyticsPanel_71cc5ad6f30b06ab26deec6ee09e3575,
-  "/components/TotpAuth#TotpGate": TotpGate_3eac456c969beca2d499479aae53d595,
+  "/components/RinslyAdmin#AnalyticsPanel": AnalyticsPanel_f080d585fcf30ba912897804a22f2f48,
+  "/components/RinslyAdmin#TotpGate": TotpGate_f080d585fcf30ba912897804a22f2f48,
   "@payloadcms/storage-r2/client#R2ClientUploadHandler": R2ClientUploadHandler_85cc02ed84006fcc91d3aff39dda669d,
-  "/components/TotpAuth#TotpLoginView": TotpLoginView_3eac456c969beca2d499479aae53d595,
-  "/components/TotpAuth#TotpSetupView": TotpSetupView_3eac456c969beca2d499479aae53d595,
+  "/components/RinslyAdmin#TotpLoginView": TotpLoginView_f080d585fcf30ba912897804a22f2f48,
+  "/components/RinslyAdmin#TotpSetupView": TotpSetupView_f080d585fcf30ba912897804a22f2f48,
   "/components/DeployView#DeployView": DeployView_703d11826258ff65bac24c5c38c83090,
   "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1
 }

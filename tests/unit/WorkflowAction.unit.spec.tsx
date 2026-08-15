@@ -1,5 +1,6 @@
 /**
- * src/components/WorkflowAction.tsx — the stage-aware action button.
+ * src/components/RinslyAdmin.tsx — the stage-aware action button, re-exported
+ * from the engine through this site's single admin barrel.
  *
  * The bug this guards against took the homepage off production: advancing a
  * stage submitted `_status: 'draft'` against the edit form's DEFAULT action,
@@ -50,7 +51,7 @@ vi.mock('@payloadcms/ui', () => ({
     ]),
 }))
 
-const { WorkflowAction } = await import('../../src/components/WorkflowAction')
+const { WorkflowAction } = await import('../../src/components/RinslyAdmin')
 
 /** Narrow a queried element to a button so `.disabled` is typed. */
 const button = (el: HTMLElement) => el as HTMLButtonElement
