@@ -5,7 +5,7 @@ import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useRef } from 'react'
 
-import { Media, type MediaResource } from '@/components/frontend/ui/Media'
+import { Media, type MediaResource } from '@rinsly-com/site-core/ui'
 
 gsap.registerPlugin(useGSAP, ScrollTrigger)
 

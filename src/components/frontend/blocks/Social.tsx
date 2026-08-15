@@ -7,7 +7,7 @@ import { ArrowIcon } from '@/components/frontend/ui/ArrowIcon'
 import { hrefFor } from '@/components/frontend/ui/CMSLink'
 import { Eyebrow } from '@/components/frontend/ui/Eyebrow'
 import { Icon } from '@/components/frontend/ui/Icon'
-import { Media, mediaUrl } from '@/components/frontend/ui/Media'
+import { Media, mediaUrl } from '@rinsly-com/site-core/ui'
 import { Section } from '@/components/frontend/ui/Section'
 import { cmsText } from '@rinsly-com/site-core'
 

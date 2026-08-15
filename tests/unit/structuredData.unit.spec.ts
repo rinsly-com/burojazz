@@ -59,7 +59,7 @@ describe('buildSiteJsonLd', () => {
 
   it('falls back to the favicon when no logo relation is populated', () => {
     const org = (buildSiteJsonLd(footer({}))['@graph'] as Record<string, unknown>[])[0]
-    expect(org.logo).toBe('https://burojazz.com/favicon.ico')
+    expect(org.logo).toBe('https://burojazz.nl/favicon.ico')
     expect(org.image).toBe(org.logo)
   })
 

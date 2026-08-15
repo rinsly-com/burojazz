@@ -2,7 +2,7 @@ import type { Page } from '@/payload-types'
 
 import { ComplaintsStepper, type Step } from '@/components/frontend/blocks/ComplaintsStepper'
 import { Icon } from '@/components/frontend/ui/Icon'
-import { Media } from '@/components/frontend/ui/Media'
+import { Media } from '@rinsly-com/site-core/ui'
 import { Section } from '@/components/frontend/ui/Section'
 import { cmsText } from '@rinsly-com/site-core'
 
