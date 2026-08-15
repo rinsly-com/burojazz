@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { scrollToAnchor } from '@/components/frontend/ui/AnchorLink'
 import { ArrowIcon } from '@/components/frontend/ui/ArrowIcon'
 import { hrefFor, type LinkFields } from '@/components/frontend/ui/CMSLink'
-import { Media } from '@/components/frontend/ui/Media'
+import { Media } from '@rinsly-com/site-core/ui'
 import type { Header } from '@/payload-types'
 
 type SiteHeaderProps = {

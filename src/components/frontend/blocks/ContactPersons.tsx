@@ -2,7 +2,7 @@ import type { Page } from '@/payload-types'
 
 import { Eyebrow } from '@/components/frontend/ui/Eyebrow'
 import { Icon } from '@/components/frontend/ui/Icon'
-import { Media, resolveMedia, type MediaResource } from '@/components/frontend/ui/Media'
+import { Media, resolveMedia, type MediaResource } from '@rinsly-com/site-core/ui'
 import { Section } from '@/components/frontend/ui/Section'
 import { cmsText } from '@rinsly-com/site-core'
 

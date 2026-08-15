@@ -6,7 +6,7 @@ import { Button } from '@/components/frontend/ui/Button'
 import { Buttons } from '@/components/frontend/ui/CMSLink'
 import { Eyebrow } from '@/components/frontend/ui/Eyebrow'
 import { Icon } from '@/components/frontend/ui/Icon'
-import { Media } from '@/components/frontend/ui/Media'
+import { Media } from '@rinsly-com/site-core/ui'
 import { Section } from '@/components/frontend/ui/Section'
 import { cmsText } from '@rinsly-com/site-core'
 

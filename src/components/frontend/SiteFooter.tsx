@@ -1,7 +1,7 @@
 import { AnchorLink } from '@/components/frontend/ui/AnchorLink'
 import { hrefFor, type LinkFields } from '@/components/frontend/ui/CMSLink'
 import { Icon } from '@/components/frontend/ui/Icon'
-import { Media } from '@/components/frontend/ui/Media'
+import { Media } from '@rinsly-com/site-core/ui'
 import type { Footer } from '@/payload-types'
 import { cmsText } from '@rinsly-com/site-core'
 

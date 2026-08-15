@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "build": "pnpm run generate:types:cloudflare && cross-env NODE_OPTIONS=\"--no-deprecation --max-old-space-size=8000\" next build",
-    "build:static": "pnpm run generate:types:cloudflare && node scripts/build-static.mjs",
+    "build:static": "pnpm run optimize:images && pnpm run generate:types:cloudflare && node scripts/build-static.mjs",
     "deploy": "pnpm run deploy:database && pnpm run deploy:app",
     "deploy:app": "opennextjs-cloudflare build ${CLOUDFLARE_ENV:+--env=$CLOUDFLARE_ENV} && opennextjs-cloudflare deploy ${CLOUDFLARE_ENV:+--env=$CLOUDFLARE_ENV}",
     "deploy:database": "pnpm run lint:migrations && cross-env NODE_ENV=production PAYLOAD_SECRET=ignore payload migrate && wrangler d1 execute D1 --command 'PRAGMA optimize' ${CLOUDFLARE_ENV:+--env=$CLOUDFLARE_ENV} --remote",
@@ -26,7 +26,8 @@
     "test": "pnpm run test:unit && pnpm run test:int && pnpm run test:e2e",
     "test:e2e": "cross-env NODE_OPTIONS=\"--no-deprecation --import=tsx/esm\" playwright test --config=playwright.config.ts",
     "test:int": "cross-env NODE_OPTIONS=--no-deprecation vitest run --config ./vitest.config.mts",
-    "test:unit": "cross-env NODE_OPTIONS=--no-deprecation vitest run --config ./vitest.unit.config.mts"
+    "test:unit": "cross-env NODE_OPTIONS=--no-deprecation vitest run --config ./vitest.unit.config.mts",
+    "optimize:images": "node scripts/optimize-images.mjs"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
@@ -38,7 +39,7 @@
     "@payloadcms/storage-r2": "3.85.2",
     "@payloadcms/translations": "3.85.2",
     "@payloadcms/ui": "3.85.2",
-    "@rinsly-com/site-core": "^0.12.1",
+    "@rinsly-com/site-core": "^0.14.0",
     "@tabler/icons-react": "^3.44.0",
     "cross-env": "^7.0.3",
     "dotenv": "16.4.7",

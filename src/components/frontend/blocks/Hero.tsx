@@ -2,10 +2,10 @@ import type { CSSProperties } from 'react'
 
 import { Button } from '@/components/frontend/ui/Button'
 import { Buttons } from '@/components/frontend/ui/CMSLink'
-import { mediaUrl, resolveMedia } from '@/components/frontend/ui/Media'
+import { mediaUrl, resolveMedia } from '@rinsly-com/site-core/ui'
 import { focalCrop } from '@/lib/focalCrop'
 import { desktopPhotoStyle } from '@/lib/heroDesktopPhoto'
-import { cfImageSrcSet } from '@/lib/image'
+import { cfImageSrcSet } from '@rinsly-com/site-core/lib/image'
 import type { Page } from '@/payload-types'
 import { cmsText } from '@rinsly-com/site-core'
 

@@ -1,7 +1,7 @@
 import { ImageResponse } from 'next/og'
 
 import type { Page } from '@/payload-types'
-import { cfImageSrc } from './image'
+import { cfImageSrc } from '@rinsly-com/site-core/lib/image'
 
 /**
  * Open Graph image rendering, shared by the `opengraph-image` routes.
