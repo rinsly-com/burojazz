@@ -26,7 +26,18 @@
 /fonts/*
   Cache-Control: public, max-age=31536000, immutable
 
-# Everything else, HTML included, keeps revalidating: content changes when an
-# editor publishes, and a stale page is more confusing than a slow one.
-/*
-  Cache-Control: public, max-age=0, must-revalidate
+# Deliberately NO `/*` rule.
+#
+# Workers Assets MERGES every rule whose pattern matches, it does not stop at
+# the first. A catch-all setting Cache-Control was therefore appended to the
+# rules above, and the image responses went out with both:
+#
+#   cache-control: public, max-age=0, must-revalidate, public, max-age=604800, …
+#
+# A browser honours the most restrictive of those, so the caching above did
+# nothing at all. Verified in production, not assumed.
+#
+# Nothing is lost by omitting it: Workers Assets already defaults to
+# `public, max-age=0, must-revalidate`, which is exactly what HTML should have.
+# Content changes when an editor publishes, and a stale page is more confusing
+# than a slow one.
