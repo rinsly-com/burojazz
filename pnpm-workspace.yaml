@@ -3,12 +3,13 @@
 # parents (next, payload, wrangler) still pull older ones. Re-check and drop
 # entries whenever the parents bump: pnpm why <pkg>.
 #
-# Deliberately ABSENT: undici (5 alerts, fixed in 7.29.0). Forcing 7.29.0
-# breaks miniflare's fetch under the Next dev server (every next/font
-# download fails and the frontend 500s), and undici only runs in local dev
-# tooling here (miniflare/wrangler/jsdom), never in the deployed Worker.
-# Accepted until wrangler/next move to it themselves.
+# undici note: 7.29.0 breaks next/font/google fetching in dev/builds
+# (miniflare's undici fails those requests), which is why this site
+# self-hosts its fonts (src/fonts + next/font/local). Do not reintroduce
+# next/font/google while this floor exists. The floor matters at runtime:
+# undici lands in the deployed Worker bundle via payload.
 overrides:
+  'undici@>=7.0.0 <7.29.0': 7.29.0
   'postcss@<8.5.23': 8.5.23
   'js-yaml@>=4.0.0 <4.3.1': 4.3.1
   'fast-uri@>=3.0.0 <3.1.5': 3.1.5
