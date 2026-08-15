@@ -36,6 +36,7 @@ import { AdminIcon as AdminIcon_f080d585fcf30ba912897804a22f2f48 } from '../../.
 import { AdminLogo as AdminLogo_f080d585fcf30ba912897804a22f2f48 } from '../../../components/RinslyAdmin'
 import { TotpNavLink as TotpNavLink_f080d585fcf30ba912897804a22f2f48 } from '../../../components/RinslyAdmin'
 import { DeployNavLink as DeployNavLink_49051cef4f4f73eec296efbbf5e2838c } from '../../../components/DeployNavLink'
+import { UptimePanel as UptimePanel_f080d585fcf30ba912897804a22f2f48 } from '../../../components/RinslyAdmin'
 import { AnalyticsPanel as AnalyticsPanel_f080d585fcf30ba912897804a22f2f48 } from '../../../components/RinslyAdmin'
 import { TotpGate as TotpGate_f080d585fcf30ba912897804a22f2f48 } from '../../../components/RinslyAdmin'
 import { R2ClientUploadHandler as R2ClientUploadHandler_85cc02ed84006fcc91d3aff39dda669d } from '@payloadcms/storage-r2/client'
@@ -84,6 +85,7 @@ export const importMap = {
   "/components/RinslyAdmin#AdminLogo": AdminLogo_f080d585fcf30ba912897804a22f2f48,
   "/components/RinslyAdmin#TotpNavLink": TotpNavLink_f080d585fcf30ba912897804a22f2f48,
   "/components/DeployNavLink#DeployNavLink": DeployNavLink_49051cef4f4f73eec296efbbf5e2838c,
+  "/components/RinslyAdmin#UptimePanel": UptimePanel_f080d585fcf30ba912897804a22f2f48,
   "/components/RinslyAdmin#AnalyticsPanel": AnalyticsPanel_f080d585fcf30ba912897804a22f2f48,
   "/components/RinslyAdmin#TotpGate": TotpGate_f080d585fcf30ba912897804a22f2f48,
   "@payloadcms/storage-r2/client#R2ClientUploadHandler": R2ClientUploadHandler_85cc02ed84006fcc91d3aff39dda669d,
