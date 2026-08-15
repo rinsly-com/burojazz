@@ -1,0 +1,11 @@
+/**
+ * Admin-panel styling. The theme lives in the engine, so all this site does is
+ * import it.
+ *
+ * No brand seeds are overridden here on purpose. Buro J.A.Z.Z. is a direct
+ * Rinsly client, not a partner who has bought the white-label, so its CMS is a
+ * Rinsly-branded product: Rinsly's palette, mark, favicon and tab title. The
+ * engine's `whitelabel` flag is what switches a panel to the client's own
+ * brand, and this site does not set it.
+ */
+@import '@rinsly-com/site-core/styles/admin.scss';

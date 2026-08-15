@@ -10,7 +10,9 @@ export const siteConfig = {
   name: 'Buro J.A.Z.Z.',
   url: (process.env.NEXT_PUBLIC_SITE_URL || 'https://burojazz.com').replace(/\/+$/, ''),
   themeColor: '#51c2cc',
-  logo: '/logo.svg',
+  // The square brand mark, the same asset the site header renders.
+  // (Was '/logo.svg', which does not exist in public/.)
+  logo: '/images/header-hero/logo.svg',
   seo: {
     titleSuffix: ' — Buro J.A.Z.Z.',
     defaultTitle: 'Buro J.A.Z.Z.',

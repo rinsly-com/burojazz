@@ -30,7 +30,7 @@ export const Pages: CollectionConfig = {
     components: {
       edit: {
         // Stage-aware action button (Submit for review / Approve / Publish).
-        PublishButton: '/components/WorkflowAction#WorkflowAction',
+        PublishButton: '/components/RinslyAdmin#WorkflowAction',
       },
     },
   },
@@ -97,7 +97,7 @@ export const Pages: CollectionConfig = {
         },
         components: {
           // Colored stage chip in the list/table view.
-          Cell: '/components/WorkflowStatusCell#WorkflowStatusCell',
+          Cell: '/components/RinslyAdmin#WorkflowStatusCell',
         },
       },
     },
