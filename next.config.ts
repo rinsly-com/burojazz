@@ -15,7 +15,12 @@ const isStatic = process.env.BUILD_STATIC === 'true'
 const nextConfig: NextConfig = {
   // The shared engine (@rinsly-com/site-core, used by payload.config) ships as
   // TypeScript source; Next must transpile it.
-  transpilePackages: ['@rinsly-com/site-core'],
+  // Both Rinsly packages ship as TypeScript/JSX source; Next must transpile
+  // BOTH. The ui entry is load-bearing even though most imports reach it via
+  // the engine's re-export: pnpm resolves @rinsly-com/ui as its own package,
+  // and without the entry the build fails with "Unknown module type" as soon
+  // as its store path changes (e.g. after a lockfile re-resolution).
+  transpilePackages: ['@rinsly-com/site-core', '@rinsly-com/ui'],
   images: {
     // Static export cannot use the Next image optimizer.
     unoptimized: isStatic,

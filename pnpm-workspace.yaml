@@ -1,3 +1,22 @@
+# Security floors for vulnerable TRANSITIVE packages (GitHub dependabot
+# alerts, 2026-08-15). Each pins a range that has a patched release; direct
+# parents (next, payload, wrangler) still pull older ones. Re-check and drop
+# entries whenever the parents bump: pnpm why <pkg>.
+#
+# undici note: 7.29.0 breaks next/font/google fetching in dev/builds
+# (miniflare's undici fails those requests), which is why this site
+# self-hosts its fonts (src/fonts + next/font/local). Do not reintroduce
+# next/font/google while this floor exists. The floor matters at runtime:
+# undici lands in the deployed Worker bundle via payload.
+overrides:
+  'undici@>=7.0.0 <7.29.0': 7.29.0
+  'postcss@<8.5.23': 8.5.23
+  'js-yaml@>=4.0.0 <4.3.1': 4.3.1
+  'fast-uri@>=3.0.0 <3.1.5': 3.1.5
+  'brace-expansion@>=2.0.0 <2.1.3': 2.1.3
+  'brace-expansion@>=4.0.0 <5.0.9': 5.0.9
+  'nanoid@<3.3.16': 3.3.16
+  'dompurify@<3.4.13': 3.4.13
 allowBuilds:
   core-js-pure: true
   esbuild: true

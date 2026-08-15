@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import React from 'react'
-import { Mona_Sans, Montserrat } from 'next/font/google'
+import localFont from 'next/font/local'
 
 import { AanmeldenDialog } from '@/components/frontend/aanmelden/AanmeldenDialog'
 import { JsonLd } from '@/components/frontend/JsonLd'
@@ -13,15 +13,22 @@ import { buildSiteJsonLd } from '@/lib/structuredData'
 import './globals.css'
 import './styles.css'
 
-const montserrat = Montserrat({
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
+// Self-hosted (variable woff2, latin subset, downloaded from Google Fonts —
+// both OFL). Not next/font/google, deliberately: that fetches from Google at
+// every dev/build compile, which couples builds to Google's availability and
+// breaks outright under the undici security floor in pnpm-workspace.yaml
+// (miniflare's undici 7.29.0 fails those fetches). Same fonts, same subsets,
+// zero network.
+const montserrat = localFont({
+  src: '../../fonts/montserrat-latin-wght.woff2',
+  weight: '100 900',
   variable: '--font-montserrat',
   display: 'swap',
 })
 
-const monaSans = Mona_Sans({
-  subsets: ['latin'],
+const monaSans = localFont({
+  src: '../../fonts/mona-sans-latin-wght.woff2',
+  weight: '200 900',
   variable: '--font-mona-sans',
   display: 'swap',
 })
