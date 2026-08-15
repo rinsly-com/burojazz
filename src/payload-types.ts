@@ -138,9 +138,24 @@ export interface UserAuthOperations {
 export interface User {
   id: number;
   /**
-   * Authors edit & submit for review. Reviewers approve (Ready) and publish.
+   * Authors draft and submit for review. Reviewers approve and publish. Admins also manage users.
    */
   roles: ('admin' | 'reviewer' | 'author')[];
+  totpSecret?: string | null;
+  totpLastCounter?: number | null;
+  totpRecovery?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  /**
+   * Set up via the Two-factor authentication screen. Empty means not enrolled.
+   */
+  totpConfirmedAt?: string | null;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -1097,6 +1112,10 @@ export interface PayloadMigration {
  */
 export interface UsersSelect<T extends boolean = true> {
   roles?: T;
+  totpSecret?: T;
+  totpLastCounter?: T;
+  totpRecovery?: T;
+  totpConfirmedAt?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
