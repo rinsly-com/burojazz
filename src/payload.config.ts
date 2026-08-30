@@ -58,6 +58,11 @@ export default buildSiteConfig({
   // the accp + prod Workers. Without the token the panel renders nothing, so
   // enabling it before the secret exists is harmless.
   dashboardUptime: true,
+  // Last media-backup widget: last successful `rinsly-backups` run for this
+  // site, plus the fixed D1 Time Travel line. Needs the RinslyAdmin barrel's
+  // BackupsPanel re-export plus RINSLY_BACKUPS_TOKEN + RINSLY_BACKUPS_SITE on
+  // the accp + prod Workers. Without them the panel renders nothing.
+  dashboardBackups: true,
   // TOTP two-factor authentication: login code field, /admin/two-factor
   // enrolment screen, and admins are steered into enrolling (never locked
   // out). Needs the src/components/TotpAuth.tsx re-export. This is what makes
