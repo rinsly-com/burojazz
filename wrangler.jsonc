@@ -100,4 +100,11 @@
   // "kv_namespaces": [
   //   { "binding": "INSTAGRAM_KV", "id": "<KV_NAMESPACE_ID>" },
   // ],
+  // Workers Observability — CMS/API runtime failures (aanmelding flow, D1/R2,
+  // media saves) don't show up on static-site uptime checks. head_sampling_rate 1
+  // matches current accp traffic; dial back only if log volume shows on a bill.
+  "observability": {
+    "enabled": true,
+    "logs": { "invocation_logs": true, "head_sampling_rate": 1 },
+  },
 }
