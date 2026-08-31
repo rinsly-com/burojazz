@@ -58,9 +58,19 @@ const staticizeRoutes = () => {
     if (!existsSync(file)) continue
     const src = readFileSync(file, 'utf8')
     savedRouteSrc.set(file, src)
+    // Also drop `loadPreviewShell`. Live preview cannot run in the static
+    // export — resolvePreview returns false under BUILD_STATIC — but the shell
+    // is a 'use client' module importing this site's block renderers (and the
+    // icon barrel). Under `output: export` a dynamic import is still bundled
+    // into page JS; rewriting the loader to `undefined` is what keeps public
+    // weight down. On accp (a Worker, not this export) preview is untouched.
     const patched = src
       .replace(/^export const dynamic = ['"]force-dynamic['"].*\n?/m, '')
       .replace(/^export const dynamicParams = true\b.*$/m, 'export const dynamicParams = false')
+      .replace(
+        /const loadPreviewShell:[\s\S]*?=\s*\(\)\s*=>\s*import\('@\/components\/PreviewShell'\)/,
+        'const loadPreviewShell = undefined',
+      )
     writeFileSync(file, patched)
   }
 }

@@ -1,12 +1,11 @@
-import { RichText } from '@payloadcms/richtext-lexical/react'
-
 import type { Page } from '@/payload-types'
 
 import { Button } from '@/components/frontend/ui/Button'
 import { Buttons } from '@/components/frontend/ui/CMSLink'
 import { Eyebrow } from '@/components/frontend/ui/Eyebrow'
 import { Icon } from '@/components/frontend/ui/Icon'
-import { Media } from '@rinsly-com/site-core/ui'
+import { Media, RichTextField } from '@rinsly-com/site-core/ui'
+import { editable } from '@rinsly-com/site-core/preview'
 import { Section } from '@/components/frontend/ui/Section'
 import { cmsText } from '@rinsly-com/site-core'
 
@@ -69,9 +68,12 @@ export function About(props: Props) {
                 {title}
               </h2>
             )}
-            <div className="rich-text max-w-[549px] text-sm leading-[1.6] font-medium text-ink">
+            <div
+              className="rich-text max-w-[549px] text-sm leading-[1.6] font-medium text-ink"
+              {...(props.body ? editable('body', { inline: false }) : {})}
+            >
               {props.body ? (
-                <RichText data={props.body} disableContainer />
+                <RichTextField data={props.body} field="body" />
               ) : (
                 <>
                   <p>

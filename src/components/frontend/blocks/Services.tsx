@@ -1,9 +1,9 @@
-import { RichText } from '@payloadcms/richtext-lexical/react'
-
 import type { Page } from '@/payload-types'
 import { Eyebrow } from '@/components/frontend/ui/Eyebrow'
 import { Icon } from '@/components/frontend/ui/Icon'
 import { Section } from '@/components/frontend/ui/Section'
+import { RichTextField } from '@rinsly-com/site-core/ui'
+import { editable } from '@rinsly-com/site-core/preview'
 import { hasRichTextContent } from '@/lib/richText'
 
 import { ServicesTabs, type TabData } from './ServicesTabs'
@@ -129,14 +129,19 @@ export function Services(props: Props) {
   // the rich text renderer out of the shipped JS. Cards whose `details` is empty
   // get no node, so their read-more link keeps navigating instead of opening
   // the dialog.
-  const renderedTabs: TabData[] = tabs.map((tab) => ({
+  const renderedTabs: TabData[] = tabs.map((tab, tabIndex) => ({
     ...tab,
-    cards: (tab.cards ?? []).map((card) => {
+    cards: (tab.cards ?? []).map((card, cardIndex) => {
       const details = hasRichTextContent(card.details) ? card.details : null
+      const detailsField = `tabs.${tabIndex}.cards.${cardIndex}.details`
       return {
         ...card,
         iconNode: <Icon name={card.icon} fallback={DEFAULT_CARD_ICON} size={28} stroke={1.75} />,
-        detailsNode: details ? <RichText data={details} disableContainer /> : undefined,
+        detailsNode: details ? (
+          <div {...editable(detailsField, { inline: false })}>
+            <RichTextField data={details} field={detailsField} />
+          </div>
+        ) : undefined,
       }
     }),
   }))
