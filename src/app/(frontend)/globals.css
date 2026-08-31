@@ -161,9 +161,8 @@ html {
  *
  * Painted as the image's own background by <Media>, not a wrapper element: a
  * wrapper would have to carry the caller's className (which sizes and positions
- * the box) and would apply it twice. The image is opaque once it paints, so it
- * covers the shimmer and nothing has to observe "loaded" — no state, no effect,
- * no client component.
+ * the box) and would apply it twice. MediaImage drops this class on load/error
+ * (transparent pixels and broken URLs would otherwise leave the shimmer forever).
  *
  * An image arriving into empty space is the jank people mean when they call a
  * site slow, even once the bytes are small: the layout is already right and the

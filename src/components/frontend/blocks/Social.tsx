@@ -7,7 +7,7 @@ import { ArrowIcon } from '@/components/frontend/ui/ArrowIcon'
 import { hrefFor } from '@/components/frontend/ui/CMSLink'
 import { Eyebrow } from '@/components/frontend/ui/Eyebrow'
 import { Icon } from '@/components/frontend/ui/Icon'
-import { Media, mediaUrl } from '@rinsly-com/site-core/ui'
+import { Media } from '@rinsly-com/site-core/ui'
 import { Section } from '@/components/frontend/ui/Section'
 import { cmsText } from '@rinsly-com/site-core'
 
@@ -68,7 +68,8 @@ export function Social(props: Props) {
           {/* Phone in hand (cropped like the design frame). When "live" is on,
               InstagramPhone overlays the most recent post on the screen. */}
           <InstagramPhone
-            phoneSrc={mediaUrl(props.photos?.phone, { width: 1200 }) ?? '/images/social/phone-hand.png'}
+            resource={props.photos?.phone}
+            fallbackSrc="/images/social/phone-hand.png"
             live={props.instagramLive ?? false}
             handle={handle}
           />
@@ -96,6 +97,7 @@ export function Social(props: Props) {
                 fallbackSrc="/images/social/instagram.svg"
                 alt="Instagram"
                 fit="contain"
+                sizes="60px"
                 className="size-[60px] shrink-0"
               />
               <span className="flex min-w-0 flex-1 flex-col gap-1.5">

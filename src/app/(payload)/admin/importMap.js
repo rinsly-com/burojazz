@@ -32,17 +32,19 @@ import { MetaDescriptionComponent as MetaDescriptionComponent_a8a977ebc872c5d5ea
 import { MetaImageComponent as MetaImageComponent_a8a977ebc872c5d5ea7ee689724c0860 } from '@payloadcms/plugin-seo/client'
 import { PreviewComponent as PreviewComponent_a8a977ebc872c5d5ea7ee689724c0860 } from '@payloadcms/plugin-seo/client'
 import { WorkflowAction as WorkflowAction_f080d585fcf30ba912897804a22f2f48 } from '../../../components/RinslyAdmin'
+import { VisualEditBridge as VisualEditBridge_f080d585fcf30ba912897804a22f2f48 } from '../../../components/RinslyAdmin'
 import { AdminIcon as AdminIcon_f080d585fcf30ba912897804a22f2f48 } from '../../../components/RinslyAdmin'
 import { AdminLogo as AdminLogo_f080d585fcf30ba912897804a22f2f48 } from '../../../components/RinslyAdmin'
 import { TotpNavLink as TotpNavLink_f080d585fcf30ba912897804a22f2f48 } from '../../../components/RinslyAdmin'
 import { DeployNavLink as DeployNavLink_49051cef4f4f73eec296efbbf5e2838c } from '../../../components/DeployNavLink'
-import { UptimePanel as UptimePanel_f080d585fcf30ba912897804a22f2f48 } from '../../../components/RinslyAdmin'
-import { AnalyticsPanel as AnalyticsPanel_f080d585fcf30ba912897804a22f2f48 } from '../../../components/RinslyAdmin'
 import { TotpGate as TotpGate_f080d585fcf30ba912897804a22f2f48 } from '../../../components/RinslyAdmin'
 import { R2ClientUploadHandler as R2ClientUploadHandler_85cc02ed84006fcc91d3aff39dda669d } from '@payloadcms/storage-r2/client'
 import { TotpLoginView as TotpLoginView_f080d585fcf30ba912897804a22f2f48 } from '../../../components/RinslyAdmin'
 import { TotpSetupView as TotpSetupView_f080d585fcf30ba912897804a22f2f48 } from '../../../components/RinslyAdmin'
 import { DeployView as DeployView_703d11826258ff65bac24c5c38c83090 } from '../../../components/DeployView'
+import { BackupsPanel as BackupsPanel_f080d585fcf30ba912897804a22f2f48 } from '../../../components/RinslyAdmin'
+import { UptimePanel as UptimePanel_f080d585fcf30ba912897804a22f2f48 } from '../../../components/RinslyAdmin'
+import { AnalyticsPanel as AnalyticsPanel_f080d585fcf30ba912897804a22f2f48 } from '../../../components/RinslyAdmin'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 
 /** @type import('payload').ImportMap */
@@ -81,16 +83,18 @@ export const importMap = {
   "@payloadcms/plugin-seo/client#MetaImageComponent": MetaImageComponent_a8a977ebc872c5d5ea7ee689724c0860,
   "@payloadcms/plugin-seo/client#PreviewComponent": PreviewComponent_a8a977ebc872c5d5ea7ee689724c0860,
   "/components/RinslyAdmin#WorkflowAction": WorkflowAction_f080d585fcf30ba912897804a22f2f48,
+  "/components/RinslyAdmin#VisualEditBridge": VisualEditBridge_f080d585fcf30ba912897804a22f2f48,
   "/components/RinslyAdmin#AdminIcon": AdminIcon_f080d585fcf30ba912897804a22f2f48,
   "/components/RinslyAdmin#AdminLogo": AdminLogo_f080d585fcf30ba912897804a22f2f48,
   "/components/RinslyAdmin#TotpNavLink": TotpNavLink_f080d585fcf30ba912897804a22f2f48,
   "/components/DeployNavLink#DeployNavLink": DeployNavLink_49051cef4f4f73eec296efbbf5e2838c,
-  "/components/RinslyAdmin#UptimePanel": UptimePanel_f080d585fcf30ba912897804a22f2f48,
-  "/components/RinslyAdmin#AnalyticsPanel": AnalyticsPanel_f080d585fcf30ba912897804a22f2f48,
   "/components/RinslyAdmin#TotpGate": TotpGate_f080d585fcf30ba912897804a22f2f48,
   "@payloadcms/storage-r2/client#R2ClientUploadHandler": R2ClientUploadHandler_85cc02ed84006fcc91d3aff39dda669d,
   "/components/RinslyAdmin#TotpLoginView": TotpLoginView_f080d585fcf30ba912897804a22f2f48,
   "/components/RinslyAdmin#TotpSetupView": TotpSetupView_f080d585fcf30ba912897804a22f2f48,
   "/components/DeployView#DeployView": DeployView_703d11826258ff65bac24c5c38c83090,
+  "/components/RinslyAdmin#BackupsPanel": BackupsPanel_f080d585fcf30ba912897804a22f2f48,
+  "/components/RinslyAdmin#UptimePanel": UptimePanel_f080d585fcf30ba912897804a22f2f48,
+  "/components/RinslyAdmin#AnalyticsPanel": AnalyticsPanel_f080d585fcf30ba912897804a22f2f48,
   "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1
 }

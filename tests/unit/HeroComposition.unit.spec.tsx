@@ -83,4 +83,17 @@ describe('the fixed-frame regression', () => {
     expect(photo.style.width).toMatch(/cqw|vw/)
     expect(photo.style.transform).toMatch(/cqw/)
   })
+
+  it('preloads the LCP image so the fetch starts before CSS/JS', () => {
+    // React hoists <link> into document.head; query the whole document, not
+    // just the render container.
+    const { baseElement } = render(<Hero {...({ blockType: 'hero' } as HeroProps)} />)
+    const preload = baseElement.ownerDocument.querySelector(
+      'link[rel="preload"][as="image"]',
+    )
+    expect(preload, 'hero should emit a preload for the LCP candidate').toBeTruthy()
+    expect(
+      preload!.getAttribute('fetchPriority') ?? preload!.getAttribute('fetchpriority'),
+    ).toBe('high')
+  })
 })

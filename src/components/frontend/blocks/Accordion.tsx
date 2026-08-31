@@ -1,5 +1,6 @@
 import React from 'react'
-import { RichText } from '@payloadcms/richtext-lexical/react'
+import { RichTextField } from '@rinsly-com/site-core/ui'
+import { editable } from '@rinsly-com/site-core/preview'
 
 import type { Page } from '@/payload-types'
 import { Eyebrow } from '@/components/frontend/ui/Eyebrow'
@@ -10,6 +11,10 @@ type Props = Extract<NonNullable<Page['layout']>[number], { blockType: 'accordio
 /**
  * Generic accordion section: 0…N collapsible items. Uses native
  * <details>/<summary> so it stays a zero-JS server component.
+ *
+ * Item bodies are rich text — Lexical objects have no string for the overlay
+ * to match, so they go through RichTextField + editable() (same pattern as
+ * site-core's RichTextBlock).
  */
 export function Accordion({ header, items }: Props) {
   if (!items?.length) return null
@@ -30,27 +35,33 @@ export function Accordion({ header, items }: Props) {
       )}
 
       <div className="mx-auto flex max-w-3xl flex-col gap-4">
-        {items.map((item, index) => (
-          <details
-            key={item.id ?? index}
-            className="group rounded-3xl border border-brand/20 bg-white open:border-brand"
-          >
-            <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-5 text-left text-base font-semibold text-black [&::-webkit-details-marker]:hidden">
-              {item.title}
-              <span
-                aria-hidden
-                className="text-brand transition-transform duration-200 group-open:rotate-45"
-              >
-                +
-              </span>
-            </summary>
-            {item.body && (
-              <div className="rich-text px-6 pb-6 text-sm leading-relaxed text-ink/90">
-                <RichText data={item.body} disableContainer />
-              </div>
-            )}
-          </details>
-        ))}
+        {items.map((item, index) => {
+          const bodyField = `items.${index}.body`
+          return (
+            <details
+              key={item.id ?? index}
+              className="group rounded-3xl border border-brand/20 bg-white open:border-brand"
+            >
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-5 text-left text-base font-semibold text-black [&::-webkit-details-marker]:hidden">
+                {item.title}
+                <span
+                  aria-hidden
+                  className="text-brand transition-transform duration-200 group-open:rotate-45"
+                >
+                  +
+                </span>
+              </summary>
+              {item.body && (
+                <div
+                  className="rich-text px-6 pb-6 text-sm leading-relaxed text-ink/90"
+                  {...editable(bodyField, { inline: false })}
+                >
+                  <RichTextField data={item.body} field={bodyField} />
+                </div>
+              )}
+            </details>
+          )
+        })}
       </div>
     </Section>
   )

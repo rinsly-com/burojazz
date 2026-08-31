@@ -2,11 +2,16 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import React from 'react'
 
+import config from '@payload-config'
+import { PreviewRuntime } from '@rinsly-com/site-core/preview'
+import { DEFAULT_LOCALE } from '@rinsly-com/site-core/lib/locale'
+
 import { JsonLd } from '@/components/frontend/JsonLd'
 import { PageView } from '@/components/frontend/PageView'
 import { RenderBlocks } from '@/components/frontend/RenderBlocks'
 import { buildPageMetadata } from '@/lib/metadata'
 import { getRenderablePageBySlug, getRenderablePages } from '@/lib/pages'
+import { resolvePreview, type SearchParams } from '@/lib/preview'
 import { buildPageJsonLd } from '@/lib/structuredData'
 import '../styles.css'
 
@@ -19,6 +24,11 @@ import '../styles.css'
 // export (build-static.mjs) strips `dynamic` so it can prerender published slugs.
 export const dynamic = 'force-dynamic'
 export const dynamicParams = true
+
+// A loader, not an import — see the home route. build-static.mjs rewrites this
+// to `undefined` for the static export.
+const loadPreviewShell: (() => Promise<typeof import('@/components/PreviewShell')>) | undefined =
+  () => import('@/components/PreviewShell')
 
 export async function generateStaticParams() {
   // Worker (preview): render every slug on demand — nothing to prebuild, and we
@@ -40,11 +50,33 @@ export async function generateMetadata({
   return buildPageMetadata(page, { path: `/${slug}` })
 }
 
-export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
+export default async function Page({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ slug: string }>
+  searchParams?: SearchParams
+}) {
   const { slug } = await params
+  const { isPreview, serverURL } = await resolvePreview({ config, searchParams })
   const page = await getRenderablePageBySlug(slug)
 
   if (!page) notFound()
+
+  if (isPreview && loadPreviewShell) {
+    const { PreviewShell } = await loadPreviewShell()
+    return (
+      <>
+        <PreviewRuntime serverURL={serverURL} />
+        <PreviewShell
+          // Owned Pages layout ≠ core Page type; shell only needs the document shape at runtime.
+          initialPage={page as React.ComponentProps<typeof PreviewShell>['initialPage']}
+          locale={DEFAULT_LOCALE}
+          serverURL={serverURL}
+        />
+      </>
+    )
+  }
 
   const jsonLd = buildPageJsonLd(page)
 

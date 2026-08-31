@@ -77,6 +77,7 @@ export function SocialParallax({ photos }: { photos?: Photos }) {
           resource={photos?.toys}
           fallbackSrc="/images/social/photo-toys.jpg"
           alt=""
+          sizes="9vw"
           className={`w-full rotate-2 rounded-[24px] ${SHADOW}`}
         />
       </div>
@@ -85,6 +86,7 @@ export function SocialParallax({ photos }: { photos?: Photos }) {
           resource={photos?.gym}
           fallbackSrc="/images/social/photo-gym.jpg"
           alt=""
+          sizes="14vw"
           className={`aspect-[3/4] w-full -rotate-[15deg] rounded-[24px] ${SHADOW}`}
         />
       </div>
@@ -95,6 +97,7 @@ export function SocialParallax({ photos }: { photos?: Photos }) {
           resource={photos?.boxing}
           fallbackSrc="/images/social/photo-boxing.png"
           alt=""
+          sizes="19vw"
           className="w-full"
         />
       </div>
@@ -103,6 +106,7 @@ export function SocialParallax({ photos }: { photos?: Photos }) {
           resource={photos?.figures}
           fallbackSrc="/images/social/photo-figures.jpg"
           alt=""
+          sizes="12vw"
           className={`aspect-[3/4] w-full rotate-[15deg] rounded-[24px] ${SHADOW}`}
         />
       </div>
@@ -118,6 +122,7 @@ export function SocialParallax({ photos }: { photos?: Photos }) {
           fallbackSrc="/images/social/arrow-doodle.svg"
           alt=""
           fit="contain"
+          sizes="(min-width: 1024px) 6vw, 1px"
           className="h-auto w-[40%] -scale-y-100 -rotate-[34deg]"
         />
         <p className="mt-3 text-center text-[20px] font-semibold leading-[1.2] tracking-[0.02em] text-black">

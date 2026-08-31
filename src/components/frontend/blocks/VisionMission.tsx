@@ -1,11 +1,10 @@
-import { RichText } from '@payloadcms/richtext-lexical/react'
-
 import type { Page } from '@/payload-types'
 
 import { VisionMissionAccordion } from '@/components/frontend/blocks/VisionMissionAccordion'
 import { Eyebrow } from '@/components/frontend/ui/Eyebrow'
 import { Icon } from '@/components/frontend/ui/Icon'
-import { Media } from '@rinsly-com/site-core/ui'
+import { Media, RichTextField } from '@rinsly-com/site-core/ui'
+import { editable } from '@rinsly-com/site-core/preview'
 import { Section } from '@/components/frontend/ui/Section'
 import { cmsText } from '@rinsly-com/site-core'
 
@@ -52,7 +51,9 @@ export function VisionMission(props: Props) {
         typeof body === 'string' ? (
           <p className="whitespace-pre-line">{body}</p>
         ) : (
-          <RichText data={body} disableContainer />
+          <div {...editable(`items.${i}.body`, { inline: false })}>
+            <RichTextField data={body} field={`items.${i}.body`} />
+          </div>
         )
       ) : null,
     }
@@ -83,6 +84,7 @@ export function VisionMission(props: Props) {
             resource={props.image}
             fallbackSrc="/images/vision-mission/photo.png"
             alt="Kind doet een handstand op een dikke mat in een gymzaal"
+            sizes="(min-width: 1024px) 40vw, 100vw"
             className="aspect-[4/5] w-full rounded-[24px] shadow-[0px_3px_16px_0px_rgba(0,0,0,0.1)] sm:aspect-[4/3] lg:aspect-auto lg:h-[632px]"
           />
         </div>

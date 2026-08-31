@@ -77,6 +77,7 @@ export function SiteHeader({ header }: SiteHeaderProps) {
                 fallbackSrc="/images/header-hero/logo.svg"
                 alt="Buro J.A.Z.Z. logo"
                 fit="contain"
+                sizes="56px"
                 className="size-12 md:size-14"
               />
             </Link>

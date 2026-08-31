@@ -116,6 +116,7 @@ export function SiteFooter({ footer }: Props) {
                 fallbackSrc="/images/footer/logo.svg"
                 alt="Buro J.A.Z.Z. logo"
                 fit="contain"
+                sizes="71px"
                 className="size-[71px]"
               />
               {tagline && <p className="text-sm font-medium leading-[1.4] tracking-[-0.01em]">{tagline}</p>}
@@ -194,6 +195,7 @@ export function SiteFooter({ footer }: Props) {
                     fallbackSrc="/images/footer/kiwa-iso9001.png"
                     alt="Kiwa Certified ISO 9001"
                     fit="contain"
+                    sizes="90px"
                     className="h-[90px] w-auto"
                   />
                 </div>

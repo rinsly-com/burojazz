@@ -20,10 +20,12 @@ export {
   AdminIcon,
   AnalyticsPanel,
   UptimePanel,
+  BackupsPanel,
   TotpLoginView,
   TotpSetupView,
   TotpGate,
   TotpNavLink,
   WorkflowAction,
   WorkflowStatusCell,
+  VisualEditBridge,
 } from '@rinsly-com/site-core/admin'

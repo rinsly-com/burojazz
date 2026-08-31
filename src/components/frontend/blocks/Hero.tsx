@@ -5,7 +5,7 @@ import { Buttons } from '@/components/frontend/ui/CMSLink'
 import { mediaUrl, resolveMedia } from '@rinsly-com/site-core/ui'
 import { focalCrop } from '@/lib/focalCrop'
 import { desktopPhotoStyle } from '@/lib/heroDesktopPhoto'
-import { cfImageSrcSet } from '@rinsly-com/site-core/lib/image'
+import { cfImageSrcSet, srcWidthFromSizes } from '@rinsly-com/site-core/lib/image'
 import type { Page } from '@/payload-types'
 import { cmsText } from '@rinsly-com/site-core'
 
@@ -16,6 +16,50 @@ const IMAGE_ALT = 'Begeleider en jongere tijdens een bokstraining'
 
 /** The mobile photo's box, matching its `aspect-[4/3]` wrapper. */
 const MOBILE_PHOTO_ASPECT = 4 / 3
+
+const DESKTOP_SIZES = '(min-width: 1280px) 50vw, (min-width: 768px) 40vw, 100vw'
+
+/** `<picture>` siblings for a static `/images/*.jpg|png` fallback. */
+function StaticPicture({
+  src,
+  alt,
+  className,
+  style,
+  loading,
+  fetchPriority,
+  decoding,
+}: {
+  src: string
+  alt: string
+  className?: string
+  style?: CSSProperties
+  loading?: 'eager' | 'lazy'
+  fetchPriority?: 'high' | 'low' | 'auto'
+  decoding?: 'async' | 'sync' | 'auto'
+}) {
+  const isRaster = /^\/images\/.+\.(jpe?g|png)$/i.test(src)
+  const img = (
+    // eslint-disable-next-line @next/next/no-img-element -- static export; next/image optimizer unavailable
+    <img
+      src={src}
+      alt={alt}
+      className={className}
+      style={style}
+      loading={loading}
+      fetchPriority={fetchPriority}
+      decoding={decoding}
+    />
+  )
+  if (!isRaster) return img
+  const variant = (ext: string) => src.replace(/\.(jpe?g|png)$/i, `.${ext}`)
+  return (
+    <picture>
+      <source srcSet={variant('avif')} type="image/avif" />
+      <source srcSet={variant('webp')} type="image/webp" />
+      {img}
+    </picture>
+  )
+}
 
 /**
  * Hero section: huge teal "BURO J.A.Z.Z." wordmark, subtitle, description and
@@ -31,11 +75,6 @@ export function Hero(props: Props) {
     props.header?.intro ??
     'Wij bieden ambulante jeugdhulp en jeugdhulp met verblijf, gericht op behandeling en begeleiding.'
   const media = resolveMedia(props.image)
-  const imageUrl = mediaUrl(props.image, { width: 1600 }) ?? DEFAULT_IMAGE
-  // Responsive srcset for the mobile hero photo (the mobile LCP element) so
-  // phones fetch a viewport-sized variant instead of the fixed 1600px desktop
-  // image. Only CMS media can be transformed; the /public fallback has none.
-  const mobileImageSrcSet = cfImageSrcSet(media?.url ?? '')
 
   // Apply the CMS focal point so editors control the crop framing (the crop
   // itself is done in the browser — see Media.tsx). NOT via `object-position`:
@@ -71,8 +110,39 @@ export function Hero(props: Props) {
     100 * mobileCrop.widthRatio,
   )}vw`
 
+  const mobileWidth = srcWidthFromSizes(mobileSizes)
+  const desktopWidth = srcWidthFromSizes(DESKTOP_SIZES)
+  // Ceiling covers both slots so one srcset serves mobile + desktop.
+  const srcCeiling = Math.max(mobileWidth, desktopWidth)
+  const imageUrl = mediaUrl(props.image, { width: srcCeiling }) ?? DEFAULT_IMAGE
+  const cmsSrcSet = media?.url
+    ? cfImageSrcSet(media.url, {}, { maxWidth: srcCeiling })
+    : undefined
+  const isCms = Boolean(cmsSrcSet)
+
   return (
     <section className="relative overflow-hidden bg-white">
+      {/* Kick the mobile LCP fetch before CSS/JS. imageSrcSet + imageSizes let
+          supporting browsers pick the same candidate the <img> will use. */}
+      {isCms ? (
+        <link
+          rel="preload"
+          as="image"
+          href={imageUrl}
+          imageSrcSet={cmsSrcSet}
+          imageSizes={mobileSizes}
+          fetchPriority="high"
+        />
+      ) : (
+        <link
+          rel="preload"
+          as="image"
+          href={DEFAULT_IMAGE.replace(/\.(jpe?g|png)$/i, '.avif')}
+          type="image/avif"
+          fetchPriority="high"
+        />
+      )}
+
       {/* Decorative desktop background, laid out on the 1512px design frame.
           Every offset below is in `cqw` — a percentage of THIS container's
           width — so the whole composition scales proportionally once the
@@ -103,20 +173,34 @@ export function Hero(props: Props) {
             stays horizontal and fills the frame instead of being cropped askew. */}
         <div className="absolute left-[54.1005cqw] top-[-11.1111cqw] flex h-[106.8783cqw] w-[104.5635cqw] items-center justify-center">
           <div className="relative h-[80.4894cqw] w-[74.2063cqw] shrink-0 rotate-[-30deg] overflow-hidden rounded-[5.291cqw]">
-            {/* Desktop LCP photo. loading=lazy so mobile (where this whole
-                composition is display:none) never fetches this 1600px variant;
-                on desktop it's in the initial viewport, so it still loads —
-                with fetchpriority=high to win the race there. Sizing and pan
-                come from the CMS focal point via heroDesktopPhoto.ts. */}
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={imageUrl}
-              alt=""
-              loading="lazy"
-              fetchPriority="high"
-              className="absolute left-1/2 top-1/2 max-w-none object-cover"
-              style={desktopStyle}
-            />
+            {/* Desktop photo. loading=lazy so mobile (where this whole
+                composition is display:none) never fetches it; on desktop it's
+                in the initial viewport so it still loads, with fetchpriority=
+                high to win the race there. */}
+            {isCms ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={imageUrl}
+                srcSet={cmsSrcSet}
+                sizes={DESKTOP_SIZES}
+                alt=""
+                loading="lazy"
+                fetchPriority="high"
+                decoding="async"
+                className="absolute left-1/2 top-1/2 max-w-none object-cover"
+                style={desktopStyle}
+              />
+            ) : (
+              <StaticPicture
+                src={DEFAULT_IMAGE}
+                alt=""
+                loading="lazy"
+                fetchPriority="high"
+                decoding="async"
+                className="absolute left-1/2 top-1/2 max-w-none object-cover"
+                style={desktopStyle}
+              />
+            )}
             <div className="absolute inset-0 bg-black/[0.03]" />
           </div>
         </div>
@@ -155,17 +239,30 @@ export function Hero(props: Props) {
               This is the mobile LCP element, so it loads eagerly with
               fetchpriority=high and a viewport-sized srcset. */}
           <div className="relative aspect-[4/3] w-full overflow-hidden rounded-[40px] xl:hidden">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={imageUrl}
-              srcSet={mobileImageSrcSet}
-              sizes={mobileImageSrcSet ? mobileSizes : undefined}
-              alt={IMAGE_ALT}
-              loading="eager"
-              fetchPriority="high"
-              className="absolute left-1/2 top-1/2 max-w-none object-cover"
-              style={mobilePhotoStyle}
-            />
+            {isCms ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={imageUrl}
+                srcSet={cmsSrcSet}
+                sizes={mobileSizes}
+                alt={IMAGE_ALT}
+                loading="eager"
+                fetchPriority="high"
+                decoding="sync"
+                className="absolute left-1/2 top-1/2 max-w-none object-cover"
+                style={mobilePhotoStyle}
+              />
+            ) : (
+              <StaticPicture
+                src={DEFAULT_IMAGE}
+                alt={IMAGE_ALT}
+                loading="eager"
+                fetchPriority="high"
+                decoding="sync"
+                className="absolute left-1/2 top-1/2 max-w-none object-cover"
+                style={mobilePhotoStyle}
+              />
+            )}
           </div>
         </div>
       </div>

@@ -4,6 +4,7 @@ import { slugField } from 'payload'
 import { authenticated, reviewerOnly, isReviewer } from '../access/roles'
 import { pageBlocks } from '../blocks'
 import { enforceWorkflow } from '../hooks/enforceWorkflow'
+import { previewPath } from '../lib/preview'
 import type { User } from '@/payload-types'
 
 /**
@@ -27,10 +28,20 @@ export const Pages: CollectionConfig = {
   admin: {
     useAsTitle: 'title',
     defaultColumns: ['title', 'slug', 'workflowStatus', 'updatedAt'],
+    // Shareable draft link (same URL the live-preview iframe loads).
+    // `?preview=1` only shows drafts to an authenticated editor session.
+    preview: (doc: Record<string, unknown>) =>
+      previewPath(doc?.slug as string | undefined),
     components: {
       edit: {
         // Stage-aware action button (Submit for review / Approve / Publish).
         PublishButton: '/components/RinslyAdmin#WorkflowAction',
+      },
+      views: {
+        edit: {
+          // Return channel: click section → focus field, blur writes.
+          livePreview: { Component: '/components/RinslyAdmin#VisualEditBridge' },
+        },
       },
     },
   },
