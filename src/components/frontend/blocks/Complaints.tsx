@@ -94,6 +94,7 @@ function ContactCard({ contact }: { contact: NonNullable<Props['contact']> }) {
       <Media
         resource={contact.photo}
         alt={contact.title ?? ''}
+        sizes="56px"
         className="size-14 shrink-0 rounded-2xl"
       />
       <div className="min-w-0 flex-1">

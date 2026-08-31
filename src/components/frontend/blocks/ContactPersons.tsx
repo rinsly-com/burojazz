@@ -79,6 +79,7 @@ function PersonCard({
           <Media
             resource={photo}
             alt={name}
+            sizes="(min-width: 768px) 398px, 100vw"
             className="absolute inset-0 size-full"
             style={{ objectPosition: 'center top' }}
           />
