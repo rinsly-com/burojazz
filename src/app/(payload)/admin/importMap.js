@@ -32,6 +32,7 @@ import { MetaDescriptionComponent as MetaDescriptionComponent_a8a977ebc872c5d5ea
 import { MetaImageComponent as MetaImageComponent_a8a977ebc872c5d5ea7ee689724c0860 } from '@payloadcms/plugin-seo/client'
 import { PreviewComponent as PreviewComponent_a8a977ebc872c5d5ea7ee689724c0860 } from '@payloadcms/plugin-seo/client'
 import { WorkflowAction as WorkflowAction_f080d585fcf30ba912897804a22f2f48 } from '../../../components/RinslyAdmin'
+import { VisualEditBridge as VisualEditBridge_f080d585fcf30ba912897804a22f2f48 } from '../../../components/RinslyAdmin'
 import { AdminIcon as AdminIcon_f080d585fcf30ba912897804a22f2f48 } from '../../../components/RinslyAdmin'
 import { AdminLogo as AdminLogo_f080d585fcf30ba912897804a22f2f48 } from '../../../components/RinslyAdmin'
 import { TotpNavLink as TotpNavLink_f080d585fcf30ba912897804a22f2f48 } from '../../../components/RinslyAdmin'
@@ -82,6 +83,7 @@ export const importMap = {
   "@payloadcms/plugin-seo/client#MetaImageComponent": MetaImageComponent_a8a977ebc872c5d5ea7ee689724c0860,
   "@payloadcms/plugin-seo/client#PreviewComponent": PreviewComponent_a8a977ebc872c5d5ea7ee689724c0860,
   "/components/RinslyAdmin#WorkflowAction": WorkflowAction_f080d585fcf30ba912897804a22f2f48,
+  "/components/RinslyAdmin#VisualEditBridge": VisualEditBridge_f080d585fcf30ba912897804a22f2f48,
   "/components/RinslyAdmin#AdminIcon": AdminIcon_f080d585fcf30ba912897804a22f2f48,
   "/components/RinslyAdmin#AdminLogo": AdminLogo_f080d585fcf30ba912897804a22f2f48,
   "/components/RinslyAdmin#TotpNavLink": TotpNavLink_f080d585fcf30ba912897804a22f2f48,

@@ -1,11 +1,10 @@
-import { RichText } from '@payloadcms/richtext-lexical/react'
-
 import type { Page } from '@/payload-types'
 
 import { VisionMissionAccordion } from '@/components/frontend/blocks/VisionMissionAccordion'
 import { Eyebrow } from '@/components/frontend/ui/Eyebrow'
 import { Icon } from '@/components/frontend/ui/Icon'
-import { Media } from '@rinsly-com/site-core/ui'
+import { Media, RichTextField } from '@rinsly-com/site-core/ui'
+import { editable } from '@rinsly-com/site-core/preview'
 import { Section } from '@/components/frontend/ui/Section'
 import { cmsText } from '@rinsly-com/site-core'
 
@@ -52,7 +51,9 @@ export function VisionMission(props: Props) {
         typeof body === 'string' ? (
           <p className="whitespace-pre-line">{body}</p>
         ) : (
-          <RichText data={body} disableContainer />
+          <div {...editable(`items.${i}.body`, { inline: false })}>
+            <RichTextField data={body} field={`items.${i}.body`} />
+          </div>
         )
       ) : null,
     }

@@ -27,4 +27,5 @@ export {
   TotpNavLink,
   WorkflowAction,
   WorkflowStatusCell,
+  VisualEditBridge,
 } from '@rinsly-com/site-core/admin'
