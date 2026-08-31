@@ -36,6 +36,7 @@ export function About(props: Props) {
             resource={props.image}
             fallbackSrc="/images/about/directors.jpg"
             alt="Medewerker van Buro J.A.Z.Z. met een basketbal"
+            sizes="(min-width: 1024px) 45vw, 100vw"
             className="h-[420px] w-full rounded-photo shadow-[0px_3px_16px_0px_rgba(0,0,0,0.1)] sm:h-[520px] lg:h-[632px]"
           />
           <a

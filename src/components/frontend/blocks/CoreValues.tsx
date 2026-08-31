@@ -146,6 +146,7 @@ export function CoreValues(props: Props) {
             fallbackSrc="/images/core-values/logo.svg"
             alt="J.A.Z.Z. logo"
             fit="contain"
+            sizes="128px"
             className="mb-2 w-32 basis-full sm:mb-0 sm:basis-auto"
           />
           {values.map((value, i) => (
@@ -166,6 +167,7 @@ export function CoreValues(props: Props) {
                 fallbackSrc="/images/core-values/logo.svg"
                 alt="J.A.Z.Z. logo"
                 fit="contain"
+                sizes="354px"
                 className="absolute left-[322px] top-[287px] size-[354px]"
               />
               {clustered.map((value, i) => {

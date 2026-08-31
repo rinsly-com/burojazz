@@ -33,14 +33,14 @@ describe('cfImageSrc — transforms enabled (https accp worker)', () => {
   it('rewrites a relative media URL through /cdn-cgi/image with defaults', async () => {
     const { cfImageSrc } = await loadWith(ORIGIN)
     expect(cfImageSrc('/api/media/file/foto.jpg')).toBe(
-      `${ORIGIN}/cdn-cgi/image/format=auto,quality=82,fit=scale-down/api/media/file/foto.jpg`,
+      `${ORIGIN}/cdn-cgi/image/format=auto,quality=75,fit=scale-down/api/media/file/foto.jpg`,
     )
   })
 
   it('includes width when provided', async () => {
     const { cfImageSrc } = await loadWith(ORIGIN)
     expect(cfImageSrc('/api/media/file/foto.jpg', { width: 828 })).toBe(
-      `${ORIGIN}/cdn-cgi/image/format=auto,quality=82,fit=scale-down,width=828/api/media/file/foto.jpg`,
+      `${ORIGIN}/cdn-cgi/image/format=auto,quality=75,fit=scale-down,width=828/api/media/file/foto.jpg`,
     )
   })
 
@@ -77,9 +77,9 @@ describe('cfImageSrcSet', () => {
     const set = cfImageSrcSet('/api/media/file/foto.jpg')
     expect(set).toBeDefined()
     const entries = set!.split(', ')
-    expect(entries).toHaveLength(6)
+    expect(entries).toHaveLength(5)
     expect(entries[0]).toMatch(/width=640\/api\/media\/file\/foto\.jpg 640w$/)
-    expect(entries.at(-1)).toMatch(/width=3840\/api\/media\/file\/foto\.jpg 3840w$/)
+    expect(entries.at(-1)).toMatch(/width=2048\/api\/media\/file\/foto\.jpg 2048w$/)
   })
 
   it('threads quality/fit through every descriptor', async () => {
@@ -89,5 +89,48 @@ describe('cfImageSrcSet', () => {
       expect(entry).toContain('quality=50')
       expect(entry).toContain('fit=cover')
     }
+  })
+
+  // REGRESSION: with sizes="56px" Media still emitted a full srcset up to 2048w
+  // and a 1600w src fallback — old browsers / missing sizes over-fetched.
+  it('trims candidates above maxWidth', async () => {
+    const { cfImageSrcSet } = await loadWith('https://accp.burojazz.workers.dev')
+    const set = cfImageSrcSet('/api/media/file/foto.jpg', {}, { maxWidth: 640 })!
+    const entries = set.split(', ')
+    expect(entries).toHaveLength(1)
+    expect(entries[0]).toMatch(/width=640.*640w$/)
+  })
+})
+
+describe('cfImageSrc — SVG passthrough', () => {
+  // REGRESSION: logos/icons went through /cdn-cgi/image/ with a full srcset
+  // (up to 3840w). Transforms cannot shrink an SVG; the browser fetched six
+  // identical CF wrappers for the header logo on every page.
+  it('returns an SVG URL untouched even when transforms are enabled', async () => {
+    const { cfImageSrc } = await loadWith('https://accp.burojazz.workers.dev')
+    expect(cfImageSrc('/api/media/file/logo.svg', { width: 1600 })).toBe('/api/media/file/logo.svg')
+  })
+
+  it('emits no srcset for SVG', async () => {
+    const { cfImageSrcSet } = await loadWith('https://accp.burojazz.workers.dev')
+    expect(cfImageSrcSet('/api/media/file/logo.svg')).toBeUndefined()
+  })
+})
+
+describe('srcWidthFromSizes', () => {
+  it('maps a small px box to the 640 srcset step at 2× DPR', async () => {
+    const { srcWidthFromSizes } = await loadWith('https://accp.burojazz.workers.dev')
+    expect(srcWidthFromSizes('56px')).toBe(640)
+  })
+
+  it('maps 100vw to the 2048 ceiling at 2× DPR on a 1920 viewport', async () => {
+    const { srcWidthFromSizes } = await loadWith('https://accp.burojazz.workers.dev')
+    expect(srcWidthFromSizes('100vw')).toBe(2048)
+  })
+
+  it('uses the largest candidate in a sizes list', async () => {
+    const { srcWidthFromSizes } = await loadWith('https://accp.burojazz.workers.dev')
+    // 100vw at 1920×2 beats 398px×2 → 2048 ceiling
+    expect(srcWidthFromSizes('(min-width: 768px) 398px, 100vw')).toBe(2048)
   })
 })

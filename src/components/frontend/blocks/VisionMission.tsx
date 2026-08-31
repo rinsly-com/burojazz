@@ -84,6 +84,7 @@ export function VisionMission(props: Props) {
             resource={props.image}
             fallbackSrc="/images/vision-mission/photo.png"
             alt="Kind doet een handstand op een dikke mat in een gymzaal"
+            sizes="(min-width: 1024px) 40vw, 100vw"
             className="aspect-[4/5] w-full rounded-[24px] shadow-[0px_3px_16px_0px_rgba(0,0,0,0.1)] sm:aspect-[4/3] lg:aspect-auto lg:h-[632px]"
           />
         </div>
