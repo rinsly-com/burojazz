@@ -103,12 +103,14 @@ describe('cfImageSrcSet', () => {
 })
 
 describe('cfImageSrc — SVG passthrough', () => {
-  // REGRESSION: logos/icons went through /cdn-cgi/image/ with a full srcset
-  // (up to 3840w). Transforms cannot shrink an SVG; the browser fetched six
-  // identical CF wrappers for the header logo on every page.
-  it('returns an SVG URL untouched even when transforms are enabled', async () => {
+  // REGRESSION: logos/icons went through /cdn-cgi/image/ with a full srcset.
+  // Transforms cannot shrink an SVG. Returning the relative path unbroken
+  // then 404'd on the static prod host (no /api/media) — absolutise instead.
+  it('absolutises an SVG onto the media origin without /cdn-cgi/image/', async () => {
     const { cfImageSrc } = await loadWith('https://accp.burojazz.workers.dev')
-    expect(cfImageSrc('/api/media/file/logo.svg', { width: 1600 })).toBe('/api/media/file/logo.svg')
+    expect(cfImageSrc('/api/media/file/logo.svg', { width: 1600 })).toBe(
+      'https://accp.burojazz.workers.dev/api/media/file/logo.svg',
+    )
   })
 
   it('emits no srcset for SVG', async () => {
