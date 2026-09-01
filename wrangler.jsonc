@@ -85,6 +85,20 @@
   "r2_buckets": [
     { "binding": "R2", "bucket_name": "burojazz-accp" },
   ],
+  // Shared fleet read tokens (Cloudflare Secrets Store). Store id also in Core
+  // fleet.json → secretsStore.id. Site-unique secrets stay Worker secrets.
+  "secrets_store_secrets": [
+    {
+      "binding": "RINSLY_UPTIME_TOKEN",
+      "store_id": "f412ff4156b241719d0932b621ff9c26",
+      "secret_name": "FLEET_UPTIME_READ_TOKEN",
+    },
+    {
+      "binding": "RINSLY_BACKUPS_TOKEN",
+      "store_id": "f412ff4156b241719d0932b621ff9c26",
+      "secret_name": "FLEET_BACKUPS_READ_TOKEN",
+    },
+  ],
   // Instagram "latest post" integration (src/lib/instagram.ts). DISABLED until
   // provisioned: with no INSTAGRAM_KV binding the social block simply falls back
   // to the static phone mockup, and the worker deploys cleanly. A placeholder
