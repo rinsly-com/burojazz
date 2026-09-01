@@ -17,7 +17,7 @@ import { staticizeFrontendRouteSource } from './staticizeFrontendRoute.mjs'
 const root = process.cwd()
 const backupDir = path.join(root, '.static-build-backup')
 const snapshotDir = path.join(root, '.static-content')
-const API_URL = process.env.PAYLOAD_API_URL || 'http://localhost:3000'
+const API_URL = process.env.PAYLOAD_API_URL || 'https://accp.burojazz.com'
 
 // Server-only paths to hide during the static export.
 const EXCLUDED = [
