@@ -1,4 +1,5 @@
 import type { CollectionConfig, PayloadRequest } from 'payload'
+import { withTurnstile } from '@rinsly-com/site-core/lib/turnstile'
 
 import { authenticated, adminOnly } from '../access/roles'
 import { sendAanmeldingNotification, sendAanmeldingConfirmation } from '../lib/email'
@@ -217,7 +218,7 @@ export const Aanmeldingen: CollectionConfig = {
     {
       path: '/submit',
       method: 'post',
-      handler: submitHandler,
+      handler: withTurnstile(submitHandler, { action: 'aanmelding' }),
     },
   ],
   timestamps: true,

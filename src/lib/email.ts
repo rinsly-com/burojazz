@@ -94,22 +94,27 @@ async function sendViaCloudflare(
   await binding.send(new EmailMessage(fromAddr, to, mime.asRaw()))
 }
 
-/** Payload email adapter backed by Cloudflare Email Routing (dev → log). */
+/** Payload email adapter backed by Cloudflare Email Sending (arbitrary `to`). */
 export const cloudflareEmailAdapter: EmailAdapter = ({ payload }) => ({
-  name: 'cloudflare-email-routing',
-  defaultFromAddress: EMAIL_FROM,
+  name: 'cloudflare-email-sending',
+  defaultFromAddress: EMAIL_CONFIRM_FROM,
   defaultFromName: EMAIL_FROM_NAME,
   sendEmail: async (message: SendEmailOptions) => {
-    const binding = await getEmailBinding(NOTIFY_BINDING)
+    // Auth mail (forgot-password) and any payload.sendEmail must reach arbitrary
+    // inboxes — Email Routing cannot. Reuse the confirm Sending binding.
+    const binding = await getEmailBinding(CONFIRM_BINDING)
     if (!binding) {
       payload.logger.info({
-        msg: '[email] no send_email binding (dev/CLI) — logging instead of sending',
+        msg: '[email] no Email Sending binding (dev/CLI) — logging instead of sending',
         to: message.to,
         subject: message.subject,
       })
       return
     }
-    await sendViaCloudflare(binding, message)
+    await sendViaCloudflare(binding, {
+      ...message,
+      from: message.from ?? `${EMAIL_FROM_NAME} <${EMAIL_CONFIRM_FROM}>`,
+    })
   },
 })
 
@@ -214,7 +219,25 @@ export async function sendAanmeldingNotification({
 }): Promise<void> {
   const { subject, text, html } = buildAanmeldingEmail(doc)
   const replyTo = doc.verwijzerEmail ? String(doc.verwijzerEmail) : undefined
-  await payload.sendEmail({ to: EMAIL_TO, subject, text, html, ...(replyTo ? { replyTo } : {}) })
+  // Team inbox stays on Email Routing (verified destination), not Payload's
+  // Sending adapter used for auth / arbitrary recipients.
+  const binding = await getEmailBinding(NOTIFY_BINDING)
+  if (!binding) {
+    payload.logger.info({
+      msg: '[email] no team notify binding (dev/CLI) — logging instead of sending',
+      to: EMAIL_TO,
+      subject,
+    })
+    return
+  }
+  await sendViaCloudflare(binding, {
+    to: EMAIL_TO,
+    from: `${EMAIL_FROM_NAME} <${EMAIL_FROM}>`,
+    subject,
+    text,
+    html,
+    ...(replyTo ? { replyTo } : {}),
+  })
 }
 
 // ---------------------------------------------------------------------------

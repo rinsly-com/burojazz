@@ -26,6 +26,8 @@ const dirname = path.dirname(fileURLToPath(import.meta.url))
  */
 export default buildSiteConfig({
   siteConfig,
+  // Accp origin for forgot-password links.
+  serverURL: process.env.PAYLOAD_SERVER_URL || 'https://accp.burojazz.com',
   // This site owns its full content model (single-language, workflow, intake).
   collections: [Users, Media, Pages, Comments, Aanmeldingen],
   globals: [Header, Footer, AanmeldingInstellingen],

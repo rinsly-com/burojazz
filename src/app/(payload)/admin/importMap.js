@@ -1,3 +1,4 @@
+import { TotpAdminReset as TotpAdminReset_f080d585fcf30ba912897804a22f2f48 } from '../../../components/RinslyAdmin'
 import { ReviewPanel as ReviewPanel_176db3e0d68114a4f1814b2462895ab6 } from '../../../components/ReviewPanel'
 import { SlugField as SlugField_2b8867833a34864a02ddf429b0728a40 } from '@payloadcms/next/client'
 import { WorkflowStatusCell as WorkflowStatusCell_f080d585fcf30ba912897804a22f2f48 } from '../../../components/RinslyAdmin'
@@ -49,6 +50,7 @@ import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } f
 
 /** @type import('payload').ImportMap */
 export const importMap = {
+  "/components/RinslyAdmin#TotpAdminReset": TotpAdminReset_f080d585fcf30ba912897804a22f2f48,
   "/components/ReviewPanel#ReviewPanel": ReviewPanel_176db3e0d68114a4f1814b2462895ab6,
   "@payloadcms/next/client#SlugField": SlugField_2b8867833a34864a02ddf429b0728a40,
   "/components/RinslyAdmin#WorkflowStatusCell": WorkflowStatusCell_f080d585fcf30ba912897804a22f2f48,
