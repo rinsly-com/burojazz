@@ -106,12 +106,14 @@ export function AanmeldenForm({
       return
     }
     setState('submitting')
+    const tokenToSend = turnstileToken
+    setTurnstileToken(null)
     try {
       const res = await fetch(`${API_BASE}/api/aanmeldingen/submit`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          ...turnstileHeaders(turnstileToken),
+          ...turnstileHeaders(tokenToSend),
         },
         // Honeypot field `website` stays empty for real users (see endpoint).
         body: JSON.stringify({ ...toSubmitBody(data), website: '' }),
