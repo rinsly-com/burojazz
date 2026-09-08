@@ -26,18 +26,17 @@
 /fonts/*
   Cache-Control: public, max-age=31536000, immutable
 
-# Deliberately NO `/*` rule.
+# Deliberately NO Cache-Control catch-all.
 #
 # Workers Assets MERGES every rule whose pattern matches, it does not stop at
-# the first. A catch-all setting Cache-Control was therefore appended to the
-# rules above, and the image responses went out with both:
+# the first. A catch-all setting Cache-Control would append to the rules above
+# and make browsers honour the most restrictive max-age (breaking image cache).
+# HTML already defaults to revalidate; that is correct for published pages.
 #
-#   cache-control: public, max-age=0, must-revalidate, public, max-age=604800, …
-#
-# A browser honours the most restrictive of those, so the caching above did
-# nothing at all. Verified in production, not assumed.
-#
-# Nothing is lost by omitting it: Workers Assets already defaults to
-# `public, max-age=0, must-revalidate`, which is exactly what HTML should have.
-# Content changes when an editor publishes, and a stale page is more confusing
-# than a slow one.
+# CSP on `/*` is fine: it merges as an additional header, not Cache-Control.
+
+# Turnstile widget (public forms). Without these hosts the challenge is blocked.
+# img-src also allows Instagram CDN hosts used by the live phone overlay
+# (InstagramPhone → media_url / thumbnail_url from Graph).
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://accp.burojazz.com https://*.cdninstagram.com https://*.fbcdn.net; font-src 'self' data:; connect-src 'self' https://accp.burojazz.com https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self' https://accp.burojazz.com; object-src 'none'

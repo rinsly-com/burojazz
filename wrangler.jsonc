@@ -72,6 +72,9 @@
     // src/hooks/triggerStaticDeploy.ts). Non-secret. The paired
     // DEPLOY_DISPATCH_TOKEN is a Worker SECRET (never stored here).
     "DEPLOY_DISPATCH_URL": "https://api.github.com/repos/rinsly-com/burojazz/dispatches",
+    // Turnstile siteverify hostnames (no localhost in production).
+    // Secret: wrangler secret put TURNSTILE_SECRET
+    "TURNSTILE_HOSTNAMES": "burojazz.nl,www.burojazz.nl,burojazz.com,www.burojazz.com,accp.burojazz.com",
   },
   // Media storage. Originals are stored in R2 and served by this worker at
   // /api/media/file/<filename>; payload.config.ts activates the R2 storage
