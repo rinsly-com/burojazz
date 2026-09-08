@@ -36,5 +36,7 @@
 # CSP on `/*` is fine: it merges as an additional header, not Cache-Control.
 
 # Turnstile widget (public forms). Without these hosts the challenge is blocked.
+# img-src also allows Instagram CDN hosts used by the live phone overlay
+# (InstagramPhone → media_url / thumbnail_url from Graph).
 /*
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://accp.burojazz.com; font-src 'self' data:; connect-src 'self' https://accp.burojazz.com https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self' https://accp.burojazz.com; object-src 'none'
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://accp.burojazz.com https://*.cdninstagram.com https://*.fbcdn.net; font-src 'self' data:; connect-src 'self' https://accp.burojazz.com https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self' https://accp.burojazz.com; object-src 'none'
