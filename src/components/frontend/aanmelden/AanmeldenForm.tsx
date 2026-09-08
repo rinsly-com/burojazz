@@ -2,6 +2,8 @@
 
 import { useRef, useState } from 'react'
 
+import { Turnstile, turnstileHeaders, type TurnstileHandle } from '@rinsly-com/site-core/ui'
+
 import {
   DSM_OPTIONS,
   PROBLEMATIEK_OPTIONS,
@@ -30,6 +32,7 @@ import {
 /** Base URL of the Payload API. Empty in dev (same-origin); the static build
  *  bakes in the accp/production worker URL via NEXT_PUBLIC_PAYLOAD_API_URL. */
 const API_BASE = process.env.NEXT_PUBLIC_PAYLOAD_API_URL ?? ''
+const TURNSTILE_REQUIRED = Boolean(process.env.NEXT_PUBLIC_TURNSTILE_SITEKEY)
 
 type SubmitState = 'idle' | 'submitting' | 'success' | 'error'
 
@@ -58,6 +61,8 @@ export function AanmeldenForm({
   const [data, setData] = useState<AanmeldenData>(EMPTY_AANMELDING)
   const [errors, setErrors] = useState<Errors>({})
   const [state, setState] = useState<SubmitState>('idle')
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
+  const turnstileRef = useRef<TurnstileHandle | null>(null)
   const topRef = useRef<HTMLDivElement>(null)
 
   const set = <K extends keyof AanmeldenData>(key: K, value: AanmeldenData[K]) => {
@@ -104,7 +109,10 @@ export function AanmeldenForm({
     try {
       const res = await fetch(`${API_BASE}/api/aanmeldingen/submit`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...turnstileHeaders(turnstileToken),
+        },
         // Honeypot field `website` stays empty for real users (see endpoint).
         body: JSON.stringify({ ...toSubmitBody(data), website: '' }),
       })
@@ -114,6 +122,8 @@ export function AanmeldenForm({
       onDone?.()
     } catch {
       setState('error')
+    } finally {
+      turnstileRef.current?.reset()
     }
   }
 
@@ -441,10 +451,24 @@ export function AanmeldenForm({
         </p>
       )}
 
+      {isLast ? (
+        <Turnstile
+          action="aanmelding"
+          onToken={setTurnstileToken}
+          onReady={(h) => {
+            turnstileRef.current = h
+          }}
+        />
+      ) : null}
+
       <div className="flex items-center justify-between gap-4">
         {step > 0 ? <BackButton onClick={back} /> : <span />}
         {isLast ? (
-          <PrimaryButton type="button" onClick={submit} disabled={state === 'submitting'}>
+          <PrimaryButton
+            type="button"
+            onClick={submit}
+            disabled={state === 'submitting' || (TURNSTILE_REQUIRED && !turnstileToken)}
+          >
             {state === 'submitting' ? 'Versturen…' : 'Verstuur bericht'}
           </PrimaryButton>
         ) : (
