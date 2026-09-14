@@ -32,16 +32,28 @@ export const Footer: GlobalConfig = {
       },
     },
     {
-      name: 'certImage',
-      label: { en: 'Certification logo', nl: 'Certificaat-logo' },
-      type: 'upload',
-      relationTo: 'media',
+      name: 'certificates',
+      label: { en: 'Certificates', nl: 'Certificaten' },
+      type: 'array',
+      labels: {
+        singular: { en: 'Certificate', nl: 'Certificaat' },
+        plural: { en: 'Certificates', nl: 'Certificaten' },
+      },
       admin: {
         description: {
-          en: 'Certification or quality-mark logo shown in the footer.',
-          nl: 'Certificaat- of keurmerklogo in de footer.',
+          en: 'Certification or quality-mark logos shown in the footer.',
+          nl: 'Certificaat- of keurmerklogo’s in de footer.',
         },
       },
+      fields: [
+        {
+          name: 'image',
+          label: { en: 'Logo', nl: 'Logo' },
+          type: 'upload',
+          relationTo: 'media',
+          required: true,
+        },
+      ],
     },
     {
       name: 'tagline',

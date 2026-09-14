@@ -1723,9 +1723,14 @@ export interface Footer {
    */
   logo?: (number | null) | Media;
   /**
-   * Certification or quality-mark logo shown in the footer.
+   * Certification or quality-mark logos shown in the footer.
    */
-  certImage?: (number | null) | Media;
+  certificates?:
+    | {
+        image: number | Media;
+        id?: string | null;
+      }[]
+    | null;
   /**
    * Short line of text shown next to the footer logo.
    */
@@ -1849,7 +1854,12 @@ export interface HeaderSelect<T extends boolean = true> {
  */
 export interface FooterSelect<T extends boolean = true> {
   logo?: T;
-  certImage?: T;
+  certificates?:
+    | T
+    | {
+        image?: T;
+        id?: T;
+      };
   tagline?: T;
   email?: T;
   phone?: T;

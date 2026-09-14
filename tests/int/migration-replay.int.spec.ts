@@ -87,6 +87,14 @@ const seedBefore: Record<string, () => Promise<void>> = {
       `INSERT INTO footer_info_links (_order, _parent_id, id, label, url) VALUES (1, 1, 'fi1', 'KvK: 85863025', ''), (2, 1, 'fi2', 'Privacyverklaring', '/privacyverklaring')`,
     )
   },
+  '20260914_180746_footer_certificates': async () => {
+    // Single cert_image_id on footer must become the first certificates array row.
+    await run(
+      `INSERT INTO media (id, alt, updated_at, created_at, url, filename, mime_type, filesize)
+       VALUES (10, 'Kiwa ISO 9001', '2026-01-01', '2026-01-01', '/kiwa.png', 'kiwa.png', 'image/png', 100)`,
+    )
+    await run(`UPDATE footer SET cert_image_id = 10 WHERE id = 1`)
+  },
 }
 
 /** Assertions run immediately AFTER the named migration. */
@@ -168,6 +176,16 @@ const assertAfter: Record<string, () => Promise<void>> = {
     const info = await all('SELECT * FROM footer_info_links ORDER BY _order')
     expect(info.map((i) => i.label)).toEqual(['KvK: 85863025', 'Privacyverklaring'])
     expect(info.map((i) => i.url)).toEqual(['', '/privacyverklaring'])
+  },
+  '20260914_180746_footer_certificates': async () => {
+    const [footer] = await all('SELECT * FROM footer')
+    expect(footer).not.toHaveProperty('cert_image_id')
+    expect(footer.tagline).toBe('J.A.Z.Z.')
+
+    const certs = await all('SELECT * FROM footer_certificates ORDER BY _order')
+    expect(certs).toHaveLength(1)
+    expect(certs[0].image_id).toBe(10)
+    expect(certs[0]._parent_id).toBe(1)
   },
 }
 
