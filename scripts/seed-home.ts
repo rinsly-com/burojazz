@@ -825,7 +825,11 @@ async function run() {
   console.log('Header global seeded')
   await payload.updateGlobal({
     slug: 'footer',
-    data: { ...footerData(pageIdBySlug), logo: footerLogoId, certImage: footerCertId },
+    data: {
+      ...footerData(pageIdBySlug),
+      logo: footerLogoId,
+      certificates: [{ image: footerCertId }],
+    },
     user,
   })
   console.log('Footer global seeded')

@@ -23,6 +23,7 @@ import * as migration_20260724_181033_service_card_details from './20260724_1810
 import * as migration_20260724_184140_vacancies_open_application from './20260724_184140_vacancies_open_application';
 import * as migration_20260729_164929_vacancy_card_image from './20260729_164929_vacancy_card_image';
 import * as migration_20260815_155857 from './20260815_155857';
+import * as migration_20260914_180746_footer_certificates from './20260914_180746_footer_certificates';
 
 export const migrations = [
   {
@@ -148,6 +149,11 @@ export const migrations = [
   {
     up: migration_20260815_155857.up,
     down: migration_20260815_155857.down,
-    name: '20260815_155857'
+    name: '20260815_155857',
+  },
+  {
+    up: migration_20260914_180746_footer_certificates.up,
+    down: migration_20260914_180746_footer_certificates.down,
+    name: '20260914_180746_footer_certificates'
   },
 ];

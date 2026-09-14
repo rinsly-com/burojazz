@@ -80,7 +80,7 @@ function ColumnHeading({ children }: { children: string }) {
 
 /**
  * Site footer (global-driven chrome): teal panel with tagline, contact
- * details, link columns, Kiwa certificate badge, social icons and the giant
+ * details, link columns, certificate badges, social icons and the giant
  * fading "BURO J.A.Z.Z." wordmark above the copyright line.
  */
 export function SiteFooter({ footer }: Props) {
@@ -102,6 +102,7 @@ export function SiteFooter({ footer }: Props) {
         return [{ name: platform.name, href: s.url, icon: platform.icon }]
       })
     : FALLBACK_SOCIALS
+  const certificates = footer?.certificates?.length ? footer.certificates : null
 
   return (
     <footer className="overflow-hidden bg-brand text-white">
@@ -186,18 +187,38 @@ export function SiteFooter({ footer }: Props) {
                 </ul>
               </div>
 
-              {/* Certificaat */}
+              {/* Certificaten */}
               <div className="flex flex-col gap-4">
                 <ColumnHeading>Certificaat</ColumnHeading>
-                <div className="flex size-[109px] items-center justify-center overflow-hidden rounded-xl border border-ink/10 bg-white">
-                  <Media
-                    resource={footer?.certImage}
-                    fallbackSrc="/images/footer/kiwa-iso9001.png"
-                    alt="Kiwa Certified ISO 9001"
-                    fit="contain"
-                    sizes="90px"
-                    className="h-[90px] w-auto"
-                  />
+                <div className="flex flex-col gap-3">
+                  {certificates ? (
+                    certificates.map((cert, i) => (
+                      <div
+                        key={cert.id ?? i}
+                        className="flex size-[109px] items-center justify-center overflow-hidden rounded-xl border border-ink/10 bg-white"
+                      >
+                        <Media
+                          resource={cert.image}
+                          fallbackSrc="/images/footer/kiwa-iso9001.png"
+                          alt="Certificaat"
+                          fit="contain"
+                          sizes="90px"
+                          className="h-[90px] w-auto"
+                        />
+                      </div>
+                    ))
+                  ) : (
+                    <div className="flex size-[109px] items-center justify-center overflow-hidden rounded-xl border border-ink/10 bg-white">
+                      <Media
+                        resource={null}
+                        fallbackSrc="/images/footer/kiwa-iso9001.png"
+                        alt="Kiwa Certified ISO 9001"
+                        fit="contain"
+                        sizes="90px"
+                        className="h-[90px] w-auto"
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
