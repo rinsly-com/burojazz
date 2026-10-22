@@ -14,7 +14,9 @@ import { act, render, waitFor } from '@testing-library/react'
 import { afterEach, describe, expect, it } from 'vitest'
 
 import { Media } from '@rinsly-com/site-core/ui'
-import { MediaImage } from '../../node_modules/@rinsly-com/site-core/src/components/frontend/ui/MediaImage'
+// site-core 0.22 moved the client half into @rinsly-com/ui as ImgClient
+// (`placeholder="skeleton"` replaces the old `skeleton` flag).
+import { ImgClient as MediaImage } from '../../node_modules/@rinsly-com/ui/src/components/ImgClient'
 
 afterEach(() => {
   // Undo any prototype stub from the complete-on-mount case.
@@ -31,7 +33,7 @@ describe('MediaImage drops the skeleton once the image is ready', () => {
     })
 
     const { container } = render(
-      <MediaImage skeleton src="/images/about/directors.jpg" alt="" />,
+      <MediaImage placeholder="skeleton" src="/images/about/directors.jpg" alt="" />,
     )
     const img = container.querySelector('img')!
 
@@ -47,7 +49,7 @@ describe('MediaImage drops the skeleton once the image is ready', () => {
     })
 
     const { container } = render(
-      <MediaImage skeleton src="/api/media/file/pending.jpg" alt="" />,
+      <MediaImage placeholder="skeleton" src="/api/media/file/pending.jpg" alt="" />,
     )
     const img = container.querySelector('img') as HTMLImageElement
     expect(img.className).toContain('rt-media--skeleton')
