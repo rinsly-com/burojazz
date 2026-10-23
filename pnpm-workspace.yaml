@@ -9,14 +9,21 @@
 # next/font/google while this floor exists. The floor matters at runtime:
 # undici lands in the deployed Worker bundle via payload.
 overrides:
-  'undici@>=7.0.0 <7.29.0': 7.29.0
+  'undici@>=7.0.0 <7.29.1': 7.29.1
   'postcss@<8.5.23': 8.5.23
-  'js-yaml@>=4.0.0 <4.3.1': 4.3.1
-  'fast-uri@>=3.0.0 <3.1.5': 3.1.5
-  'brace-expansion@>=2.0.0 <2.1.3': 2.1.3
-  'brace-expansion@>=4.0.0 <5.0.9': 5.0.9
-  'nanoid@<3.3.16': 3.3.16
+  'js-yaml@>=4.0.0 <4.3.2': 4.3.2
+  'fast-uri@>=3.0.0 <3.1.7': 3.1.7
+  'brace-expansion@>=2.0.0 <2.1.6': 2.1.6
+  'brace-expansion@>=4.0.0 <5.0.11': 5.0.11
+  'nanoid@<3.3.18': 3.3.18
   'dompurify@<3.4.13': 3.4.13
+  # 2026-10-21 floors (site-core 0.22.2 prepare, mirrors rinsly.com #74):
+  #   undici 7.29.1, brace-expansion 2.1.6 / 5.0.11, js-yaml 4.3.2,
+  #   fast-uri 3.1.7, nanoid 3.3.18 raised in place above.
+  # proxy-addr GHSA-jqcg-44mw-7w3h (critical) fixed in 2.0.8;
+  # source-map-js GHSA-68fv-2mgg-jv7q fixed in 1.2.2.
+  'proxy-addr@<2.0.8': 2.0.8
+  'source-map-js@<1.2.2': 1.2.2
 allowBuilds:
   core-js-pure: true
   esbuild: true
@@ -25,6 +32,6 @@ allowBuilds:
   workerd: true
 minimumReleaseAgeExclude:
   - '@rinsly-com/site-core'
-  - '@rinsly-com/ui@0.1.2'
+  - '@rinsly-com/ui@0.3.1'
 patchedDependencies:
-  '@payloadcms/drizzle@3.85.2': patches/@payloadcms__drizzle@3.85.2.patch
+  '@payloadcms/drizzle@3.90.2': patches/@payloadcms__drizzle@3.90.2.patch

@@ -1,29 +1,30 @@
-import * as migration_20260709_180930_initial from './20260709_180930_initial';
-import * as migration_20260711_135639_header_nav_links from './20260711_135639_header_nav_links';
-import * as migration_20260711_150801_drop_page_content from './20260711_150801_drop_page_content';
-import * as migration_20260711_152316_trim_unrendered_block_fields from './20260711_152316_trim_unrendered_block_fields';
-import * as migration_20260711_154019_services_tabs_cards from './20260711_154019_services_tabs_cards';
-import * as migration_20260711_155148_core_value_image from './20260711_155148_core_value_image';
-import * as migration_20260711_160558_core_value_description from './20260711_160558_core_value_description';
-import * as migration_20260711_161451_contact_person_fields from './20260711_161451_contact_person_fields';
-import * as migration_20260711_181919_remove_hero_cert from './20260711_181919_remove_hero_cert';
-import * as migration_20260712_114843_complaints_pills_contact from './20260712_114843_complaints_pills_contact';
-import * as migration_20260712_130435_cms_managed_images from './20260712_130435_cms_managed_images';
-import * as migration_20260712_131205_social_arrow_instagram from './20260712_131205_social_arrow_instagram';
-import * as migration_20260712_133841_aanmeldingen from './20260712_133841_aanmeldingen';
-import * as migration_20260712_134346_anchor_links from './20260712_134346_anchor_links';
-import * as migration_20260713_161147_services_card_icon from './20260713_161147_services_card_icon';
-import * as migration_20260713_163446_seo_meta from './20260713_163446_seo_meta';
-import * as migration_20260713_172042_noindex_meta from './20260713_172042_noindex_meta';
-import * as migration_20260713_183112_aanmelding_instellingen from './20260713_183112_aanmelding_instellingen';
-import * as migration_20260723_180741_footer_socials from './20260723_180741_footer_socials';
-import * as migration_20260723_181955_social_instagram_live from './20260723_181955_social_instagram_live';
-import * as migration_20260724_175542_footer_nav_links from './20260724_175542_footer_nav_links';
-import * as migration_20260724_181033_service_card_details from './20260724_181033_service_card_details';
-import * as migration_20260724_184140_vacancies_open_application from './20260724_184140_vacancies_open_application';
-import * as migration_20260729_164929_vacancy_card_image from './20260729_164929_vacancy_card_image';
-import * as migration_20260815_155857 from './20260815_155857';
-import * as migration_20260914_180746_footer_certificates from './20260914_180746_footer_certificates';
+import * as migration_20260709_180930_initial from './20260709_180930_initial'
+import * as migration_20260711_135639_header_nav_links from './20260711_135639_header_nav_links'
+import * as migration_20260711_150801_drop_page_content from './20260711_150801_drop_page_content'
+import * as migration_20260711_152316_trim_unrendered_block_fields from './20260711_152316_trim_unrendered_block_fields'
+import * as migration_20260711_154019_services_tabs_cards from './20260711_154019_services_tabs_cards'
+import * as migration_20260711_155148_core_value_image from './20260711_155148_core_value_image'
+import * as migration_20260711_160558_core_value_description from './20260711_160558_core_value_description'
+import * as migration_20260711_161451_contact_person_fields from './20260711_161451_contact_person_fields'
+import * as migration_20260711_181919_remove_hero_cert from './20260711_181919_remove_hero_cert'
+import * as migration_20260712_114843_complaints_pills_contact from './20260712_114843_complaints_pills_contact'
+import * as migration_20260712_130435_cms_managed_images from './20260712_130435_cms_managed_images'
+import * as migration_20260712_131205_social_arrow_instagram from './20260712_131205_social_arrow_instagram'
+import * as migration_20260712_133841_aanmeldingen from './20260712_133841_aanmeldingen'
+import * as migration_20260712_134346_anchor_links from './20260712_134346_anchor_links'
+import * as migration_20260713_161147_services_card_icon from './20260713_161147_services_card_icon'
+import * as migration_20260713_163446_seo_meta from './20260713_163446_seo_meta'
+import * as migration_20260713_172042_noindex_meta from './20260713_172042_noindex_meta'
+import * as migration_20260713_183112_aanmelding_instellingen from './20260713_183112_aanmelding_instellingen'
+import * as migration_20260723_180741_footer_socials from './20260723_180741_footer_socials'
+import * as migration_20260723_181955_social_instagram_live from './20260723_181955_social_instagram_live'
+import * as migration_20260724_175542_footer_nav_links from './20260724_175542_footer_nav_links'
+import * as migration_20260724_181033_service_card_details from './20260724_181033_service_card_details'
+import * as migration_20260724_184140_vacancies_open_application from './20260724_184140_vacancies_open_application'
+import * as migration_20260729_164929_vacancy_card_image from './20260729_164929_vacancy_card_image'
+import * as migration_20260815_155857 from './20260815_155857'
+import * as migration_20260914_180746_footer_certificates from './20260914_180746_footer_certificates'
+import * as migration_20261021_172926_site_core_0_22 from './20261021_172926_site_core_0_22'
 
 export const migrations = [
   {
@@ -154,6 +155,11 @@ export const migrations = [
   {
     up: migration_20260914_180746_footer_certificates.up,
     down: migration_20260914_180746_footer_certificates.down,
-    name: '20260914_180746_footer_certificates'
+    name: '20260914_180746_footer_certificates',
   },
-];
+  {
+    up: migration_20261021_172926_site_core_0_22.up,
+    down: migration_20261021_172926_site_core_0_22.down,
+    name: '20261021_172926_site_core_0_22',
+  },
+]
