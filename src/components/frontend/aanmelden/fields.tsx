@@ -143,7 +143,8 @@ const inputBase =
 // The id is on the element itself: Field's provider id is generated until a
 // layout effect, so an `id` prop alone is missing from the server HTML.
 const Textarea = ({ id, ...props }: React.ComponentProps<'textarea'>) => (
-  <Field.Control id={id} render={<textarea id={id} />} {...props} />
+  // Field.Control is typed for <input>, so textarea props need this cast.
+  <Field.Control id={id} render={<textarea id={id} />} {...(props as object)} />
 )
 
 type InputProps = {
