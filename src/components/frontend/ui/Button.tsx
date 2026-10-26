@@ -11,8 +11,12 @@ type ButtonProps = {
 }
 
 /**
- * Brand button (server-safe). Primary is a teal pill with white text;
- * secondary is a bare teal text link. Both end in a small right arrow.
+ * Brand link button. Primary is a teal pill with white text; secondary is a
+ * bare teal text link. Both end in a small right arrow. This is a link, so it
+ * renders `next/link` directly: composing `@rinsly-com/ui/button` with
+ * `nativeButton={false}` adds `tabindex="0"` and activates the link on Space.
+ * Real buttons (Aanmelden, the services read-more, the dialog close) use
+ * `@rinsly-com/ui/button` at their call sites.
  */
 export function Button({ label, href, variant = 'primary', newTab, className }: ButtonProps) {
   const base = 'inline-flex items-center gap-2.5 text-sm font-medium'

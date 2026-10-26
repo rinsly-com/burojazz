@@ -3,11 +3,14 @@
 import Link from 'next/link'
 import { type ReactNode, useState } from 'react'
 
+import { Button } from '@rinsly-com/ui/button'
+import { Tabs } from '@rinsly-com/ui/tabs'
+import { cmsText } from '@rinsly-com/site-core'
+
 import type { Page } from '@/payload-types'
 import { ArrowIcon } from '@/components/frontend/ui/ArrowIcon'
 import { hrefFor, type LinkFields } from '@/components/frontend/ui/CMSLink'
 import { Modal } from '@/components/frontend/ui/Modal'
-import { cmsText } from '@rinsly-com/site-core'
 
 type ServicesBlock = Extract<NonNullable<Page['layout']>[number], { blockType: 'services' }>
 /** A service card as stored in the CMS — the source of the `details` shape. */
@@ -83,10 +86,14 @@ function ServiceCard({
           <p className="text-sm font-medium leading-[1.5]">{card.description ?? ''}</p>
         </div>
         {onOpenDetails ? (
-          <button type="button" onClick={onOpenDetails} className={`self-start ${READ_MORE_CLASSES}`}>
+          <Button
+            type="button"
+            onClick={onOpenDetails}
+            className={`self-start ${READ_MORE_CLASSES}`}
+          >
             {cmsText(card.link?.label, 'Lees verder')}
             <ArrowIcon />
-          </button>
+          </Button>
         ) : (
           <Link
             href={hrefFor(card.link)}
@@ -137,55 +144,59 @@ export function ServicesTabs({ tabs }: { tabs: TabData[] }) {
   const cards = activeTab?.cards ?? []
   const detailsCard = openCard === null ? null : (cards[openCard] ?? null)
 
-  /** Switching tabs re-indexes the cards, so close any open dialog with it. */
-  const selectTab = (index: number) => {
-    setActive(index)
-    setOpenCard(null)
-  }
-
   return (
-    <div className="flex w-full flex-col gap-6 md:gap-12">
-      {/* Clickable tab pills */}
-      <div className="flex flex-wrap justify-center gap-3 md:gap-6" role="tablist">
-        {tabs.map((tab, i) => {
-          const selected = i === active
-          return (
-            <button
+    <div className="w-full">
+      <Tabs.Root
+        value={active}
+        onValueChange={(value) => {
+          setActive(value as number)
+          setOpenCard(null)
+        }}
+        className="flex w-full flex-col gap-6 md:gap-12"
+      >
+        <Tabs.List className="flex flex-wrap justify-center gap-3 md:gap-6">
+          {tabs.map((tab, i) => (
+            <Tabs.Tab
               key={tab.id ?? i}
-              type="button"
-              role="tab"
-              aria-selected={selected}
-              onClick={() => selectTab(i)}
-              className={
-                selected
+              value={i}
+              onClick={() => setOpenCard(null)}
+              className={(state) =>
+                state.active
                   ? 'flex items-center rounded-[14px] bg-brand px-[18px] py-4 text-sm font-medium text-white transition-colors md:py-6'
                   : 'flex items-center rounded-[14px] border border-ink/5 bg-white px-[18px] py-4 text-sm font-medium text-ink transition-colors hover:bg-brand/5 md:py-6'
               }
             >
               {tab.label ?? ''}
-            </button>
-          )
-        })}
-      </div>
+            </Tabs.Tab>
+          ))}
+        </Tabs.List>
 
-      {/* Active tab's cards */}
-      <div className="flex w-full flex-wrap justify-center gap-6">
-        {cards.map((card, i) => (
-          <ServiceCard
-            key={card.id ?? i}
-            card={card}
-            index={i}
-            onOpenDetails={opensDialog(card) ? () => setOpenCard(i) : undefined}
-          />
+        {tabs.map((tab, tabIndex) => (
+          <Tabs.Panel
+            key={tab.id ?? tabIndex}
+            value={tabIndex}
+            className="flex w-full flex-wrap justify-center gap-6"
+          >
+            {(tab.cards ?? []).map((card, i) => (
+              <ServiceCard
+                key={card.id ?? i}
+                card={card}
+                index={i}
+                onOpenDetails={opensDialog(card) ? () => setOpenCard(i) : undefined}
+              />
+            ))}
+          </Tabs.Panel>
         ))}
-      </div>
+      </Tabs.Root>
 
-      {/* Read-more dialog for the card that has `details` rich text */}
+      {/* Read-more dialog for the card that has `details` rich text.
+          Outside the tab panels so switching tabs does not unmount it before
+          the close state lands. */}
       <Modal
         open={detailsCard !== null}
         onClose={() => setOpenCard(null)}
         labelledBy={DETAILS_TITLE_ID}
-        className="m-auto w-[min(720px,calc(100vw-2rem))] rounded-3xl bg-white p-0 backdrop:bg-black/50 backdrop:backdrop-blur-sm"
+        className="w-[min(720px,calc(100vw-2rem))] rounded-3xl bg-white p-0"
       >
         {detailsCard && (
           <div className="flex flex-col gap-6 pr-10">
