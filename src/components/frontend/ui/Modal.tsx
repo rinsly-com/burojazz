@@ -1,6 +1,9 @@
 'use client'
 
-import { type ReactNode, useEffect, useRef } from 'react'
+import { type ReactNode } from 'react'
+
+import { Dialog } from '@rinsly-com/ui/dialog'
+import { Button } from '@rinsly-com/ui/button'
 
 type ModalProps = {
   open: boolean
@@ -14,68 +17,51 @@ type ModalProps = {
   children: ReactNode
 }
 
-const DEFAULT_CLASSES =
-  'm-auto w-[min(920px,calc(100vw-2rem))] rounded-3xl bg-white p-0 backdrop:bg-black/50 backdrop:backdrop-blur-sm'
+const DEFAULT_BOX = 'w-[min(920px,calc(100vw-2rem))] rounded-3xl bg-white p-0'
 
 /**
- * Modal built on the native `<dialog>` element, so focus-trapping,
- * Escape-to-close and the backdrop come from the platform. Children only
- * mount while the modal is open (fresh state on every open), and the body
- * scroll is locked for as long as it is.
+ * Modal built on `@rinsly-com/ui/dialog` (Base UI). Focus-trapping, Escape,
+ * outside-press and scroll lock come from the dialog. Children only mount
+ * while the modal is open (fresh state on every open). The box stays the
+ * burojazz skin: centered, rounded, white, with a blurred dim backdrop.
  */
 export function Modal({ open, onClose, label, labelledBy, className, children }: ModalProps) {
-  const ref = useRef<HTMLDialogElement>(null)
-
-  useEffect(() => {
-    const dialog = ref.current
-    if (!dialog) return
-    if (open && !dialog.open) dialog.showModal()
-    if (!open && dialog.open) dialog.close()
-    document.body.style.overflow = open ? 'hidden' : ''
-    return () => {
-      document.body.style.overflow = ''
-    }
-  }, [open])
-
   return (
-    <dialog
-      ref={ref}
-      aria-label={label}
-      aria-labelledby={labelledBy}
-      onCancel={(e) => {
-        // Escape: close through our own handler so the caller's state stays
-        // the single source of truth.
-        e.preventDefault()
-        onClose()
+    <Dialog.Root
+      open={open}
+      onOpenChange={(next) => {
+        if (!next) onClose()
       }}
-      onClick={(e) => {
-        // Backdrop click: the dialog element fills the viewport, so a click whose
-        // target is the dialog itself (not its content) is on the backdrop.
-        if (e.target === ref.current) onClose()
-      }}
-      className={className ?? DEFAULT_CLASSES}
     >
-      {open && (
-        <div className="relative max-h-[90vh] overflow-y-auto p-5 md:p-8">
-          <ModalCloseButton onClose={onClose} />
-          {children}
-        </div>
-      )}
-    </dialog>
-  )
-}
-
-function ModalCloseButton({ onClose }: { onClose: () => void }) {
-  return (
-    <button
-      type="button"
-      onClick={onClose}
-      aria-label="Sluiten"
-      className="absolute right-4 top-4 z-10 flex size-9 items-center justify-center rounded-full bg-black/5 text-ink transition-colors hover:bg-black/10"
-    >
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-        <path d="M3 3L13 13M13 3L3 13" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
-      </svg>
-    </button>
+      <Dialog.Portal>
+        <Dialog.Backdrop className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm" />
+        <Dialog.Popup
+          aria-label={label}
+          aria-labelledby={labelledBy}
+          className={`fixed left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2 outline-none ${className ?? DEFAULT_BOX}`}
+        >
+          {open && (
+            <div className="relative max-h-[90vh] overflow-y-auto p-5 md:p-8">
+              <Dialog.Close
+                aria-label="Sluiten"
+                render={
+                  <Button className="absolute right-4 top-4 z-10 flex size-9 items-center justify-center rounded-full bg-black/5 p-0 text-ink transition-colors hover:bg-black/10" />
+                }
+              >
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                  <path
+                    d="M3 3L13 13M13 3L3 13"
+                    stroke="currentColor"
+                    strokeWidth="1.75"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              </Dialog.Close>
+              {children}
+            </div>
+          )}
+        </Dialog.Popup>
+      </Dialog.Portal>
+    </Dialog.Root>
   )
 }

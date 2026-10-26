@@ -45,7 +45,7 @@ const isHashOpen = () => window.location.hash === HASH
  * the existing Hero CTAs and the CMS-managed header CTA keep working without a
  * rewrite. The `/aanmelden` page stays a no-JS fallback.
  *
- * The dialog chrome itself (native <dialog>, backdrop, close button, scroll
+ * The dialog chrome itself (Base UI dialog, backdrop, close button, scroll
  * lock) lives in the shared `Modal`.
  */
 export function AanmeldenDialog({ privacyHref }: { privacyHref?: string }) {

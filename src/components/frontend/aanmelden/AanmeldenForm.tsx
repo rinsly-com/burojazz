@@ -3,6 +3,7 @@
 import { useRef, useState } from 'react'
 
 import { Turnstile, turnstileHeaders, type TurnstileHandle } from '@rinsly-com/site-core/ui'
+import { Button } from '@rinsly-com/ui/button'
 
 import {
   DSM_OPTIONS,
@@ -13,7 +14,6 @@ import {
 import {
   BackButton,
   CheckboxField,
-  Field,
   PlusIcon,
   PrimaryButton,
   StepIndicator,
@@ -38,9 +38,7 @@ type SubmitState = 'idle' | 'submitting' | 'success' | 'error'
 
 /** Teal panel wrapper matching the design. */
 function Panel({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="flex flex-col gap-6 rounded-3xl bg-brand p-6 md:p-8">{children}</div>
-  )
+  return <div className="flex flex-col gap-6 rounded-3xl bg-brand p-6 md:p-8">{children}</div>
 }
 
 function SectionHeading({ children }: { children: React.ReactNode }) {
@@ -131,7 +129,10 @@ export function AanmeldenForm({
 
   if (state === 'success') {
     return (
-      <div ref={topRef} className="flex flex-col items-center gap-4 rounded-3xl bg-brand/5 p-10 text-center">
+      <div
+        ref={topRef}
+        className="flex flex-col items-center gap-4 rounded-3xl bg-brand/5 p-10 text-center"
+      >
         <span className="flex size-14 items-center justify-center rounded-full bg-brand text-white">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path
@@ -162,6 +163,7 @@ export function AanmeldenForm({
           <SectionHeading>Persoonsgegevens</SectionHeading>
           <div className={grid}>
             <TextField
+              id="aanmelden-client-naam"
               label="Naam client"
               required
               value={data.clientNaam}
@@ -169,6 +171,7 @@ export function AanmeldenForm({
               onChange={(v) => set('clientNaam', v)}
             />
             <TextField
+              id="aanmelden-client-geboortedatum"
               label="Geboortedatum"
               type="date"
               required
@@ -178,6 +181,7 @@ export function AanmeldenForm({
             />
           </div>
           <TextField
+            id="aanmelden-client-adres"
             label="Adres en woonplaats"
             required
             value={data.clientAdres}
@@ -188,6 +192,7 @@ export function AanmeldenForm({
           <SectionHeading>Gegevens verwijzer</SectionHeading>
           <div className={grid}>
             <TextField
+              id="aanmelden-verwijzer-naam"
               label="Naam verwijzer"
               required
               value={data.verwijzerNaam}
@@ -195,6 +200,7 @@ export function AanmeldenForm({
               onChange={(v) => set('verwijzerNaam', v)}
             />
             <TextField
+              id="aanmelden-verwijzer-organisatie"
               label="Organisatie"
               required
               value={data.verwijzerOrganisatie}
@@ -202,6 +208,7 @@ export function AanmeldenForm({
               onChange={(v) => set('verwijzerOrganisatie', v)}
             />
             <TextField
+              id="aanmelden-verwijzer-email"
               label="Email adres"
               type="email"
               required
@@ -210,6 +217,7 @@ export function AanmeldenForm({
               onChange={(v) => set('verwijzerEmail', v)}
             />
             <TextField
+              id="aanmelden-verwijzer-telefoon"
               label="Telefoonnr."
               type="tel"
               required
@@ -226,6 +234,7 @@ export function AanmeldenForm({
           <SectionHeading>Ouders / verzorgers</SectionHeading>
           <div className={grid}>
             <TextField
+              id="aanmelden-moeder-naam"
               label="Naam moeder/verzorgster"
               required
               value={data.moederNaam}
@@ -233,6 +242,7 @@ export function AanmeldenForm({
               onChange={(v) => set('moederNaam', v)}
             />
             <TextField
+              id="aanmelden-moeder-adres"
               label="Adres en woonplaats moeder/verzorgster"
               required
               value={data.moederAdres}
@@ -240,6 +250,7 @@ export function AanmeldenForm({
               onChange={(v) => set('moederAdres', v)}
             />
             <TextField
+              id="aanmelden-moeder-email"
               label="Email adres"
               type="email"
               required
@@ -248,6 +259,7 @@ export function AanmeldenForm({
               onChange={(v) => set('moederEmail', v)}
             />
             <TextField
+              id="aanmelden-moeder-telefoon"
               label="Telefoonnr."
               type="tel"
               required
@@ -261,6 +273,7 @@ export function AanmeldenForm({
 
           <div className={grid}>
             <TextField
+              id="aanmelden-vader-naam"
               label="Naam vader/verzorger"
               required
               value={data.vaderNaam}
@@ -268,12 +281,14 @@ export function AanmeldenForm({
               onChange={(v) => set('vaderNaam', v)}
             />
             <TextField
+              id="aanmelden-vader-adres"
               label="Adres en woonplaats"
               placeholder="(indien afwijkend van moeder/verzorgster)"
               value={data.vaderAdres}
               onChange={(v) => set('vaderAdres', v)}
             />
             <TextField
+              id="aanmelden-vader-email"
               label="Email adres"
               type="email"
               placeholder="(indien afwijkend van moeder/verzorgster)"
@@ -282,6 +297,7 @@ export function AanmeldenForm({
               onChange={(v) => set('vaderEmail', v)}
             />
             <TextField
+              id="aanmelden-vader-telefoon"
               label="Telefoonnr."
               type="tel"
               placeholder="(indien afwijkend van moeder/verzorgster)"
@@ -296,22 +312,25 @@ export function AanmeldenForm({
           <div className="flex flex-col gap-4">
             {data.siblings.map((sib, i) => (
               <div key={i} className="flex flex-col gap-3 md:flex-row md:items-center md:gap-6">
-                <input
-                  type="text"
+                <TextField
+                  id={`aanmelden-sibling-${i}-leeftijd`}
+                  label="Leeftijd"
+                  labelClassName="sr-only"
+                  className="flex w-full flex-col gap-1.5 md:max-w-xs"
                   value={sib.leeftijd}
                   placeholder="Leeftijd"
-                  onChange={(e) =>
+                  onChange={(v) =>
                     set(
                       'siblings',
-                      data.siblings.map((s, j) => (j === i ? { ...s, leeftijd: e.target.value } : s)),
+                      data.siblings.map((s, j) => (j === i ? { ...s, leeftijd: v } : s)),
                     )
                   }
-                  className="w-full rounded-xl border border-transparent bg-white px-4 py-3.5 text-sm font-medium text-ink shadow-sm outline-none placeholder:text-ink/40 focus:border-brand focus:ring-2 focus:ring-brand/30 md:max-w-xs"
                 />
                 <div className="flex flex-wrap gap-6">
                   {SIBLING_TYPE_OPTIONS.map((opt) => (
                     <CheckboxField
                       key={opt.value}
+                      id={`aanmelden-sibling-${i}-${opt.value}`}
                       label={opt.label}
                       checked={sib.type === opt.value}
                       onChange={() =>
@@ -319,7 +338,10 @@ export function AanmeldenForm({
                           'siblings',
                           data.siblings.map((s, j) =>
                             j === i
-                              ? { ...s, type: s.type === opt.value ? '' : (opt.value as SiblingType) }
+                              ? {
+                                  ...s,
+                                  type: s.type === opt.value ? '' : (opt.value as SiblingType),
+                                }
                               : s,
                           ),
                         )
@@ -329,14 +351,14 @@ export function AanmeldenForm({
                 </div>
               </div>
             ))}
-            <button
+            <Button
               type="button"
               onClick={() => set('siblings', [...data.siblings, { leeftijd: '', type: '' }])}
               className="inline-flex items-center gap-2 self-start text-sm font-semibold text-black transition-colors hover:text-white"
             >
               <PlusIcon />
               verdere broers en zussen
-            </button>
+            </Button>
           </div>
         </Panel>
       )}
@@ -345,6 +367,7 @@ export function AanmeldenForm({
         <Panel>
           <SectionHeading>Reden van aanmelden</SectionHeading>
           <TextAreaField
+            id="aanmelden-reden"
             label="Beschrijf kort en bondig de reden van aanmelden"
             required
             rows={5}
@@ -355,6 +378,7 @@ export function AanmeldenForm({
           <div className="h-px bg-white/40" />
           <SectionHeading>Hulpverleningsgeschiedenis</SectionHeading>
           <TextAreaField
+            id="aanmelden-hulpgeschiedenis"
             label="Beschrijf de organisatie en (indien bekend) de behandeling/begeleiding"
             rows={5}
             placeholder="(indien aanwezig)"
@@ -371,6 +395,7 @@ export function AanmeldenForm({
             {PROBLEMATIEK_OPTIONS.map((opt) => (
               <CheckboxField
                 key={opt.value}
+                id={`aanmelden-problematiek-${opt.value}`}
                 label={opt.label}
                 checked={data.problematiek.includes(opt.value)}
                 onChange={() => toggleInArray('problematiek', opt.value)}
@@ -379,33 +404,41 @@ export function AanmeldenForm({
           </div>
           <div className="flex items-center gap-3">
             <CheckboxField
+              id="aanmelden-problematiek-overig"
               label={<span className="sr-only">Overig</span>}
               checked={data.problematiekOverig.trim() !== ''}
               onChange={(c) => !c && set('problematiekOverig', '')}
             />
-            <input
-              type="text"
+            <TextField
+              id="aanmelden-problematiek-overig-tekst"
+              label="Overig, namelijk:"
+              labelClassName="sr-only"
+              className="flex min-w-0 flex-1 flex-col gap-1.5"
               value={data.problematiekOverig}
               placeholder="Overig, namelijk:"
-              onChange={(e) => set('problematiekOverig', e.target.value)}
-              className="w-full rounded-xl border border-transparent bg-white px-4 py-3.5 text-sm font-medium text-ink shadow-sm outline-none placeholder:text-ink/40 focus:border-brand focus:ring-2 focus:ring-brand/30"
+              onChange={(v) => set('problematiekOverig', v)}
             />
           </div>
 
-          <Field label="DSM diagnose bekend?">
+          <div className="flex flex-col gap-1.5">
+            <span className="text-sm font-medium text-black">DSM diagnose bekend?</span>
             <div className="flex gap-6">
               {DSM_OPTIONS.map((opt) => (
                 <CheckboxField
                   key={opt.value}
+                  id={`aanmelden-dsm-${opt.value}`}
                   label={opt.label}
                   checked={data.dsmDiagnoseBekend === opt.value}
                   onChange={() =>
-                    set('dsmDiagnoseBekend', data.dsmDiagnoseBekend === opt.value ? '' : (opt.value as DsmValue))
+                    set(
+                      'dsmDiagnoseBekend',
+                      data.dsmDiagnoseBekend === opt.value ? '' : (opt.value as DsmValue),
+                    )
                   }
                 />
               ))}
             </div>
-          </Field>
+          </div>
 
           <div className="h-px bg-white/40" />
 
@@ -417,6 +450,7 @@ export function AanmeldenForm({
             {VORM_VAN_HULP_OPTIONS.map((opt) => (
               <CheckboxField
                 key={opt.value}
+                id={`aanmelden-vorm-${opt.value}`}
                 label={opt.label}
                 checked={data.vormVanHulp.includes(opt.value)}
                 onChange={() => toggleInArray('vormVanHulp', opt.value)}
@@ -428,12 +462,18 @@ export function AanmeldenForm({
 
           <div className="flex flex-col gap-1.5">
             <CheckboxField
+              id="aanmelden-privacy"
               checked={data.privacyAkkoord}
               onChange={(c) => set('privacyAkkoord', c)}
               label={
                 <span>
                   Ik ga akkoord met de verwerking van mijn gegevens in overeenstemming met{' '}
-                  <a href={privacyHref} target="_blank" rel="noopener noreferrer" className="underline">
+                  <a
+                    href={privacyHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline"
+                  >
                     de privacyverklaring
                   </a>{' '}
                   van Buro J.A.Z.Z. <span className="text-[#f04438]">*</span>
