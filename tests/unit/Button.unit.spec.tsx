@@ -1,6 +1,6 @@
 /**
- * The brand button is `@rinsly-com/ui/button` composed onto next/link.
- * The fork used to render the link itself; the classes and href stay.
+ * The brand link renders next/link itself. Composing ui/button onto the link
+ * added tabindex="0" and Space-to-activate, which a link does not do.
  */
 import { cleanup, render, screen } from '@testing-library/react'
 import { afterEach, describe, expect, it } from 'vitest'
@@ -13,7 +13,10 @@ describe('Button', () => {
   it('renders a primary link with the brand classes', () => {
     render(<Button label="Direct aanmelden" href="/aanmelden" />)
     const link = screen.getByRole('link', { name: /Direct aanmelden/ })
+    expect(link.tagName).toBe('A')
     expect(link.getAttribute('href')).toBe('/aanmelden')
+    expect(link.hasAttribute('tabindex')).toBe(false)
+    expect(link.getAttribute('role')).toBeNull()
     expect(link.className).toContain('bg-brand')
     expect(link.className).toContain('rounded-pill')
   })

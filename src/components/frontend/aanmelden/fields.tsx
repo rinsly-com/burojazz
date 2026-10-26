@@ -140,8 +140,10 @@ const inputBase =
   'w-full rounded-xl border border-transparent bg-white px-4 py-3.5 text-sm font-medium text-ink shadow-sm outline-none transition-colors placeholder:text-ink/40 focus:border-brand focus:ring-2 focus:ring-brand/30'
 
 // Base UI has no Textarea part; Field.Control renders one.
-const Textarea = (props: React.ComponentProps<'textarea'>) => (
-  <Field.Control render={<textarea />} {...(props as object)} />
+// The id is on the element itself: Field's provider id is generated until a
+// layout effect, so an `id` prop alone is missing from the server HTML.
+const Textarea = ({ id, ...props }: React.ComponentProps<'textarea'>) => (
+  <Field.Control id={id} render={<textarea id={id} />} {...props} />
 )
 
 type InputProps = {
@@ -179,13 +181,19 @@ function FieldLabelText({
   label,
   required,
   className,
+  htmlFor,
 }: {
   label: string
   required?: boolean
   className?: string
+  /** Explicit id. On the rendered label so `for` matches in the server HTML. */
+  htmlFor: string
 }) {
   return (
-    <Field.Label className={className ?? 'text-sm font-medium text-black'}>
+    <Field.Label
+      className={className ?? 'text-sm font-medium text-black'}
+      render={<label htmlFor={htmlFor} />}
+    >
       {label}
       {required && <span className="text-[#f04438]"> *</span>}
     </Field.Label>
@@ -207,9 +215,10 @@ export function TextField({
 }: InputProps) {
   return (
     <Field.Root className={className ?? 'flex flex-col gap-1.5'} invalid={Boolean(error)}>
-      <FieldLabelText label={label} required={required} className={labelClassName} />
+      <FieldLabelText label={label} required={required} className={labelClassName} htmlFor={id} />
       <Input
         id={id}
+        render={<input id={id} />}
         type={type}
         value={value}
         placeholder={placeholder}
@@ -237,7 +246,7 @@ export function TextAreaField({
 }: Omit<InputProps, 'type' | 'autoComplete'> & { rows?: number }) {
   return (
     <Field.Root className={className ?? 'flex flex-col gap-1.5'} invalid={Boolean(error)}>
-      <FieldLabelText label={label} required={required} className={labelClassName} />
+      <FieldLabelText label={label} required={required} className={labelClassName} htmlFor={id} />
       <Textarea
         id={id}
         rows={rows}
@@ -267,16 +276,20 @@ export function CheckboxField({
 }) {
   return (
     <Field.Root>
-      <Field.Label className="flex cursor-pointer items-start gap-3 text-sm font-medium text-ink">
+      <Field.Label
+        className="flex cursor-pointer items-start gap-3 text-sm font-medium text-ink"
+        render={<label htmlFor={id} />}
+      >
         <Checkbox.Root
           id={id}
           // Keep the native button. `nativeButton={false}` puts the id on the
           // hidden input, and the visible control's generated id no longer
-          // matches the label.
+          // matches the label. The id is also on the rendered button so the
+          // server HTML carries it; Field only copies it across in an effect.
           nativeButton
           checked={checked}
           onCheckedChange={onChange}
-          render={<button type="button" />}
+          render={<button type="button" id={id} />}
           className={`mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-md border-2 p-0 transition-colors ${
             checked ? 'border-brand bg-brand text-white' : 'border-white bg-white'
           }`}

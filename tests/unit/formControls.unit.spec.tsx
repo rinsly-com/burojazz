@@ -1,9 +1,9 @@
 /**
- * Aanmelden controls are Base UI fields. Base UI regenerates ids on hydration,
- * so a label's `for` only stays attached when the control passes an explicit id.
- * Checkboxes keep `nativeButton` so that id lands on the visible button; setting
- * it false puts the id on the hidden input and the label points at nothing
- * you can see.
+ * Aanmelden controls are Base UI fields. Field's provider id is a generated
+ * `base-ui-_R_…` until a layout effect, so the explicit id has to be on the
+ * rendered element for it to be in the server HTML. Checkboxes keep
+ * `nativeButton` so that id lands on the visible button; setting it false
+ * puts the id on the hidden input and the label points at nothing you can see.
  */
 import { act, createElement, type ReactElement } from 'react'
 import { hydrateRoot, type Root } from 'react-dom/client'
@@ -12,6 +12,7 @@ import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { AanmeldenForm } from '@/components/frontend/aanmelden/AanmeldenForm'
+import { CheckboxField } from '@/components/frontend/aanmelden/fields'
 
 vi.mock('@rinsly-com/site-core/ui', () => ({
   Turnstile: () => null,
@@ -20,7 +21,7 @@ vi.mock('@rinsly-com/site-core/ui', () => ({
 
 const roots: Root[] = []
 
-function labelPointsAtControl(root: ParentNode) {
+function labelPointsAtControl(root: Element) {
   const labels = [...root.querySelectorAll('label')]
   expect(labels.length).toBeGreaterThan(0)
   for (const label of labels) {
@@ -62,6 +63,11 @@ describe('Aanmelden control ids survive hydration', () => {
     const ssr = document.createElement('div')
     ssr.innerHTML = renderToString(ui)
     labelPointsAtControl(ssr)
+    // The explicit ids are in the server HTML, not only after hydration.
+    expect(ssr.querySelector('label[for="aanmelden-client-naam"]')).toBeTruthy()
+    expect(ssr.querySelector('#aanmelden-client-naam')).toBeInstanceOf(HTMLInputElement)
+    expect(ssr.querySelector('label[for="aanmelden-verwijzer-email"]')).toBeTruthy()
+    expect(ssr.querySelector('#aanmelden-verwijzer-email')).toBeInstanceOf(HTMLInputElement)
 
     const view = hydrate(ui)
     labelPointsAtControl(view)
@@ -108,6 +114,23 @@ describe('Aanmelden control ids survive hydration', () => {
     expect(privacy.tagName).toBe('BUTTON')
     expect(privacy.getAttribute('id')).toBe('aanmelden-privacy')
     expect(document.querySelector('label[for="aanmelden-privacy"]')).toBeTruthy()
+    expect(screen.getByRole('group', { name: 'DSM diagnose bekend?' })).toBeTruthy()
     labelPointsAtControl(document.body)
+  })
+
+  it('renders the checkbox id in the server HTML', () => {
+    const ssr = document.createElement('div')
+    ssr.innerHTML = renderToString(
+      createElement(CheckboxField, {
+        id: 'aanmelden-privacy',
+        label: 'privacy',
+        checked: false,
+        onChange: () => {},
+      }),
+    )
+    const button = ssr.querySelector('button')
+    expect(button?.id).toBe('aanmelden-privacy')
+    expect(ssr.querySelector('label')?.getAttribute('for')).toBe('aanmelden-privacy')
+    labelPointsAtControl(ssr)
   })
 })

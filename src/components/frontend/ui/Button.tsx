@@ -1,7 +1,5 @@
 import Link from 'next/link'
 
-import { Button as UiButton } from '@rinsly-com/ui/button'
-
 import { ArrowIcon } from './ArrowIcon'
 
 type ButtonProps = {
@@ -14,9 +12,11 @@ type ButtonProps = {
 
 /**
  * Brand link button. Primary is a teal pill with white text; secondary is a
- * bare teal text link. Both end in a small right arrow. The control is
- * `@rinsly-com/ui/button` composed onto `next/link`; this file only owns the
- * burojazz classes.
+ * bare teal text link. Both end in a small right arrow. This is a link, so it
+ * renders `next/link` directly: composing `@rinsly-com/ui/button` with
+ * `nativeButton={false}` adds `tabindex="0"` and activates the link on Space.
+ * Real buttons (Aanmelden, the services read-more, the dialog close) use
+ * `@rinsly-com/ui/button` at their call sites.
  */
 export function Button({ label, href, variant = 'primary', newTab, className }: ButtonProps) {
   const base = 'inline-flex items-center gap-2.5 text-sm font-medium'
@@ -26,18 +26,13 @@ export function Button({ label, href, variant = 'primary', newTab, className }: 
       : `${base} text-brand transition-colors hover:text-[#3fadb7]`
 
   return (
-    <UiButton
-      nativeButton={false}
-      // Base UI's non-native button sets role="button". These are links
-      // (href, new tab, middle-click), so keep the link role.
-      role="link"
-      render={
-        <Link href={href} {...(newTab ? { target: '_blank', rel: 'noopener noreferrer' } : {})} />
-      }
+    <Link
+      href={href}
       className={className ? `${styles} ${className}` : styles}
+      {...(newTab ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
     >
       {label}
       <ArrowIcon />
-    </UiButton>
+    </Link>
   )
 }

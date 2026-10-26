@@ -420,8 +420,10 @@ export function AanmeldenForm({
             />
           </div>
 
-          <div className="flex flex-col gap-1.5">
-            <span className="text-sm font-medium text-black">DSM diagnose bekend?</span>
+          <fieldset className="m-0 min-w-0 border-0 p-0">
+            <legend className="mb-1.5 p-0 text-sm font-medium text-black">
+              DSM diagnose bekend?
+            </legend>
             <div className="flex gap-6">
               {DSM_OPTIONS.map((opt) => (
                 <CheckboxField
@@ -438,7 +440,7 @@ export function AanmeldenForm({
                 />
               ))}
             </div>
-          </div>
+          </fieldset>
 
           <div className="h-px bg-white/40" />
 
