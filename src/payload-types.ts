@@ -72,6 +72,8 @@ export interface Config {
     pages: Page;
     comments: Comment;
     aanmeldingen: Aanmeldingen;
+    'content-audit': ContentAudit;
+    'content-replay': ContentReplay;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -84,6 +86,8 @@ export interface Config {
     pages: PagesSelect<false> | PagesSelect<true>;
     comments: CommentsSelect<false> | CommentsSelect<true>;
     aanmeldingen: AanmeldingenSelect<false> | AanmeldingenSelect<true>;
+    'content-audit': ContentAuditSelect<false> | ContentAuditSelect<true>;
+    'content-replay': ContentReplaySelect<false> | ContentReplaySelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -1026,6 +1030,61 @@ export interface Aanmeldingen {
   createdAt: string;
 }
 /**
+ * Rinsly remote content writes. Rows are insert-only.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "content-audit".
+ */
+export interface ContentAudit {
+  id: number;
+  at: string;
+  outcome: 'applied' | 'rejected' | 'skipped';
+  reason: string;
+  who: string;
+  keyId: string;
+  ip: string;
+  kind?: string | null;
+  slug?: string | null;
+  docId?: string | null;
+  path?: string | null;
+  locale?: string | null;
+  before?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  after?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "content-replay".
+ */
+export interface ContentReplay {
+  id: number;
+  key: string;
+  kind: 'nonce' | 'rate';
+  keyId?: string | null;
+  expiresAt?: string | null;
+  count?: number | null;
+  windowStart?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -1068,6 +1127,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'aanmeldingen';
         value: number | Aanmeldingen;
+      } | null)
+    | ({
+        relationTo: 'content-audit';
+        value: number | ContentAudit;
+      } | null)
+    | ({
+        relationTo: 'content-replay';
+        value: number | ContentReplay;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -1611,6 +1678,41 @@ export interface AanmeldingenSelect<T extends boolean = true> {
   dsmDiagnoseBekend?: T;
   vormVanHulp?: T;
   privacyAkkoord?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "content-audit_select".
+ */
+export interface ContentAuditSelect<T extends boolean = true> {
+  at?: T;
+  outcome?: T;
+  reason?: T;
+  who?: T;
+  keyId?: T;
+  ip?: T;
+  kind?: T;
+  slug?: T;
+  docId?: T;
+  path?: T;
+  locale?: T;
+  before?: T;
+  after?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "content-replay_select".
+ */
+export interface ContentReplaySelect<T extends boolean = true> {
+  key?: T;
+  kind?: T;
+  keyId?: T;
+  expiresAt?: T;
+  count?: T;
+  windowStart?: T;
   updatedAt?: T;
   createdAt?: T;
 }
