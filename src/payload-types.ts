@@ -1030,7 +1030,7 @@ export interface Aanmeldingen {
   createdAt: string;
 }
 /**
- * Rinsly remote content writes. Rows are insert-only.
+ * Rinsly remote content writes. A pending row can be completed once. Other edits are rejected.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "content-audit".
@@ -1038,7 +1038,7 @@ export interface Aanmeldingen {
 export interface ContentAudit {
   id: number;
   at: string;
-  outcome: 'applied' | 'rejected' | 'skipped';
+  outcome: 'applied' | 'rejected' | 'skipped' | 'pending';
   reason: string;
   who: string;
   keyId: string;
