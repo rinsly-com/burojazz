@@ -51,8 +51,8 @@ importers:
         specifier: 3.90.2
         version: 3.90.2(@types/react@19.2.14)(monaco-editor@0.55.1)(next@16.4.3(@babel/core@7.29.7)(@playwright/test@1.58.2)(@types/node@22.19.9)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(sass@1.77.4))(payload@3.90.2(graphql@16.14.2)(typescript@5.7.3))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(typescript@5.7.3)
       '@rinsly-com/site-core':
-        specifier: 0.26.0
-        version: 0.26.0(1d28eb6fb4f270b1bf1171651451ac1f)
+        specifier: 0.26.1
+        version: 0.26.1(1d28eb6fb4f270b1bf1171651451ac1f)
       '@rinsly-com/ui':
         specifier: 0.3.1
         version: 0.3.1(@date-fns/tz@1.2.0)(@types/react@19.2.14)(date-fns@4.1.0)(next@16.4.3(@babel/core@7.29.7)(@playwright/test@1.58.2)(@types/node@22.19.9)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(sass@1.77.4))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
@@ -2051,8 +2051,8 @@ packages:
   '@preact/signals-core@1.14.4':
     resolution: {integrity: sha512-HNB6HYeYKhQbJ1aKl+YRjrS4+QWHLKX6qKoUsfS/m0vqzsVaEBiZiaKbG/e+NKk2ch5ALQr/ihWaMHxiCuuWHA==}
 
-  '@rinsly-com/site-core@0.26.0':
-    resolution: {integrity: sha512-ZAsZInfWwbj4uBdWGwB8r0/2TOHJHwzKnxBm4ZniDVvLarhJblY+IX1TPvI6FvCvAB64CCrWlL0+dCAc+qg4vQ==, tarball: https://npm.pkg.github.com/download/@rinsly-com/site-core/0.26.0/270eb7f10b20bc1f8252f103ff90d892a7c0f76a}
+  '@rinsly-com/site-core@0.26.1':
+    resolution: {integrity: sha512-0s66MeZj+lZYvOzjtM1SbDMFDyKQGc+foqzj/p5P4X/5XFBQfO6gmJntkTAEHmhkPYgtQcxCnC1fGCHGROIKgw==, tarball: https://npm.pkg.github.com/download/@rinsly-com/site-core/0.26.1/c088653f4fa13bcfc29ee4cbff9a2884e694b9c8}
     hasBin: true
     peerDependencies:
       '@opennextjs/cloudflare': ^1.20.2
@@ -7964,7 +7964,7 @@ snapshots:
 
   '@preact/signals-core@1.14.4': {}
 
-  '@rinsly-com/site-core@0.26.0(1d28eb6fb4f270b1bf1171651451ac1f)':
+  '@rinsly-com/site-core@0.26.1(1d28eb6fb4f270b1bf1171651451ac1f)':
     dependencies:
       '@gsap/react': 2.1.2(gsap@3.15.0)(react@19.2.6)
       '@opennextjs/cloudflare': 1.20.13(next@16.4.3(@babel/core@7.29.7)(@playwright/test@1.58.2)(@types/node@22.19.9)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(sass@1.77.4))(wrangler@4.154.0(@types/node@22.19.9))
