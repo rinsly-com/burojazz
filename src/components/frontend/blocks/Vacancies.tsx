@@ -7,6 +7,7 @@ import { hrefFor, type LinkFields } from '@/components/frontend/ui/CMSLink'
 import { Eyebrow } from '@/components/frontend/ui/Eyebrow'
 import { Icon } from '@/components/frontend/ui/Icon'
 import { Media, type MediaResource } from '@rinsly-com/site-core/ui'
+import { fallbackSectionId } from '@/components/frontend/sectionAnchor'
 import { Section } from '@/components/frontend/ui/Section'
 import { cmsText } from '@rinsly-com/site-core'
 
@@ -87,8 +88,10 @@ export function Vacancies(props: Props) {
   const openHrefFromCMS = hrefFor(openApp)
   const openHref = openHrefFromCMS === '#' ? OPEN_APPLICATION.href : openHrefFromCMS
 
+  // Historical `#vacatures` target. Omitted once the wrapper publishes
+  // that same id from the content anchor.
   return (
-    <Section id="vacatures" py="py-16 md:py-[120px]">
+    <Section id={fallbackSectionId(props, 'vacatures')} py="py-16 md:py-[120px]">
       {/* Header */}
       <div className="flex flex-col items-center gap-6 text-center">
         <span className="inline-flex items-center gap-2.5 rounded-pill bg-brand/5 px-3 py-2.5 text-brand">

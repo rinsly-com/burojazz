@@ -91,6 +91,7 @@ Keep this list current — it is the record of what has actually bitten us.
 | Preview (accp) hid published pages with no draft version rows — `/contact` 404'd on accp while live on production | `pages.unit.spec.ts` |
 | Production was rebuilt by every publish, every draft save of a live page, and every Header/Footer save, making Actions runs look random | `triggerStaticDeploy.unit.spec.ts`, `collectionConfig.unit.spec.ts` |
 | The static build must ship published content only — never a draft | `pages.unit.spec.ts` |
+| Content-endpoint anchors on About / Vacancies duplicated the hardcoded `#wie-wij-zijn` and `#vacatures` ids | `sectionAnchors.unit.spec.tsx` |
 
 ## Known broken
 
