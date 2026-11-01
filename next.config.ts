@@ -3,6 +3,8 @@ import type { NextConfig } from 'next'
 import path from 'path'
 import { fileURLToPath } from 'url'
 
+import { nextPermanentRedirects } from './src/lib/permanentRedirects'
+
 const __filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(__filename)
 
@@ -29,6 +31,12 @@ const nextConfig: NextConfig = {
         pathname: '/api/media/file/**',
       },
     ],
+  },
+  // Accp (OpenNext) only: the no-slash 301. Next 308s the trailing-slash
+  // form onto it. Static export ignores redirects(); production uses
+  // public/_redirects (both forms), copied into out/.
+  async redirects() {
+    return nextPermanentRedirects()
   },
   // Packages with Cloudflare Workers (workerd) specific code.
   // https://opennext.js.org/cloudflare/howtos/workerd
