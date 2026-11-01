@@ -10,6 +10,9 @@
   "assets": {
     "directory": "out",
     // Next's static export emits 404.html and trailing-slash directory pages.
+    // public/_redirects and public/_headers are copied into this directory.
+    // Wrangler reads them as asset metadata (it does not serve the files).
+    // Nothing here excludes them: no assets.exclude, and no .assetsignore.
     "not_found_handling": "404-page",
     "html_handling": "auto-trailing-slash",
   },

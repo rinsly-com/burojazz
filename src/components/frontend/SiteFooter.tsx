@@ -12,14 +12,18 @@ type Props = {
 /** Footer link lists use the same shared link fields as the header nav. */
 type LinkItem = LinkFields & { id?: string | null }
 
-/** The site is a onepager, so the fallback menu scrolls to home page sections. */
+/**
+ * The site is a onepager, so the fallback menu scrolls to home page sections.
+ * Section order matches the home page. Contact is the existing link for
+ * contact-personen (the header uses the same target).
+ */
 const FALLBACK_MENU: LinkItem[] = [
   { label: 'Home', type: 'external', url: '/' },
   { label: 'Hulpverleningsvormen', type: 'external', url: '/#hulpverleningsvormen' },
   { label: 'Over ons', type: 'external', url: '/#over-ons' },
-  { label: 'Klachtregeling', type: 'external', url: '/#klachtregeling' },
+  { label: 'Contact', type: 'external', url: '/#contact-personen' },
+  { label: 'Klachtenregeling', type: 'external', url: '/#klachtenregeling' },
   { label: 'Vacatures', type: 'external', url: '/#vacatures' },
-  { label: 'Contact', type: 'external', url: '/contact' },
 ]
 
 const FALLBACK_INFO: LinkItem[] = [
