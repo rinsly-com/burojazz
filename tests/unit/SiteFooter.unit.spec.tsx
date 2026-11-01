@@ -58,7 +58,7 @@ describe('footer fallback menu', () => {
   })
 
   it('uses the same fallback when the CMS menu is an empty list', () => {
-    render(<SiteFooter footer={{ menuItems: [] } as Footer} />)
+    render(<SiteFooter footer={{ id: 1, menuItems: [] } as unknown as Footer} />)
     expect(menuLinks()).toEqual(FALLBACK_LINKS)
   })
 

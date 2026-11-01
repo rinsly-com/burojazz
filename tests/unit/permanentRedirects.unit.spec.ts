@@ -4,10 +4,10 @@
  * REGRESSION: `/psycholoog--orthopedagoog` was a published path. Production
  * is Workers Assets (`out/` from the static export) and does not run
  * `next.config` redirects. Accp is an OpenNext worker, and Workers Assets
- * does not apply `_redirects` to requests that worker serves. Both layers
- * have to 301, including the trailing-slash form, because static assets use
- * `html_handling: auto-trailing-slash` and Next strips trailing slashes
- * itself unless the slash rule is priority.
+ * does not apply `_redirects` to requests that worker serves. Workers Assets
+ * lists both slash forms. Next lists only the no-slash path: `trailingSlash:
+ * false` already 308s the slash form onto it, and `priority` is not a valid
+ * redirect field in Next 16.4.3.
  */
 import { existsSync, readFileSync } from 'node:fs'
 
@@ -24,15 +24,19 @@ const REDIRECT_LINES = [
 ]
 
 describe('psycholoog orthopedagoog permanent redirects', () => {
-  it('301s both slash forms to the single-dash path', () => {
+  it('301s both slash forms from Workers Assets and only the no-slash path from Next', () => {
     expect(workersAssetsRedirectLines()).toBe(`${REDIRECT_LINES.join('\n')}\n`)
-    expect(
-      nextPermanentRedirects().map(
-        (rule) => `${rule.source} ${rule.destination} ${rule.statusCode}`,
-      ),
-    ).toEqual(REDIRECT_LINES)
-    expect(nextPermanentRedirects()[1]?.priority).toBe(true)
-    expect(nextPermanentRedirects()[0]?.priority).toBeUndefined()
+
+    const nextRules = nextPermanentRedirects()
+    expect(nextRules).toEqual([
+      {
+        source: '/psycholoog--orthopedagoog',
+        destination: '/psycholoog-orthopedagoog',
+        statusCode: 301,
+      },
+    ])
+    expect(nextRules.some((rule) => rule.source.endsWith('/'))).toBe(false)
+    expect(nextRules.some((rule) => 'priority' in rule)).toBe(false)
   })
 
   it('ships those lines in public/_redirects for the static asset build', () => {

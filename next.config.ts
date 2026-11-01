@@ -32,8 +32,9 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  // Accp (OpenNext) only. Static export does not apply these; production
-  // uses public/_redirects, copied into out/ for Workers Assets.
+  // Accp (OpenNext) only: the no-slash 301. Next 308s the trailing-slash
+  // form onto it. Static export ignores redirects(); production uses
+  // public/_redirects (both forms), copied into out/.
   async redirects() {
     return nextPermanentRedirects()
   },
