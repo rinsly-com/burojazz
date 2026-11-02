@@ -68,7 +68,7 @@ const usable = (n: number) => Number.isFinite(n) && n > 0
  */
 export const clampFocal = (value: number | null | undefined) => {
   if (value === null || value === undefined) return 50
-  const n = Number(value)
+  const n = value
   return Number.isFinite(n) ? Math.min(100, Math.max(0, n)) : 50
 }
 

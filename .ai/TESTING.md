@@ -94,6 +94,8 @@ Keep this list current — it is the record of what has actually bitten us.
 | Content-endpoint anchors on About / Vacancies duplicated the hardcoded `#wie-wij-zijn` and `#vacatures` ids | `sectionAnchors.unit.spec.tsx` |
 | The footer fallback still said Klachtregeling and missed `contact-personen` / `klachtenregeling` | `SiteFooter.unit.spec.tsx` |
 | Static production sent only Content-Security-Policy; accp sent no hardening headers. DENY on accp would blank live preview | `securityHeaders.unit.spec.ts` |
+| A non-object JSON body on `/api/aanmeldingen/submit` threw before the handler's catch and 500'd the route | `aanmeldingSubmit.unit.spec.ts` |
+| A bad page document in a list was cast through, so one row could throw while the list rendered | `rows.unit.spec.ts`, `pages.unit.spec.ts` |
 
 ## Known broken
 

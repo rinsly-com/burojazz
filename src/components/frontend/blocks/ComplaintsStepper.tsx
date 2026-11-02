@@ -136,8 +136,10 @@ export function ComplaintsStepper({
           if (best >= 0) setActiveIndex(best)
         }
 
+        const root = rootRef.current
+        if (!root) return
         const st = ScrollTrigger.create({
-          trigger: rootRef.current!,
+          trigger: root,
           start: 'top bottom',
           end: 'bottom top',
           onUpdate: updateActive,

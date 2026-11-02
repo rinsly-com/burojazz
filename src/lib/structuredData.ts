@@ -1,4 +1,6 @@
 import type { Footer, Page } from '@/payload-types'
+
+import { envUrl } from './env'
 import { absoluteUrl, SITE_NAME, SITE_URL } from './siteUrl'
 
 const DEFAULT_DESCRIPTION = 'Buro J.A.Z.Z. — jeugdzorg, advies, zorg en zekerheid.'
@@ -8,7 +10,7 @@ function absoluteMediaUrl(media: unknown): string | undefined {
   if (!media || typeof media !== 'object') return undefined
   const url = (media as { url?: string | null }).url
   if (!url) return undefined
-  const origin = process.env.PAYLOAD_API_URL || 'http://localhost:3000'
+  const origin = envUrl('PAYLOAD_API_URL', 'http://localhost:3000')
   return new URL(url, origin).toString()
 }
 

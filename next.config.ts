@@ -42,8 +42,10 @@ const nextConfig: NextConfig = {
   // X-Frame-Options is SAMEORIGIN so /admin live preview can iframe the site.
   ...(isStatic
     ? { output: 'export' as const, distDir: '.next-static' }
-    : { headers: async () => accpSecurityHeaders() }),
+    : { headers: () => Promise.resolve(accpSecurityHeaders()) }),
   webpack: (webpackConfig) => {
+    // Next types this hook's config as `any`.
+    /* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return */
     webpackConfig.resolve.extensionAlias = {
       '.cjs': ['.cts', '.cjs'],
       '.js': ['.ts', '.tsx', '.js', '.jsx'],
@@ -51,6 +53,7 @@ const nextConfig: NextConfig = {
     }
 
     return webpackConfig
+    /* eslint-enable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return */
   },
   turbopack: {
     root: path.resolve(dirname),

@@ -4,6 +4,10 @@ import { useEffect, useState } from 'react'
 
 import { Media, type MediaResource } from '@rinsly-com/site-core/ui'
 
+import { validatePublicUrl } from '@/lib/env'
+import { LogCode, logCode } from '@/lib/logCode'
+import { instagramClientPostSchema } from '@/lib/instagramPost'
+
 type Post = {
   permalink: string
   imageUrl: string
@@ -22,7 +26,10 @@ const PHONE_SIZES = '(min-width: 768px) 762px, 560px'
 
 /** Base URL of the Payload API — empty same-origin in dev, the accp origin in
  *  the static build (same env the aanmelden form uses). */
-const API_BASE = process.env.NEXT_PUBLIC_PAYLOAD_API_URL ?? ''
+const API_BASE = validatePublicUrl(
+  'NEXT_PUBLIC_PAYLOAD_API_URL',
+  process.env.NEXT_PUBLIC_PAYLOAD_API_URL,
+)
 
 /**
  * The hand-held phone in the social collage. Always renders the phone mockup
@@ -51,13 +58,23 @@ export function InstagramPhone({
   useEffect(() => {
     if (!live) return
     let cancelled = false
-    fetch(`${API_BASE}/api/instagram/latest`)
-      .then((r) => (r.ok ? (r.json() as Promise<{ post?: Post | null }>) : null))
+    void fetch(`${API_BASE}/api/instagram/latest`)
+      .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
-        if (!cancelled && data?.post) setPost(data.post)
+        if (cancelled || !data || typeof data !== 'object') return
+        const parsed = instagramClientPostSchema.safeParse((data as { post?: unknown }).post)
+        if (!parsed.success) {
+          logCode('warn', LogCode.INSTAGRAM_CLIENT_PAYLOAD_INVALID)
+          return
+        }
+        setPost({
+          permalink: parsed.data.permalink,
+          imageUrl: parsed.data.imageUrl,
+          caption: parsed.data.caption ?? null,
+        })
       })
       .catch(() => {
-        /* keep the static mockup */
+        logCode('warn', LogCode.INSTAGRAM_CLIENT_FETCH_FAILED)
       })
     return () => {
       cancelled = true

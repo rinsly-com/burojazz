@@ -11,6 +11,8 @@ import {
   SIBLING_TYPE_OPTIONS,
   VORM_VAN_HULP_OPTIONS,
 } from '@/lib/aanmeldingOptions'
+import { validatePublicUrl } from '@/lib/env'
+import { headerRecord } from '@/lib/headerRecord'
 import {
   BackButton,
   CheckboxField,
@@ -31,7 +33,10 @@ import {
 
 /** Base URL of the Payload API. Empty in dev (same-origin); the static build
  *  bakes in the accp/production worker URL via NEXT_PUBLIC_PAYLOAD_API_URL. */
-const API_BASE = process.env.NEXT_PUBLIC_PAYLOAD_API_URL ?? ''
+const API_BASE = validatePublicUrl(
+  'NEXT_PUBLIC_PAYLOAD_API_URL',
+  process.env.NEXT_PUBLIC_PAYLOAD_API_URL,
+)
 const TURNSTILE_REQUIRED = Boolean(process.env.NEXT_PUBLIC_TURNSTILE_SITEKEY)
 
 type SubmitState = 'idle' | 'submitting' | 'success' | 'error'
@@ -111,7 +116,7 @@ export function AanmeldenForm({
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          ...turnstileHeaders(tokenToSend),
+          ...headerRecord(turnstileHeaders(tokenToSend)),
         },
         // Honeypot field `website` stays empty for real users (see endpoint).
         body: JSON.stringify({ ...toSubmitBody(data), website: '' }),
@@ -510,7 +515,9 @@ export function AanmeldenForm({
         {isLast ? (
           <PrimaryButton
             type="button"
-            onClick={submit}
+            onClick={() => {
+              void submit()
+            }}
             disabled={state === 'submitting' || (TURNSTILE_REQUIRED && !turnstileToken)}
           >
             {state === 'submitting' ? 'Versturen…' : 'Verstuur bericht'}

@@ -99,7 +99,7 @@ describe('accp OpenNext headers()', () => {
   })
 
   it('is wired from next.config only when the build is not the static export', () => {
-    expect(nextConfigSource).toContain('headers: async () => accpSecurityHeaders()')
+    expect(nextConfigSource).toMatch(/headers:.*accpSecurityHeaders\(\)/)
     expect(nextConfigSource).toContain("? { output: 'export' as const, distDir: '.next-static' }")
   })
 })

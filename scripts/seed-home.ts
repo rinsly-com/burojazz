@@ -585,8 +585,8 @@ async function repairOrphanedVersions(payload: PayloadInstance) {
     )
     await drizzle.run(sql`DELETE FROM _pages_v WHERE parent_id IS NULL`)
     console.log('Checked/repaired orphaned page-version links')
-  } catch (err) {
-    console.warn('Version-link repair skipped:', err instanceof Error ? err.message : err)
+  } catch {
+    console.warn({ code: 'SEED_VERSION_REPAIR_FAILED' })
   }
 }
 
@@ -771,7 +771,7 @@ async function run() {
     })
     console.log('Home page published')
   } catch (err) {
-    console.error('PUBLISH FAILED:', err instanceof Error ? err.message : err)
+    console.error({ code: 'SEED_PUBLISH_FAILED' })
     throw err
   }
 
@@ -841,7 +841,7 @@ async function run() {
 try {
   await run()
   process.exit(0)
-} catch (err) {
-  console.error(err)
+} catch {
+  console.error({ code: 'SEED_FAILED' })
   process.exit(1)
 }

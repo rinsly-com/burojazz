@@ -3,8 +3,8 @@ import { notFound } from 'next/navigation'
 import React from 'react'
 
 import config from '@payload-config'
+import { resolveI18n } from '@rinsly-com/site-core/lib/locale'
 import { PreviewRuntime } from '@rinsly-com/site-core/preview'
-import { DEFAULT_LOCALE } from '@rinsly-com/site-core/lib/locale'
 
 import { JsonLd } from '@/components/frontend/JsonLd'
 import { PageView } from '@/components/frontend/PageView'
@@ -70,7 +70,10 @@ export default async function Page({
         <PreviewShell
           // Owned Pages layout ≠ core Page type; shell only needs the document shape at runtime.
           initialPage={page as React.ComponentProps<typeof PreviewShell>['initialPage']}
-          locale={DEFAULT_LOCALE}
+          // site.config has no i18n field. An empty argument is the weak
+          // { i18n?: … } parameter, so the resolved default stays the package
+          // default (the former DEFAULT_LOCALE). Do not invent locales here.
+          locale={resolveI18n({}).defaultLocale}
           serverURL={serverURL}
         />
       </>

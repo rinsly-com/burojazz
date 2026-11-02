@@ -4,7 +4,7 @@
  * `extraOrigins` (CORS/CSRF) and `seo` (the admin SEO-plugin defaults). The
  * frontend keeps its own branding (this project's `lib/siteUrl` etc. are unchanged).
  */
-type Localized = { nl: string; en: string }
+import { envUrl } from './lib/env'
 
 export const siteConfig = {
   name: 'Buro J.A.Z.Z.',
@@ -13,7 +13,7 @@ export const siteConfig = {
   // tag, the sitemap, Open Graph, and the domain the admin's availability panel
   // asks the uptime monitor about. Naming the redirecting domain here made all
   // four point at an address the site does not actually serve from.
-  url: (process.env.NEXT_PUBLIC_SITE_URL || 'https://burojazz.nl').replace(/\/+$/, ''),
+  url: envUrl('NEXT_PUBLIC_SITE_URL', 'https://burojazz.nl').replace(/\/+$/, ''),
   themeColor: '#51c2cc',
   // The square brand mark, the same asset the site header renders.
   // (Was '/logo.svg', which does not exist in public/.)
@@ -24,7 +24,7 @@ export const siteConfig = {
     description: {
       nl: 'Buro J.A.Z.Z. — jeugdzorg, advies, zorg en zekerheid.',
       en: 'Buro J.A.Z.Z. — youth care, advice, care and certainty.',
-    } as Localized,
+    },
   },
   // Origins allowed to call the accp worker's API cross-origin (CORS/CSRF) —
   // chiefly the public static site POSTing the "Direct aanmelden" form. `url`
