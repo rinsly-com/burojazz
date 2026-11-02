@@ -4,6 +4,7 @@ import { apiOrigin } from './apiOrigin'
 import { readSnapshot } from './contentSnapshot'
 import { LogCode, logCode } from './logCode'
 import { parsePageList, parsePageRow } from './rows'
+import { readJson } from './readJson'
 
 /**
  * Fetch renderable content from the Payload API over HTTP (no Payload/DB import,
@@ -31,10 +32,6 @@ const mergeBySlug = (preferred: Page[], fallback: Page[]): Page[] => {
   for (const page of fallback) bySlug.set(page.slug, page)
   for (const page of preferred) bySlug.set(page.slug, page)
   return [...bySlug.values()]
-}
-
-async function readJson(res: Response): Promise<unknown> {
-  return (await res.json()) as unknown
 }
 
 async function fetchPages(query: string): Promise<Page[]> {

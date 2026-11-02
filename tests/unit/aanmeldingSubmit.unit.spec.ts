@@ -74,6 +74,24 @@ describe('parseAanmeldingSubmit', () => {
     expect(decision).toEqual({ kind: 'honeypot' })
   })
 
+  it('accepts an email the client trims, and stores it trimmed', () => {
+    // The wizard's regex runs on the trimmed string and still POSTs the raw
+    // field. Zod's email() rejects that padding, which would 400 a submit the
+    // client had already accepted.
+    const body = toSubmitBody({
+      ...valid(),
+      verwijzerEmail: '  jansen@wijkteam.nl  ',
+      moederEmail: ' moeder@example.nl ',
+      vaderEmail: '   ',
+    })
+    const decision = parseAanmeldingSubmit(body)
+    expect(decision.kind).toBe('data')
+    if (decision.kind !== 'data') return
+    expect(decision.data.verwijzerEmail).toBe('jansen@wijkteam.nl')
+    expect(decision.data.moederEmail).toBe('moeder@example.nl')
+    expect(decision.data.vaderEmail).toBe('')
+  })
+
   it('rejects a sibling relation that is not one of the options', () => {
     const body = toSubmitBody({
       ...valid(),

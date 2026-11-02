@@ -64,6 +64,15 @@ async function getEmailBinding(name: string): Promise<SendEmailBinding | null> {
   }
 }
 
+function firstString(value: unknown): string | undefined {
+  if (typeof value === 'string' && value !== '') return value
+  if (!Array.isArray(value)) return undefined
+  for (const item of value) {
+    if (typeof item === 'string' && item !== '') return item
+  }
+  return undefined
+}
+
 /** Build a raw MIME message and hand it to the Cloudflare Email Routing binding. */
 async function sendViaCloudflare(
   binding: SendEmailBinding,
@@ -80,24 +89,34 @@ async function sendViaCloudflare(
   )) as { EmailMessage: new (from: string, to: string, raw: string) => unknown }
   const { createMimeMessage, Mailbox } = await import('mimetext')
 
-  const toRaw = Array.isArray(message.to) ? message.to[0] : message.to
-  const to = typeof toRaw === 'string' && toRaw !== '' ? toRaw : EMAIL_TO
-  const from =
-    typeof message.from === 'string' && message.from !== ''
-      ? message.from
-      : `${EMAIL_FROM_NAME} <${EMAIL_FROM}>`
+  // SendEmailOptions pulls `to` / `subject` from nodemailer. When that module
+  // is unresolved the fields are an error type; read them as unknown instead.
+  const fields = message as {
+    to?: unknown
+    from?: unknown
+    subject?: unknown
+    text?: unknown
+    html?: unknown
+    replyTo?: unknown
+  }
+  const to = firstString(fields.to) ?? EMAIL_TO
+  const from = typeof fields.from === 'string' && fields.from !== '' ? fields.from : `${EMAIL_FROM_NAME} <${EMAIL_FROM}>`
   const fromAddr = from.match(/<([^>]+)>/)?.[1] ?? from
+  const subject = typeof fields.subject === 'string' ? fields.subject : ''
+  const text = typeof fields.text === 'string' ? fields.text : undefined
+  const html = typeof fields.html === 'string' ? fields.html : undefined
+  const replyTo = typeof fields.replyTo === 'string' ? fields.replyTo : undefined
 
   const mime = createMimeMessage()
   mime.setSender({ name: EMAIL_FROM_NAME, addr: fromAddr })
   mime.setRecipient(to)
-  mime.setSubject(message.subject ?? '')
+  mime.setSubject(subject)
   // Reply-To must be a Mailbox instance — mimetext's address-header validator
   // rejects a plain string/object outright ("header value is invalid").
-  if (message.replyTo) mime.setHeader('Reply-To', new Mailbox(String(message.replyTo)))
-  if (message.text) mime.addMessage({ contentType: 'text/plain', data: String(message.text) })
-  if (message.html) mime.addMessage({ contentType: 'text/html', data: String(message.html) })
-  if (!message.text && !message.html) {
+  if (replyTo) mime.setHeader('Reply-To', new Mailbox(replyTo))
+  if (text) mime.addMessage({ contentType: 'text/plain', data: text })
+  if (html) mime.addMessage({ contentType: 'text/html', data: html })
+  if (!text && !html) {
     mime.addMessage({ contentType: 'text/plain', data: '' })
   }
 
@@ -116,8 +135,6 @@ export const cloudflareEmailAdapter: EmailAdapter = ({ payload }) => ({
     if (!binding) {
       payload.logger.info({
         msg: '[email] no Email Sending binding (dev/CLI) — logging instead of sending',
-        to: message.to,
-        subject: message.subject,
       })
       return
     }

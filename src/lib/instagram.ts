@@ -18,6 +18,7 @@
  */
 
 import { envOptionalSecret } from './env'
+import { readJson } from './readJson'
 import { LogCode, logCode } from './logCode'
 import {
   instagramCacheSchema,
@@ -90,7 +91,7 @@ async function maybeRefreshToken(kv: KVNamespace, token: string): Promise<string
     const res = await fetch(url)
     status = res.status
     if (!res.ok) throw new Error('refresh http')
-    const json = instagramRefreshSchema.safeParse((await res.json()) as unknown)
+    const json = instagramRefreshSchema.safeParse(await readJson(res))
     if (!json.success) throw new Error('refresh shape')
     await kv.put(KEY_TOKEN, json.data.access_token)
     await kv.put(KEY_TOKEN_REFRESHED_AT, String(now))
@@ -138,7 +139,7 @@ export async function getLatestInstagramPost(): Promise<InstagramPost | null> {
     if (!res.ok) {
       logCode('warn', LogCode.INSTAGRAM_MEDIA_FAILED, { status: res.status })
     } else {
-      const json = instagramMediaSchema.safeParse((await res.json()) as unknown)
+      const json = instagramMediaSchema.safeParse(await readJson(res))
       const node = json.success ? json.data.data?.[0] : undefined
       const mapped = node ? mediaNodeToPost(node) : null
       if (!json.success || (node && !mapped)) logCode('warn', LogCode.INSTAGRAM_MEDIA_INVALID)

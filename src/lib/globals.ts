@@ -8,6 +8,7 @@ import { apiOrigin } from './apiOrigin'
 import { readSnapshot } from './contentSnapshot'
 import { LogCode, logCode } from './logCode'
 import { parseFooter, parseHeader } from './rows'
+import { readJson } from './readJson'
 
 async function fetchNamed<T>(
   slug: 'header' | 'footer',
@@ -28,7 +29,7 @@ async function fetchNamed<T>(
       logCode('warn', LogCode.GLOBAL_FETCH_FAILED, { slug, status: res.status })
       return null
     }
-    return parse((await res.json()) as unknown)
+    return parse(await readJson(res))
   } catch {
     // API may be unreachable (e.g. first static build) — degrade gracefully.
     logCode('warn', LogCode.GLOBAL_FETCH_FAILED, { slug })

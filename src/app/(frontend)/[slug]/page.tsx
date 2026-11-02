@@ -3,10 +3,11 @@ import { notFound } from 'next/navigation'
 import React from 'react'
 
 import config from '@payload-config'
+import { resolveI18n } from '@rinsly-com/site-core/lib/locale'
 import { PreviewRuntime } from '@rinsly-com/site-core/preview'
-import { DEFAULT_LOCALE } from '@rinsly-com/site-core/lib/locale'
 
 import { JsonLd } from '@/components/frontend/JsonLd'
+import { siteConfig } from '@/site.config'
 import { PageView } from '@/components/frontend/PageView'
 import { RenderBlocks } from '@/components/frontend/RenderBlocks'
 import { buildPageMetadata } from '@/lib/metadata'
@@ -70,7 +71,7 @@ export default async function Page({
         <PreviewShell
           // Owned Pages layout ≠ core Page type; shell only needs the document shape at runtime.
           initialPage={page as React.ComponentProps<typeof PreviewShell>['initialPage']}
-          locale={DEFAULT_LOCALE}
+          locale={resolveI18n(siteConfig).defaultLocale}
           serverURL={serverURL}
         />
       </>

@@ -5,6 +5,7 @@ import { FieldLabel, SelectInput, useField, useFormFields } from '@payloadcms/ui
 import type { TextFieldClientComponent } from 'payload'
 
 import { LogCode, logCode } from '@/lib/logCode'
+import { readJson } from '@/lib/readJson'
 
 /** The subset of a Page block we need to build a scroll-target option. */
 type BlockLite = {
@@ -77,7 +78,7 @@ export const SectionSelect: TextFieldClientComponent = ({ field, path }) => {
       credentials: 'include',
       headers: { accept: 'application/json' },
     })
-      .then((r) => (r.ok ? (r.json() as Promise<unknown>) : Promise.reject(new Error(String(r.status)))))
+      .then((r) => (r.ok ? readJson(r) : Promise.reject(new Error(String(r.status)))))
       .then((doc) => {
         const layout =
           doc && typeof doc === 'object' && 'layout' in doc

@@ -7,6 +7,17 @@ import type { User } from '@/payload-types'
 import { isReviewer } from '../access/roles'
 import type { DeployResult } from '../hooks/triggerStaticDeploy'
 import { LogCode, logCode } from '../lib/logCode'
+import { readJson } from '../lib/readJson'
+
+function isDeployResult(value: unknown): value is DeployResult & { message: string } {
+  if (typeof value !== 'object' || value === null) return false
+  if (!('status' in value) || !('message' in value)) return false
+  const { status, message } = value
+  return (
+    (status === 'triggered' || status === 'skipped' || status === 'failed') &&
+    typeof message === 'string'
+  )
+}
 
 type PanelState =
   | { phase: 'idle' }
@@ -39,7 +50,13 @@ export const DeployPanel: React.FC = () => {
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
       })
-      const result = (await res.json()) as DeployResult & { message: string }
+      const result = await readJson(res)
+      if (!isDeployResult(result)) {
+        const message = 'Deploy request failed.'
+        setState({ phase: 'error', message })
+        toast.error(message)
+        return
+      }
       if (!res.ok && result.status !== 'skipped') {
         const message = result.message || `Request failed (HTTP ${res.status}).`
         setState({ phase: 'error', message })

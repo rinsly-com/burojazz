@@ -239,7 +239,7 @@ export const Aanmeldingen: CollectionConfig = {
 async function submitHandler(req: PayloadRequest): Promise<Response> {
   let body: unknown = {}
   try {
-    body = req.json ? ((await req.json()) as unknown) : {}
+    body = req.json ? await req.json() : {}
   } catch {
     logCode('warn', LogCode.AANMELDING_BODY_INVALID, undefined, req.payload.logger)
     return Response.json({ error: 'Invalid JSON body.' }, { status: 400 })

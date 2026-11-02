@@ -59,7 +59,7 @@ export function InstagramPhone({
     if (!live) return
     let cancelled = false
     void fetch(`${API_BASE}/api/instagram/latest`)
-      .then((r) => (r.ok ? (r.json() as Promise<unknown>) : null))
+      .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
         if (cancelled || !data || typeof data !== 'object') return
         const parsed = instagramClientPostSchema.safeParse((data as { post?: unknown }).post)

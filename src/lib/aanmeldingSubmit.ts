@@ -16,6 +16,10 @@ import {
 
 const text = z.string()
 const requiredText = z.string().min(1)
+// The client trims before its email regex. Zod's email() does not, so a padded
+// address the wizard accepts would 400 here. Trim first; store the trimmed value.
+const requiredEmail = z.string().trim().pipe(z.email())
+const optionalEmail = z.string().trim().pipe(z.union([z.literal(''), z.email()]))
 
 function enumOf(options: { value: string }[]) {
   const values = options.map((option) => option.value)
@@ -33,15 +37,15 @@ const submitSchema = z.object({
   clientAdres: requiredText,
   verwijzerNaam: requiredText,
   verwijzerOrganisatie: requiredText,
-  verwijzerEmail: z.email(),
+  verwijzerEmail: requiredEmail,
   verwijzerTelefoon: requiredText,
   moederNaam: requiredText,
   moederAdres: requiredText,
-  moederEmail: z.email(),
+  moederEmail: requiredEmail,
   moederTelefoon: requiredText,
   vaderNaam: requiredText,
   vaderAdres: text.optional(),
-  vaderEmail: z.union([z.literal(''), z.email()]).optional(),
+  vaderEmail: optionalEmail.optional(),
   vaderTelefoon: text.optional(),
   siblings: z.array(z.unknown()).optional(),
   redenAanmelden: requiredText,

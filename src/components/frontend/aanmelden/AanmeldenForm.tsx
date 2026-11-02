@@ -12,6 +12,7 @@ import {
   VORM_VAN_HULP_OPTIONS,
 } from '@/lib/aanmeldingOptions'
 import { validatePublicUrl } from '@/lib/env'
+import { headerRecord } from '@/lib/headerRecord'
 import {
   BackButton,
   CheckboxField,
@@ -115,7 +116,7 @@ export function AanmeldenForm({
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          ...turnstileHeaders(tokenToSend),
+          ...headerRecord(turnstileHeaders(tokenToSend)),
         },
         // Honeypot field `website` stays empty for real users (see endpoint).
         body: JSON.stringify({ ...toSubmitBody(data), website: '' }),
