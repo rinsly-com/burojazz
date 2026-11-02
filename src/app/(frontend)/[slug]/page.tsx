@@ -13,7 +13,6 @@ import { buildPageMetadata } from '@/lib/metadata'
 import { getRenderablePageBySlug, getRenderablePages } from '@/lib/pages'
 import { resolvePreview, type SearchParams } from '@/lib/preview'
 import { buildPageJsonLd } from '@/lib/structuredData'
-import '../styles.css'
 
 // On the accp worker, pages.ts reads request headers to self-fetch its API,
 // which makes this route render dynamically — any published slug renders on

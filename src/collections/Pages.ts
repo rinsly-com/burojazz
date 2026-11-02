@@ -1,11 +1,10 @@
 import type { CollectionConfig } from 'payload'
 import { slugField } from 'payload'
 
-import { authenticated, reviewerOnly, isReviewer } from '../access/roles'
+import { authenticated, reviewerOnly } from '../access/roles'
 import { pageBlocks } from '../blocks'
 import { enforceWorkflow } from '../hooks/enforceWorkflow'
 import { previewPath } from '../lib/preview'
-import type { User } from '@/payload-types'
 
 /**
  * Pages — content with a per-document PR-style review workflow:
@@ -138,6 +137,3 @@ export const Pages: CollectionConfig = {
   ],
   timestamps: true,
 }
-
-/** Whether the given user may publish this collection (used by the UI too). */
-export const canPublishPages = (user: User | null | undefined): boolean => isReviewer(user)

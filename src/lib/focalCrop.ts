@@ -33,7 +33,7 @@
  */
 export const MIN_PAN = 0.2
 
-export type FocalCropInput = {
+type FocalCropInput = {
   /** The visible window's width / height. */
   boxAspect: number
   /** The image's intrinsic width / height. */
@@ -45,7 +45,7 @@ export type FocalCropInput = {
   minPan?: number
 }
 
-export type FocalCrop = {
+type FocalCrop = {
   /** Image width as a multiple of the box width (1 = exactly the box). */
   widthRatio: number
   /** Image height as a multiple of the box height. */

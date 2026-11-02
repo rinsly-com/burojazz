@@ -45,7 +45,7 @@ const SECTION_MIN_H = 888
  * CMS media has no usable dimensions. */
 const DEFAULT_ASPECT = 1600 / 1510
 
-export type DesktopPhotoInput = {
+type DesktopPhotoInput = {
   /** The image's intrinsic width / height. */
   mediaAspect: number
   /** Payload's focal point, 0–100; absent means centred. */

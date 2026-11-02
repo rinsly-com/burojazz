@@ -1,8 +1,8 @@
-import { metaImageUrl, OG_SIZE, renderOgImage } from '@/lib/og'
+import { metaImageUrl, OG_CONTENT_TYPE, OG_SIZE, renderOgImage } from '@/lib/og'
 import { getRenderablePageBySlug } from '@/lib/pages'
 
 export const size = OG_SIZE
-export const contentType = 'image/png'
+export const contentType = OG_CONTENT_TYPE
 export const alt = 'Buro J.A.Z.Z. — jeugdzorg, advies, zorg en zekerheid'
 
 // OG-image routes compile to Route Handlers, which `output: export` does not

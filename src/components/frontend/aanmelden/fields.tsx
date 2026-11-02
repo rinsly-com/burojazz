@@ -13,7 +13,7 @@ import { STEPS } from './formData'
 /* Inline icons (client-safe — no Tabler barrel in the client bundle)         */
 /* -------------------------------------------------------------------------- */
 
-export function CheckIcon({ className }: { className?: string }) {
+function CheckIcon({ className }: { className?: string }) {
   return (
     <svg
       width="14"
