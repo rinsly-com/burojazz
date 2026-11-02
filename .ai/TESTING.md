@@ -93,6 +93,7 @@ Keep this list current — it is the record of what has actually bitten us.
 | The static build must ship published content only — never a draft | `pages.unit.spec.ts` |
 | Content-endpoint anchors on About / Vacancies duplicated the hardcoded `#wie-wij-zijn` and `#vacatures` ids | `sectionAnchors.unit.spec.tsx` |
 | The footer fallback still said Klachtregeling and missed `contact-personen` / `klachtenregeling` | `SiteFooter.unit.spec.tsx` |
+| Static production sent only Content-Security-Policy; accp sent no hardening headers. DENY on accp would blank live preview | `securityHeaders.unit.spec.ts` |
 
 ## Known broken
 
