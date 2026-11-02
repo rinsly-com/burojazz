@@ -92,7 +92,7 @@ Keep this list current — it is the record of what has actually bitten us.
 | Production was rebuilt by every publish, every draft save of a live page, and every Header/Footer save, making Actions runs look random | `triggerStaticDeploy.unit.spec.ts`, `collectionConfig.unit.spec.ts` |
 | The static build must ship published content only — never a draft | `pages.unit.spec.ts` |
 | Content-endpoint anchors on About / Vacancies duplicated the hardcoded `#wie-wij-zijn` and `#vacatures` ids | `sectionAnchors.unit.spec.tsx` |
-| `/psycholoog--orthopedagoog` had no 301 on the static host (Workers Assets ignores `next.config` redirects) or on the accp worker (`_redirects` is not applied to worker-handled requests). The footer fallback still said Klachtregeling and missed `contact-personen` / `klachtenregeling` | `permanentRedirects.unit.spec.ts`, `SiteFooter.unit.spec.tsx` |
+| The footer fallback still said Klachtregeling and missed `contact-personen` / `klachtenregeling` | `SiteFooter.unit.spec.tsx` |
 
 ## Known broken
 
