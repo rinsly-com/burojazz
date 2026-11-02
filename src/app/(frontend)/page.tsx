@@ -11,7 +11,6 @@ import { buildPageMetadata } from '@/lib/metadata'
 import { getRenderablePageBySlug, getRenderablePages } from '@/lib/pages'
 import { resolvePreview, type SearchParams } from '@/lib/preview'
 import { buildPageJsonLd } from '@/lib/structuredData'
-import './styles.css'
 
 // accp worker: render on demand so the homepage always reflects live content.
 // The static production export (build-static.mjs) strips this so it can prerender.

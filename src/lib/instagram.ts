@@ -30,7 +30,7 @@ const CACHE_TTL_MS = 30 * 60 * 1000 // 30 min
 const TOKEN_REFRESH_AFTER_MS = 24 * 24 * 60 * 60 * 1000 // 24 days
 
 /** The shape returned to the frontend. */
-export type InstagramPost = {
+type InstagramPost = {
   id: string
   permalink: string
   caption: string | null

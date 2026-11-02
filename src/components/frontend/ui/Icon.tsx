@@ -15,7 +15,7 @@ type TablerIconProps = {
 // selected SVG is inlined into the statically-exported HTML (no icon JS ships).
 const icons = TablerIcons as unknown as Record<string, ComponentType<TablerIconProps> | undefined>
 
-export type IconProps = {
+type IconProps = {
   /** Tabler component name from the CMS IconSelector, e.g. "IconHeart". */
   name?: string | null
   /** Tabler component name to use when `name` is empty or unknown. */

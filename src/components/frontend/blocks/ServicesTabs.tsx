@@ -16,7 +16,7 @@ type ServicesBlock = Extract<NonNullable<Page['layout']>[number], { blockType: '
 /** A service card as stored in the CMS — the source of the `details` shape. */
 type CMSServiceCard = NonNullable<NonNullable<ServicesBlock['tabs']>[number]['cards']>[number]
 
-export type CardData = {
+type CardData = {
   number?: string | null
   title?: string | null
   description?: string | null

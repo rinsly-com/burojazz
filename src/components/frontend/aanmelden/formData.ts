@@ -1,6 +1,6 @@
 /** Client-side shape + validation for the "Direct aanmelden" wizard. */
 
-export type SiblingRow = { leeftijd: string; type: '' | 'broer' | 'zus' | 'nvt' }
+type SiblingRow = { leeftijd: string; type: '' | 'broer' | 'zus' | 'nvt' }
 
 export type AanmeldenData = {
   // Step 1 — Persoonsgegevens

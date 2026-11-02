@@ -1,7 +1,7 @@
-import { OG_SIZE, renderOgImage } from '@/lib/og'
+import { OG_CONTENT_TYPE, OG_SIZE, renderOgImage } from '@/lib/og'
 
 export const size = OG_SIZE
-export const contentType = 'image/png'
+export const contentType = OG_CONTENT_TYPE
 export const alt = 'Direct aanmelden — Buro J.A.Z.Z.'
 
 // OG-image routes compile to Route Handlers, which `output: export` does not

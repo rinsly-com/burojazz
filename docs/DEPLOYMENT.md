@@ -201,8 +201,7 @@ content on accp (and set `PAYLOAD_API_URL` to accp) before the prod build, or it
 will error on an empty result.
 
 `scripts/build-static.mjs` temporarily removes the `(payload)` admin/API route
-group and `my-route` before exporting; add any other server-only routes to its
-`EXCLUDED` list.
+group before exporting; add any other server-only routes to its `EXCLUDED` list.
 
 ## "Direct aanmelden" intake form
 

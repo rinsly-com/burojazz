@@ -25,9 +25,9 @@ import {
  * instead of sent — production (accp) sends for real.
  */
 
-export const EMAIL_FROM = process.env.EMAIL_FROM_ADDRESS || 'aanmelden@burojazz.com'
-export const EMAIL_FROM_NAME = process.env.EMAIL_FROM_NAME || 'Buro J.A.Z.Z. website'
-export const EMAIL_TO = process.env.AANMELDING_NOTIFY_TO || 'aanmeldingen@burojazz.com'
+const EMAIL_FROM = process.env.EMAIL_FROM_ADDRESS || 'aanmelden@burojazz.com'
+const EMAIL_FROM_NAME = process.env.EMAIL_FROM_NAME || 'Buro J.A.Z.Z. website'
+const EMAIL_TO = process.env.AANMELDING_NOTIFY_TO || 'aanmeldingen@burojazz.com'
 
 /**
  * From address for the confirmation sent back to the submitter. Unlike the team
@@ -35,7 +35,7 @@ export const EMAIL_TO = process.env.AANMELDING_NOTIFY_TO || 'aanmeldingen@buroja
  * referrer, so it must send FROM a domain onboarded onto Cloudflare Email
  * Sending — see the AANMELDING_CONFIRM_EMAIL binding in wrangler.jsonc.
  */
-export const EMAIL_CONFIRM_FROM =
+const EMAIL_CONFIRM_FROM =
   process.env.EMAIL_CONFIRM_FROM_ADDRESS || 'aanmelding@noreply.burojazz.com'
 
 /** `send_email` binding names (see wrangler.jsonc). */
@@ -133,7 +133,7 @@ const nl2 = (v: unknown): string => esc(v).replace(/\n/g, '<br>')
 type AanmeldingDoc = Record<string, unknown> & { id: string | number }
 
 /** Turn a stored aanmelding into { subject, text, html } for the team email. */
-export function buildAanmeldingEmail(doc: AanmeldingDoc): {
+function buildAanmeldingEmail(doc: AanmeldingDoc): {
   subject: string
   text: string
   html: string
@@ -249,7 +249,7 @@ export async function sendAanmeldingNotification({
  * Deliberately minimal — it must NOT echo the sensitive intake data (health,
  * DSM, reason) back over email; it only acknowledges receipt.
  */
-export function buildAanmeldingConfirmation(
+function buildAanmeldingConfirmation(
   doc: AanmeldingDoc,
   /** Optional staff message from the CMS (aanmelding-instellingen global). */
   extraMessage = '',

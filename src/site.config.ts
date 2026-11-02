@@ -39,5 +39,3 @@ export const siteConfig = {
     'https://accp.burojazz.com',
   ] as string[],
 } as const
-
-export type SiteConfig = typeof siteConfig

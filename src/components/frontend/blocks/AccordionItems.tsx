@@ -4,7 +4,7 @@ import type { ReactNode } from 'react'
 
 import { Accordion } from '@rinsly-com/ui/accordion'
 
-export type AccordionListItem = {
+type AccordionListItem = {
   value: string
   title: string
   /** Server-rendered body. Null when the item has no rich text. */

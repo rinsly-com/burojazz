@@ -4,7 +4,7 @@ import type { ReactNode } from 'react'
 
 import { Accordion } from '@rinsly-com/ui/accordion'
 
-export type AccordionItem = {
+type AccordionItem = {
   key: string
   heading: string
   /** Pre-rendered on the server so the Tabler barrel and Lexical renderer

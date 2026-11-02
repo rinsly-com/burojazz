@@ -8,7 +8,7 @@ import { useRef, useState, type ReactNode } from 'react'
 
 gsap.registerPlugin(useGSAP, ScrollTrigger, ScrollToPlugin)
 
-export type StepPill = {
+type StepPill = {
   key: string
   /** Pre-rendered on the server so the Tabler barrel never ships to the client. */
   icon: ReactNode
