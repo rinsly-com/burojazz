@@ -5,7 +5,7 @@ settings:
   excludeLinksFromLockfile: false
 
 overrides:
-  undici@>=7.0.0 <7.29.1: 7.29.1
+  undici@>=7.0.0 <7.30.1: 7.30.1
   postcss@<8.5.23: 8.5.23
   js-yaml@>=4.0.0 <4.3.2: 4.3.2
   fast-uri@>=3.0.0 <3.1.7: 3.1.7
@@ -48,8 +48,8 @@ importers:
         specifier: 3.90.2
         version: 3.90.2(@types/react@19.2.14)(monaco-editor@0.55.1)(next@16.4.3(@babel/core@7.29.7)(@playwright/test@1.58.2)(@types/node@22.19.9)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(sass@1.77.4))(payload@3.90.2(graphql@16.14.2)(typescript@5.7.3))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(typescript@5.7.3)
       '@rinsly-com/site-core':
-        specifier: 0.26.4
-        version: 0.26.4(1d28eb6fb4f270b1bf1171651451ac1f)
+        specifier: 0.26.7
+        version: 0.26.7(1d28eb6fb4f270b1bf1171651451ac1f)
       '@rinsly-com/ui':
         specifier: 0.3.1
         version: 0.3.1(@date-fns/tz@1.2.0)(@types/react@19.2.14)(date-fns@4.1.0)(next@16.4.3(@babel/core@7.29.7)(@playwright/test@1.58.2)(@types/node@22.19.9)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(sass@1.77.4))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
@@ -132,12 +132,12 @@ importers:
       tsx:
         specifier: 4.22.4
         version: 4.22.4
-      typescript-eslint:
-        specifier: 8.63.0
-        version: 8.63.0(eslint@9.39.4(jiti@2.7.0))(typescript@5.7.3)
       typescript:
         specifier: 5.7.3
         version: 5.7.3
+      typescript-eslint:
+        specifier: 8.63.0
+        version: 8.63.0(eslint@9.39.4(jiti@2.7.0))(typescript@5.7.3)
       vite-tsconfig-paths:
         specifier: 6.0.5
         version: 6.0.5(typescript@5.7.3)(vite@7.3.6(@types/node@22.19.9)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.77.4)(terser@5.36.0)(tsx@4.22.4)(yaml@2.9.1))
@@ -2054,8 +2054,8 @@ packages:
   '@preact/signals-core@1.14.4':
     resolution: {integrity: sha512-HNB6HYeYKhQbJ1aKl+YRjrS4+QWHLKX6qKoUsfS/m0vqzsVaEBiZiaKbG/e+NKk2ch5ALQr/ihWaMHxiCuuWHA==}
 
-  '@rinsly-com/site-core@0.26.4':
-    resolution: {integrity: sha512-vzajWjP4VBijaRJ7BGlFfghsmtjhVqYCYkm4Jr4SKRjxToI3Sd8YHLZ3d/DRFFgA1GXBH+OI2sV81Rmuajis+w==, tarball: https://npm.pkg.github.com/download/@rinsly-com/site-core/0.26.4/9acb3be564bdeb07312345dacd7cbb008ae6994e}
+  '@rinsly-com/site-core@0.26.7':
+    resolution: {integrity: sha512-9XgrG50LR49cqOX5TsR37gRbYRSwQVFhSuwC+kgBVfkMtD8VphNXcBsA3jePvRUcIbTGDBLL5ucy8xFQFQL4rQ==, tarball: https://npm.pkg.github.com/download/@rinsly-com/site-core/0.26.7/c94b4e48233685b682bcaa71b59ef94f8743a026}
     hasBin: true
     peerDependencies:
       '@opennextjs/cloudflare': ^1.20.2
@@ -2235,6 +2235,7 @@ packages:
   '@smithy/core@3.29.2':
     resolution: {integrity: sha512-DXUk6yU0C1Q1tYvJh1VCtl8QOBcSoZpKwjTPkxT6A4MUQYHvgeKGByL8mrEdxnvhdf9nq5GyzmRb5n/vPgu3Lw==}
     engines: {node: '>=18.0.0'}
+    deprecated: Deprecated due to a bug in custom logger data redaction. See https://github.com/aws/aws-sdk-js-v3/issues/8393.
 
   '@smithy/credential-provider-imds@4.4.7':
     resolution: {integrity: sha512-UEMLOoA0Fl4uYBxh6l0uN0H6EJe/A89OGeDNTteQeXpJ20BcpfIr4wlCY9pel1jEAUHAxaYwuqrYlrKdXE1GKQ==}
@@ -5469,10 +5470,6 @@ packages:
     resolution: {integrity: sha512-EvRlUt/QqAEvXdQeRMYUfwOQsfzpDztykrG2owGEE/rBOBoYv9uF39ZzsNDh4lTFHhTr2XOZjKkYgueD12ZmGA==}
     engines: {node: '>=18.17'}
 
-  undici@7.29.1:
-    resolution: {integrity: sha512-RYONW2MeafgYlkVOKYKkA/Ag7BmXqgIWCa8t1m0JcxrQg9pI9lEqRhAOruOBCbAohOa/gkCF+iPi9hrgvTzu6Q==}
-    engines: {node: '>=20.18.1'}
-
   undici@7.30.1:
     resolution: {integrity: sha512-03KrMbjIFDWQR5RNPrSw3bd1r12JpyFQl9/yxjUbJtqkjmllqC5lFjZh6ujeuJCKr8EOQvRW872Oy/az+nLYxg==}
     engines: {node: '>=20.18.1'}
@@ -7967,9 +7964,8 @@ snapshots:
 
   '@preact/signals-core@1.14.4': {}
 
-  '@rinsly-com/site-core@0.26.4(1d28eb6fb4f270b1bf1171651451ac1f)':
+  '@rinsly-com/site-core@0.26.7(1d28eb6fb4f270b1bf1171651451ac1f)':
     dependencies:
-      '@gsap/react': 2.1.2(gsap@3.15.0)(react@19.2.6)
       '@opennextjs/cloudflare': 1.20.13(next@16.4.3(@babel/core@7.29.7)(@playwright/test@1.58.2)(@types/node@22.19.9)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(sass@1.77.4))(wrangler@4.154.0(@types/node@22.19.9))
       '@payloadcms/db-d1-sqlite': 3.90.2(payload@3.90.2(graphql@16.14.2)(typescript@5.7.3))
       '@payloadcms/live-preview': 3.90.2
@@ -10338,7 +10334,7 @@ snapshots:
       saxes: 6.0.0
       symbol-tree: 3.2.4
       tough-cookie: 6.0.2
-      undici: 7.29.1
+      undici: 7.30.1
       w3c-xmlserializer: 5.0.0
       webidl-conversions: 8.0.1
       whatwg-mimetype: 5.0.0
@@ -11025,7 +11021,7 @@ snapshots:
       sax: 1.6.1
       ts-essentials: 10.0.3(typescript@5.7.3)
       tsx: 4.22.4
-      undici: 7.29.1
+      undici: 7.30.1
       uuid: 13.0.2
       ws: 8.21.0
     transitivePeerDependencies:
@@ -11806,8 +11802,6 @@ snapshots:
   undici-types@6.21.0: {}
 
   undici@6.29.1: {}
-
-  undici@7.29.1: {}
 
   undici@7.30.1: {}
 

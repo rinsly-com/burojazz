@@ -9,7 +9,7 @@
 # next/font/google while this floor exists. The floor matters at runtime:
 # undici lands in the deployed Worker bundle via payload.
 overrides:
-  'undici@>=7.0.0 <7.29.1': 7.29.1
+  'undici@>=7.0.0 <7.30.1': 7.30.1
   'postcss@<8.5.23': 8.5.23
   'js-yaml@>=4.0.0 <4.3.2': 4.3.2
   'fast-uri@>=3.0.0 <3.1.7': 3.1.7
@@ -20,6 +20,7 @@ overrides:
   # 2026-10-21 floors (site-core 0.22.2 prepare, mirrors rinsly.com #74):
   #   undici 7.29.1, brace-expansion 2.1.6 / 5.0.11, js-yaml 4.3.2,
   #   fast-uri 3.1.7, nanoid 3.3.18 raised in place above.
+  # 2026-11-02: undici raised 7.29.1 -> 7.30.1 (site-core 0.26.7, mirrors Core #130).
   # proxy-addr GHSA-jqcg-44mw-7w3h (critical) fixed in 2.0.8;
   # source-map-js GHSA-68fv-2mgg-jv7q fixed in 1.2.2.
   'proxy-addr@<2.0.8': 2.0.8
