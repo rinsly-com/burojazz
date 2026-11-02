@@ -239,6 +239,8 @@ export function SiteFooter({ footer }: Props) {
                 aria-label={social.name}
                 className="flex size-12 items-center justify-center rounded-full bg-white/20 transition-colors hover:bg-white/30"
               >
+                {/* Decorative brand SVGs, not content images. */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={social.icon} alt="" width={24} height={24} className="size-6" />
               </a>
             ))}

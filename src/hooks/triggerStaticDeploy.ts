@@ -1,5 +1,8 @@
 import type { Payload } from 'payload'
 
+import { envEventName, envOptionalSecret, envOptionalUrl } from '../lib/env'
+import { LogCode, logCode } from '../lib/logCode'
+
 /** Outcome of a deploy-hook call, surfaced to the admin Deploy view. */
 export type DeployResult =
   | { status: 'triggered'; httpStatus: number; message: string }
@@ -27,13 +30,19 @@ export type DeployResult =
  * When the URL or token is missing (e.g. local dev) the call is skipped.
  */
 export const triggerDeploy = async (payload: Payload, reason: string): Promise<DeployResult> => {
-  const url = process.env.DEPLOY_DISPATCH_URL
-  const token = process.env.DEPLOY_DISPATCH_TOKEN
-  const eventType = process.env.DEPLOY_DISPATCH_EVENT || 'deploy-static'
-  if (!url || !token) {
+  const urlPresent = Boolean(process.env.DEPLOY_DISPATCH_URL)
+  const tokenPresent = Boolean(process.env.DEPLOY_DISPATCH_TOKEN)
+  const url = envOptionalUrl('DEPLOY_DISPATCH_URL')
+  const token = envOptionalSecret('DEPLOY_DISPATCH_TOKEN')
+  const eventType = envEventName('DEPLOY_DISPATCH_EVENT', 'deploy-static')
+  if (!urlPresent || !tokenPresent) {
     const message = 'Deploy skipped — DEPLOY_DISPATCH_URL / DEPLOY_DISPATCH_TOKEN not configured.'
     payload.logger.info(`[static-deploy] skipped (${reason}) — dispatch not configured`)
     return { status: 'skipped', message }
+  }
+  if (!url || !token) {
+    logCode('error', LogCode.ENV_INVALID, { name: url ? 'DEPLOY_DISPATCH_TOKEN' : 'DEPLOY_DISPATCH_URL' }, payload.logger)
+    return { status: 'failed', message: 'Deploy dispatch configuration is invalid.' }
   }
   try {
     const res = await fetch(url, {
@@ -49,7 +58,7 @@ export const triggerDeploy = async (payload: Payload, reason: string): Promise<D
     })
     // GitHub returns 204 No Content on success.
     if (!res.ok) {
-      payload.logger.error(`[static-deploy] failed (${reason}) — dispatch responded HTTP ${res.status}`)
+      logCode('error', LogCode.DEPLOY_DISPATCH_HTTP, { status: res.status }, payload.logger)
       return {
         status: 'failed',
         message: `Deploy dispatch responded HTTP ${res.status} — production was not rebuilt.`,
@@ -61,9 +70,9 @@ export const triggerDeploy = async (payload: Payload, reason: string): Promise<D
       httpStatus: res.status,
       message: `Production rebuild triggered (GitHub Actions dispatched, HTTP ${res.status}).`,
     }
-  } catch (err) {
-    const message = (err as Error).message
-    payload.logger.error(`[static-deploy] failed (${reason}): ${message}`)
-    return { status: 'failed', message: `Deploy dispatch request failed: ${message}` }
+  } catch {
+    // The fetch error text often includes the request URL. Log a fixed code only.
+    logCode('error', LogCode.DEPLOY_DISPATCH_FAILED, undefined, payload.logger)
+    return { status: 'failed', message: 'Deploy dispatch request failed.' }
   }
 }

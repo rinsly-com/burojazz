@@ -2,6 +2,8 @@ import type { Page } from '@/payload-types'
 
 import { apiOrigin } from './apiOrigin'
 import { readSnapshot } from './contentSnapshot'
+import { LogCode, logCode } from './logCode'
+import { parsePageList, parsePageRow } from './rows'
 
 /**
  * Fetch renderable content from the Payload API over HTTP (no Payload/DB import,
@@ -31,6 +33,10 @@ const mergeBySlug = (preferred: Page[], fallback: Page[]): Page[] => {
   return [...bySlug.values()]
 }
 
+async function readJson(res: Response): Promise<unknown> {
+  return (await res.json()) as unknown
+}
+
 async function fetchPages(query: string): Promise<Page[]> {
   // Resolve the origin BEFORE the try: apiOrigin() reads headers() on the worker,
   // and the dynamic-server bailout that triggers must propagate (not be swallowed
@@ -40,11 +46,14 @@ async function fetchPages(query: string): Promise<Page[]> {
     const res = await fetch(`${base}/api/pages?${query}`, {
       headers: { accept: 'application/json' },
     })
-    if (!res.ok) return []
-    const data = (await res.json()) as { docs?: Page[] }
-    return data.docs ?? []
+    if (!res.ok) {
+      logCode('warn', LogCode.PAGES_FETCH_FAILED, { status: res.status })
+      return []
+    }
+    return parsePageList(await readJson(res))
   } catch {
     // API may be unreachable (e.g. first static build) — degrade gracefully.
+    logCode('warn', LogCode.PAGES_FETCH_FAILED)
     return []
   }
 }
@@ -52,8 +61,8 @@ async function fetchPages(query: string): Promise<Page[]> {
 export async function getRenderablePages(): Promise<Page[]> {
   if (PRODUCTION_BUILD) {
     // Static build: prefer the pre-fetched snapshot (see contentSnapshot.ts).
-    const snapshot = await readSnapshot<Page[]>('pages-index')
-    if (snapshot) return snapshot
+    const snapshot = await readSnapshot<unknown>('pages-index')
+    if (snapshot) return parsePageList(snapshot)
   }
 
   if (PRODUCTION_BUILD) {
@@ -75,8 +84,8 @@ export async function getRenderablePageBySlug(slug: string): Promise<Page | null
 
   if (PRODUCTION_BUILD) {
     // Static build: prefer the pre-fetched snapshot (see contentSnapshot.ts).
-    const snapshot = await readSnapshot<Page | null>(`page-${slug}`)
-    if (snapshot) return snapshot
+    const snapshot = await readSnapshot<unknown>(`page-${slug}`)
+    if (snapshot) return parsePageRow(snapshot)
   }
 
   if (!PRODUCTION_BUILD) {

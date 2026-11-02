@@ -101,6 +101,7 @@ const snapshotContent = async () => {
     try {
       write(`global-${slug}`, await fetchJson(`${API_URL}/api/globals/${slug}?depth=1`))
     } catch {
+      console.warn({ code: 'BUILD_SNAPSHOT_GLOBAL_FAILED', slug })
       write(`global-${slug}`, null)
     }
   }
@@ -118,8 +119,9 @@ rmSync(path.join(root, '.next-static'), { recursive: true, force: true })
 
 try {
   await snapshotContent()
-} catch (err) {
-  console.warn(`⚠ Content snapshot failed (${err.message}) — build will fetch over HTTP instead.`)
+} catch {
+  console.warn({ code: 'BUILD_SNAPSHOT_FAILED' })
+  console.warn('Content snapshot failed — build will fetch over HTTP instead.')
 }
 
 try {

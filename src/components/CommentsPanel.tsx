@@ -1,6 +1,9 @@
 'use client'
 
 import React, { useCallback, useEffect, useState } from 'react'
+
+import { LogCode, logCode } from '@/lib/logCode'
+import { parseCommentList } from '@/lib/rows'
 import {
   Banner,
   Button,
@@ -53,21 +56,25 @@ export const CommentsPanel: React.FC = () => {
         `/api/comments?where[page][equals]=${id}&sort=-createdAt&depth=1&limit=200`,
         { credentials: 'include' },
       )
-      const data = (await res.json()) as { docs?: Comment[] }
-      return data.docs ?? []
+      return parseCommentList(await res.json())
     } catch {
+      logCode('warn', LogCode.COMMENT_FETCH_FAILED)
       return []
     }
   }, [id])
 
   useEffect(() => {
     let active = true
-    fetchComments().then((docs) => {
-      if (active) {
-        setComments(docs)
-        setLoaded(true)
-      }
-    })
+    void fetchComments()
+      .then((docs) => {
+        if (active) {
+          setComments(docs)
+          setLoaded(true)
+        }
+      })
+      .catch(() => {
+        logCode('warn', LogCode.COMMENT_FETCH_FAILED)
+      })
     return () => {
       active = false
     }

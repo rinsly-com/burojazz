@@ -6,6 +6,7 @@ import { Banner, Button, toast, useAuth } from '@payloadcms/ui'
 import type { User } from '@/payload-types'
 import { isReviewer } from '../access/roles'
 import type { DeployResult } from '../hooks/triggerStaticDeploy'
+import { LogCode, logCode } from '../lib/logCode'
 
 type PanelState =
   | { phase: 'idle' }
@@ -40,13 +41,17 @@ export const DeployPanel: React.FC = () => {
       })
       const result = (await res.json()) as DeployResult & { message: string }
       if (!res.ok && result.status !== 'skipped') {
-        throw new Error(result.message || `Request failed (HTTP ${res.status}).`)
+        const message = result.message || `Request failed (HTTP ${res.status}).`
+        setState({ phase: 'error', message })
+        toast.error(message)
+        return
       }
       setState({ phase: 'done', result })
       if (result.status === 'triggered') toast.success('Production rebuild triggered.')
       else if (result.status === 'skipped') toast.info(result.message)
-    } catch (err) {
-      const message = (err as Error).message
+    } catch {
+      logCode('error', LogCode.DEPLOY_PANEL_FAILED)
+      const message = 'Deploy request failed.'
       setState({ phase: 'error', message })
       toast.error(message)
     }
@@ -65,7 +70,13 @@ export const DeployPanel: React.FC = () => {
         <Banner type="info">Only reviewers and admins can trigger a production deploy.</Banner>
       ) : (
         <>
-          <Button buttonStyle="primary" disabled={deploying} onClick={deploy}>
+          <Button
+            buttonStyle="primary"
+            disabled={deploying}
+            onClick={() => {
+              void deploy()
+            }}
+          >
             {deploying ? 'Triggering…' : 'Deploy now'}
           </Button>
 

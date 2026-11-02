@@ -38,7 +38,7 @@ export function VisionMission(props: Props) {
   const items = rawItems.map((item, i) => {
     const body = item.body ?? DEFAULT_ITEMS[i]?.body
     return {
-      key: String(('id' in item && item.id) || `vm-item-${i}`),
+      key: ('id' in item && item.id) || `vm-item-${i}`,
       heading: item.heading ?? DEFAULT_ITEMS[i]?.heading ?? '',
       icon: (
         <Icon

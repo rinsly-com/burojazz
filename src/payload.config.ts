@@ -13,6 +13,7 @@ import { Header } from './globals/Header'
 import { Footer } from './globals/Footer'
 import { AanmeldingInstellingen } from './globals/AanmeldingInstellingen'
 import { cloudflareEmailAdapter } from './lib/email'
+import { envUrl } from './lib/env'
 import { deployHandler } from './endpoints/deploy'
 import { instagramLatestHandler } from './endpoints/instagram'
 
@@ -27,7 +28,7 @@ const dirname = path.dirname(fileURLToPath(import.meta.url))
 export default buildSiteConfig({
   siteConfig,
   // Accp origin for forgot-password links.
-  serverURL: process.env.PAYLOAD_SERVER_URL || 'https://accp.burojazz.com',
+  serverURL: envUrl('PAYLOAD_SERVER_URL', 'https://accp.burojazz.com'),
   // This site owns its full content model (single-language, workflow, intake).
   collections: [Users, Media, Pages, Comments, Aanmeldingen],
   globals: [Header, Footer, AanmeldingInstellingen],

@@ -4,6 +4,8 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { FieldLabel, SelectInput, useField, useFormFields } from '@payloadcms/ui'
 import type { TextFieldClientComponent } from 'payload'
 
+import { LogCode, logCode } from '@/lib/logCode'
+
 /** The subset of a Page block we need to build a scroll-target option. */
 type BlockLite = {
   id?: string | null
@@ -69,18 +71,25 @@ export const SectionSelect: TextFieldClientComponent = ({ field, path }) => {
 
   useEffect(() => {
     if (!hasPage) return
-    const forPage = pageId as number | string
+    const forPage = pageId
     let active = true
-    fetch(`/api/pages/${forPage}?depth=0&draft=true`, {
+    void fetch(`/api/pages/${forPage}?depth=0&draft=true`, {
       credentials: 'include',
       headers: { accept: 'application/json' },
     })
-      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
+      .then((r) => (r.ok ? (r.json() as Promise<unknown>) : Promise.reject(new Error(String(r.status)))))
       .then((doc) => {
-        const layout = (doc as { layout?: BlockLite[] } | null)?.layout
-        if (active) setResult({ pageId: forPage, blocks: Array.isArray(layout) ? layout : [], error: false })
+        const layout =
+          doc && typeof doc === 'object' && 'layout' in doc
+            ? doc.layout
+            : undefined
+        const blocks = Array.isArray(layout)
+          ? layout.filter((block): block is BlockLite => typeof block === 'object' && block !== null)
+          : []
+        if (active) setResult({ pageId: forPage, blocks, error: false })
       })
       .catch(() => {
+        logCode('warn', LogCode.SECTION_SELECT_LOAD_FAILED)
         if (active) setResult({ pageId: forPage, blocks: null, error: true })
       })
     return () => {
@@ -101,7 +110,7 @@ export const SectionSelect: TextFieldClientComponent = ({ field, path }) => {
         const target = anchor || b.id || ''
         const typeLabel = BLOCK_LABELS[b.blockType ?? ''] ?? b.blockType ?? 'Sectie'
         const label = anchor ? `${typeLabel} — #${anchor}` : `${typeLabel} (sectie ${i + 1})`
-        return { label, value: String(target) }
+        return { label, value: target }
       })
       .filter((o) => o.value)
   }, [blocks])
@@ -137,8 +146,12 @@ export const SectionSelect: TextFieldClientComponent = ({ field, path }) => {
           isClearable
           placeholder="Bovenaan de pagina (geen sectie)"
           onChange={(opt: unknown) => {
-            const selected = Array.isArray(opt) ? opt[0] : opt
-            setValue((selected as { value?: string } | null)?.value ?? '')
+            const raw = Array.isArray(opt) ? (opt as unknown[])[0] : opt
+            const next =
+              raw && typeof raw === 'object' && 'value' in raw && typeof raw.value === 'string'
+                ? raw.value
+                : ''
+            setValue(next)
           }}
         />
       )}

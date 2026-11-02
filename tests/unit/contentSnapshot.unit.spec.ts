@@ -48,11 +48,16 @@ describe('readSnapshot', () => {
     expect(await readSnapshot('does-not-exist')).toBeNull()
   })
 
-  it('returns null (never throws) on malformed JSON', async () => {
+  it('returns null (never throws) on malformed JSON and logs a fixed code', async () => {
     dir = mkdtempSync(join(tmpdir(), 'snapshot-'))
     writeFileSync(join(dir, 'broken.json'), '{ not valid json', 'utf8')
     vi.stubEnv('CONTENT_SNAPSHOT', dir)
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
     expect(await readSnapshot('broken')).toBeNull()
+    expect(warn).toHaveBeenCalledWith(
+      expect.objectContaining({ code: 'CONTENT_SNAPSHOT_READ_FAILED', name: 'broken' }),
+    )
+    expect(JSON.stringify(warn.mock.calls)).not.toContain('not valid json')
   })
 
   it('returns null when the dir itself does not exist', async () => {

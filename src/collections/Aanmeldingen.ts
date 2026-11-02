@@ -2,7 +2,9 @@ import type { CollectionConfig, PayloadRequest } from 'payload'
 import { withTurnstile } from '@rinsly-com/site-core/lib/turnstile'
 
 import { authenticated, adminOnly } from '../access/roles'
+import { parseAanmeldingSubmit } from '../lib/aanmeldingSubmit'
 import { sendAanmeldingNotification, sendAanmeldingConfirmation } from '../lib/email'
+import { LogCode, logCode } from '../lib/logCode'
 import {
   DSM_OPTIONS,
   PROBLEMATIEK_OPTIONS,
@@ -196,20 +198,23 @@ export const Aanmeldingen: CollectionConfig = {
         // isolated so the confirmation still goes out if the team notice fails,
         // and vice versa.
         try {
-          await sendAanmeldingNotification({ payload: req.payload, doc })
-        } catch (err) {
-          req.payload.logger.error({
-            msg: 'Aanmelding notification email failed',
-            err: err instanceof Error ? err.message : String(err),
+          await sendAanmeldingNotification({
+            payload: req.payload,
+            // Collection hooks default `doc` to any unless the config is generic.
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+            doc,
           })
+        } catch {
+          logCode('error', LogCode.AANMELDING_NOTIFY_FAILED, undefined, req.payload.logger)
         }
         try {
-          await sendAanmeldingConfirmation({ payload: req.payload, doc })
-        } catch (err) {
-          req.payload.logger.error({
-            msg: 'Aanmelding confirmation email failed',
-            err: err instanceof Error ? err.message : String(err),
+          await sendAanmeldingConfirmation({
+            payload: req.payload,
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+            doc,
           })
+        } catch {
+          logCode('error', LogCode.AANMELDING_CONFIRM_FAILED, undefined, req.payload.logger)
         }
       },
     ],
@@ -224,87 +229,45 @@ export const Aanmeldingen: CollectionConfig = {
   timestamps: true,
 }
 
-/** Fields the public form is allowed to set (whitelist — never `status`). */
-const SUBMITTABLE_FIELDS = [
-  'clientNaam',
-  'clientGeboortedatum',
-  'clientAdres',
-  'verwijzerNaam',
-  'verwijzerOrganisatie',
-  'verwijzerEmail',
-  'verwijzerTelefoon',
-  'moederNaam',
-  'moederAdres',
-  'moederEmail',
-  'moederTelefoon',
-  'vaderNaam',
-  'vaderAdres',
-  'vaderEmail',
-  'vaderTelefoon',
-  'redenAanmelden',
-  'hulpverleningsgeschiedenis',
-  'problematiek',
-  'problematiekOverig',
-  'dsmDiagnoseBekend',
-  'vormVanHulp',
-  'privacyAkkoord',
-] as const
-
-/** Optional single-select fields whose empty '' value is not a valid option. */
-const OPTIONAL_SELECT_FIELDS = new Set<string>(['dsmDiagnoseBekend'])
-
 /**
- * Public submission endpoint. Runs unauthenticated (the static site posts here),
- * so it whitelists incoming fields, honours a honeypot, and creates the row with
+ * Public submission endpoint. Runs unauthenticated (the static site posts here).
+ * The body is checked against the submit schema (unknown keys such as `status`
+ * are dropped, the honeypot short-circuits) and the row is created with
  * overrideAccess. Payload's own field validation still runs and returns 400 on
  * bad input.
  */
 async function submitHandler(req: PayloadRequest): Promise<Response> {
-  let body: Record<string, unknown> = {}
+  let body: unknown = {}
   try {
-    body = (req.json ? await req.json() : {}) as Record<string, unknown>
+    body = req.json ? ((await req.json()) as unknown) : {}
   } catch {
+    logCode('warn', LogCode.AANMELDING_BODY_INVALID, undefined, req.payload.logger)
     return Response.json({ error: 'Invalid JSON body.' }, { status: 400 })
   }
 
+  const parsed = parseAanmeldingSubmit(body)
   // Honeypot: real users never fill the hidden "website" field. Pretend success
   // so bots get no signal.
-  if (typeof body.website === 'string' && body.website.trim() !== '') {
+  if (parsed.kind === 'honeypot') {
     return Response.json({ ok: true }, { status: 200 })
   }
-
-  const data: Record<string, unknown> = {}
-  for (const key of SUBMITTABLE_FIELDS) {
-    if (!(key in body)) continue
-    // Optional select fields reject '' — it is not one of the configured
-    // options — so treat an empty selection as "not provided" and omit it.
-    if (OPTIONAL_SELECT_FIELDS.has(key) && body[key] === '') continue
-    data[key] = body[key]
-  }
-  // Siblings is a nested array; validate its shape defensively.
-  if (Array.isArray(body.siblings)) {
-    data.siblings = (body.siblings as unknown[])
-      .filter((s): s is Record<string, unknown> => typeof s === 'object' && s !== null)
-      .map((s) => {
-        const row: Record<string, unknown> = { leeftijd: s.leeftijd ?? '' }
-        // Only set `type` when a real option was chosen; '' is not a valid one.
-        if (s.type) row.type = s.type
-        return row
-      })
+  if (parsed.kind === 'invalid') {
+    logCode('warn', LogCode.AANMELDING_BODY_INVALID, undefined, req.payload.logger)
+    return Response.json(
+      { error: 'Er ging iets mis bij het versturen. Controleer de gegevens en probeer opnieuw.' },
+      { status: 400 },
+    )
   }
 
   try {
     const created = await req.payload.create({
       collection: 'aanmeldingen',
-      data: data as never,
+      data: parsed.data as never,
       overrideAccess: true,
     })
     return Response.json({ ok: true, id: created.id }, { status: 201 })
-  } catch (err) {
-    req.payload.logger.warn({
-      msg: 'Aanmelding submit rejected',
-      err: err instanceof Error ? err.message : String(err),
-    })
+  } catch {
+    logCode('warn', LogCode.AANMELDING_SUBMIT_REJECTED, undefined, req.payload.logger)
     return Response.json(
       { error: 'Er ging iets mis bij het versturen. Controleer de gegevens en probeer opnieuw.' },
       { status: 400 },
