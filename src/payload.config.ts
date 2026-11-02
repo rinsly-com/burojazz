@@ -52,6 +52,15 @@ export default buildSiteConfig({
   // Needs the src/components/AnalyticsPanel.tsx re-export plus
   // CLOUDFLARE_ZONE_ID + CLOUDFLARE_ANALYTICS_TOKEN; without those it renders
   // nothing on a live site.
+  // POST /api/rinsly/content (site-core 0.24+), for the readable-anchors test.
+  // Adds the content-audit / content-replay collections (migration
+  // 20261029_content_endpoint). Only the accp Worker runs Payload; the prod
+  // static export stashes the (payload) routes, so prod never serves it. The
+  // route stays a 404 until RINSLY_CONTENT_ENABLED is set on the accp Worker,
+  // and stays closed without Access (RINSLY_ACCESS_AUD/TEAM_DOMAIN secrets) and
+  // the RINSLY_CONTENT_RATE_LIMITER binding. Allowlist is empty (deny all);
+  // RINSLY_CONTENT_ALLOWLIST sets the anchor paths at test time.
+  contentEndpoint: true,
   dashboardAnalytics: true,
   // Rinsly's uptime monitor on the dashboard: up right now, the measured
   // 30/90-day percentages, and a 90-day per-day strip. The uptime Worker

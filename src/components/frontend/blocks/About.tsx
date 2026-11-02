@@ -6,6 +6,7 @@ import { Eyebrow } from '@/components/frontend/ui/Eyebrow'
 import { Icon } from '@/components/frontend/ui/Icon'
 import { Media, RichTextField } from '@rinsly-com/site-core/ui'
 import { editable } from '@rinsly-com/site-core/preview'
+import { fallbackSectionId } from '@/components/frontend/sectionAnchor'
 import { Section } from '@/components/frontend/ui/Section'
 import { cmsText } from '@rinsly-com/site-core'
 
@@ -27,8 +28,10 @@ export function About(props: Props) {
   const title = props.header?.title ?? DEFAULT_TITLE
   const email = cmsText(props.email, 'contact@burojazz.nl')
 
+  // Historical `#wie-wij-zijn` target. Omitted once the wrapper publishes
+  // that same id from the content anchor.
   return (
-    <Section id="wie-wij-zijn" py="py-16 md:pt-28 md:pb-36">
+    <Section id={fallbackSectionId(props, 'wie-wij-zijn')} py="py-16 md:pt-28 md:pb-36">
       <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-[1fr_1.2fr] lg:gap-20">
         {/* Photo with overlapping e-mail card */}
         <div className="relative mb-20 lg:mb-0">

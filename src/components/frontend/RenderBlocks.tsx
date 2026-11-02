@@ -14,6 +14,7 @@ import { Services } from '@/components/frontend/blocks/Services'
 import { Social } from '@/components/frontend/blocks/Social'
 import { Vacancies } from '@/components/frontend/blocks/Vacancies'
 import { VisionMission } from '@/components/frontend/blocks/VisionMission'
+import { blockWrapperId } from '@/components/frontend/sectionAnchor'
 
 type Block = NonNullable<Page['layout']>[number]
 
@@ -77,7 +78,7 @@ export function RenderBlocks({ layout }: { layout: Page['layout'] }) {
         // ID, fall back to the stable block id (what SectionSelect stores when
         // no Anchor ID is set). No scroll offset — onepager menu links land with
         // the section's top flush against the top of the viewport.
-        const id = block.anchor?.trim().replace(/^#+/, '') || block.id || undefined
+        const id = blockWrapperId(block)
         const className = index === 0 && clearHeader ? HEADER_CLEARANCE : undefined
         if (!id && !className) return <RenderBlock key={key} block={block} />
         return (

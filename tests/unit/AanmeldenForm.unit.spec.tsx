@@ -142,11 +142,14 @@ describe('AanmeldenForm — dynamic fields', () => {
     setInput(/Beschrijf kort en bondig/, 'reden')
     clickVerder()
 
-    const angst = screen.getByRole('checkbox', { name: 'Angst' }) as HTMLInputElement
-    expect(angst.checked).toBe(false)
-    fireEvent.click(angst)
-    expect(angst.checked).toBe(true)
-    fireEvent.click(angst)
-    expect(angst.checked).toBe(false)
+    // Base UI checkbox with nativeButton is a <button role="checkbox">.
+    // `checked` lives on aria-checked, not the input's .checked.
+    const angst = () => screen.getByRole('checkbox', { name: 'Angst' })
+    expect(angst().getAttribute('aria-checked')).toBe('false')
+    expect(angst().tagName).toBe('BUTTON')
+    fireEvent.click(angst())
+    expect(angst().getAttribute('aria-checked')).toBe('true')
+    fireEvent.click(angst())
+    expect(angst().getAttribute('aria-checked')).toBe('false')
   })
 })
