@@ -1,7 +1,7 @@
 // Build the fully static production site (out/) from the public (frontend)
-// routes only. Payload's admin + API route group and the sample custom route
-// are server-only and would block `next export`, so we temporarily move them
-// out of the app tree, run the static build, then always restore them.
+// routes only. Payload's admin + API route group is server-only and would
+// block `next export`, so we temporarily move it out of the app tree, run the
+// static build, then always restore it.
 //
 // Content is SNAPSHOTTED from the Payload API (PAYLOAD_API_URL) BEFORE the
 // stash: locally the API is the dev server on this same source tree, so
@@ -20,10 +20,7 @@ const snapshotDir = path.join(root, '.static-content')
 const API_URL = process.env.PAYLOAD_API_URL || 'https://accp.burojazz.com'
 
 // Server-only paths to hide during the static export.
-const EXCLUDED = [
-  { live: 'src/app/(payload)', stashed: 'app__payload' },
-  { live: 'src/app/my-route', stashed: 'app__my-route' },
-]
+const EXCLUDED = [{ live: 'src/app/(payload)', stashed: 'app__payload' }]
 
 const stash = () => {
   mkdirSync(backupDir, { recursive: true })
@@ -104,6 +101,7 @@ const snapshotContent = async () => {
     try {
       write(`global-${slug}`, await fetchJson(`${API_URL}/api/globals/${slug}?depth=1`))
     } catch {
+      console.warn({ code: 'BUILD_SNAPSHOT_GLOBAL_FAILED', slug })
       write(`global-${slug}`, null)
     }
   }
@@ -121,8 +119,9 @@ rmSync(path.join(root, '.next-static'), { recursive: true, force: true })
 
 try {
   await snapshotContent()
-} catch (err) {
-  console.warn(`⚠ Content snapshot failed (${err.message}) — build will fetch over HTTP instead.`)
+} catch {
+  console.warn({ code: 'BUILD_SNAPSHOT_FAILED' })
+  console.warn('Content snapshot failed — build will fetch over HTTP instead.')
 }
 
 try {

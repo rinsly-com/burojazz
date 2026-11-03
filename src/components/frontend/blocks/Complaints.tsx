@@ -8,8 +8,6 @@ import { cmsText } from '@rinsly-com/site-core'
 
 type Props = Extract<NonNullable<Page['layout']>[number], { blockType: 'complaints' }>
 
-type PillData = NonNullable<NonNullable<Props['steps']>[number]['infoPills']>[number]
-
 /** Full-fidelity default matching the design; used when the block has no steps. */
 const FALLBACK_STEPS: NonNullable<Props['steps']> = [
   {
@@ -60,15 +58,15 @@ const FALLBACK_STEPS: NonNullable<Props['steps']> = [
 
 /** Build the client-ready step data, pre-rendering each pill icon on the server. */
 function toStep(step: NonNullable<Props['steps']>[number], i: number): Step {
-  const pills = (step.infoPills ?? []) as PillData[]
+  const pills = step.infoPills ?? []
   return {
-    key: String(('id' in step && step.id) || `step-${i}`),
+    key: ('id' in step && step.id) || `step-${i}`,
     title: step.title ?? '',
     text: step.text ?? null,
     pills: pills.map((pill, j) => {
       const tone = pill.tone === 'danger' ? 'danger' : 'brand'
       return {
-        key: String(('id' in pill && pill.id) || `pill-${i}-${j}`),
+        key: ('id' in pill && pill.id) || `pill-${i}-${j}`,
         tone,
         text: pill.text ?? '',
         note: pill.note ?? null,

@@ -17,6 +17,17 @@
  * `null`, and the frontend falls back to the static phone mockup.
  */
 
+import { envOptionalSecret } from './env'
+import { readJson } from './readJson'
+import { LogCode, logCode } from './logCode'
+import {
+  instagramCacheSchema,
+  instagramMediaSchema,
+  instagramRefreshSchema,
+  mediaNodeToPost,
+  type InstagramPost,
+} from './instagramPost'
+
 const GRAPH = 'https://graph.instagram.com'
 
 /** KV keys. */
@@ -28,17 +39,6 @@ const KEY_CACHE = 'ig:latest'
 const CACHE_TTL_MS = 30 * 60 * 1000 // 30 min
 /** Refresh the long-lived token once it is older than this (tokens last 60d). */
 const TOKEN_REFRESH_AFTER_MS = 24 * 24 * 60 * 60 * 1000 // 24 days
-
-/** The shape returned to the frontend. */
-export type InstagramPost = {
-  id: string
-  permalink: string
-  caption: string | null
-  /** A directly-renderable image URL (photo, or a video's thumbnail). */
-  imageUrl: string
-  mediaType: 'IMAGE' | 'VIDEO' | 'CAROUSEL_ALBUM'
-  timestamp: string | null
-}
 
 /** Minimal KV binding surface we rely on. */
 type KVNamespace = {
@@ -56,6 +56,7 @@ async function getKV(): Promise<KVNamespace | null> {
       ? (binding as KVNamespace)
       : null
   } catch {
+    logCode('warn', LogCode.INSTAGRAM_KV_UNAVAILABLE)
     return null
   }
 }
@@ -67,7 +68,7 @@ async function getKV(): Promise<KVNamespace | null> {
  */
 async function getToken(kv: KVNamespace | null): Promise<string | null> {
   const fromKv = kv ? await kv.get(KEY_TOKEN) : null
-  return fromKv || process.env.INSTAGRAM_ACCESS_TOKEN || null
+  return fromKv || envOptionalSecret('INSTAGRAM_ACCESS_TOKEN') || null
 }
 
 /**
@@ -82,47 +83,26 @@ async function maybeRefreshToken(kv: KVNamespace, token: string): Promise<string
   const now = Date.now()
   if (refreshedAt && now - refreshedAt < TOKEN_REFRESH_AFTER_MS) return token
 
+  let status: number | undefined
   try {
     const url = `${GRAPH}/refresh_access_token?grant_type=ig_refresh_token&access_token=${encodeURIComponent(
       token,
     )}`
     const res = await fetch(url)
-    if (!res.ok) throw new Error(`refresh HTTP ${res.status}`)
-    const json = (await res.json()) as { access_token?: string }
-    if (!json.access_token) throw new Error('refresh returned no token')
-    await kv.put(KEY_TOKEN, json.access_token)
+    status = res.status
+    if (!res.ok) throw new Error('refresh http')
+    const json = instagramRefreshSchema.safeParse(await readJson(res))
+    if (!json.success) throw new Error('refresh shape')
+    await kv.put(KEY_TOKEN, json.data.access_token)
     await kv.put(KEY_TOKEN_REFRESHED_AT, String(now))
-    return json.access_token
+    return json.data.access_token
   } catch {
     // Record the attempt so we don't retry on every request; the existing token
     // is very likely still valid (refresh only fails at the edges of the window).
+    // The URL contains the access token, so the raw error is never logged.
+    logCode('warn', LogCode.INSTAGRAM_TOKEN_REFRESH_FAILED, status === undefined ? undefined : { status })
     await kv.put(KEY_TOKEN_REFRESHED_AT, String(now))
     return token
-  }
-}
-
-type MediaNode = {
-  id: string
-  caption?: string
-  media_type?: InstagramPost['mediaType']
-  media_url?: string
-  thumbnail_url?: string
-  permalink?: string
-  timestamp?: string
-}
-
-/** Map a Graph API media node to our renderable shape (videos use the thumb). */
-function toPost(node: MediaNode): InstagramPost | null {
-  const mediaType = node.media_type ?? 'IMAGE'
-  const imageUrl = mediaType === 'VIDEO' ? node.thumbnail_url : node.media_url
-  if (!imageUrl || !node.permalink) return null
-  return {
-    id: node.id,
-    permalink: node.permalink,
-    caption: node.caption ?? null,
-    imageUrl,
-    mediaType,
-    timestamp: node.timestamp ?? null,
   }
 }
 
@@ -138,10 +118,11 @@ export async function getLatestInstagramPost(): Promise<InstagramPost | null> {
     const cachedRaw = await kv.get(KEY_CACHE)
     if (cachedRaw) {
       try {
-        const cached = JSON.parse(cachedRaw) as { fetchedAt: number; post: InstagramPost | null }
-        if (Date.now() - cached.fetchedAt < CACHE_TTL_MS) return cached.post
+        const cached = instagramCacheSchema.safeParse(JSON.parse(cachedRaw) as unknown)
+        if (cached.success && Date.now() - cached.data.fetchedAt < CACHE_TTL_MS) return cached.data.post
+        if (!cached.success) logCode('warn', LogCode.INSTAGRAM_CACHE_INVALID)
       } catch {
-        // fall through and refetch
+        logCode('warn', LogCode.INSTAGRAM_CACHE_INVALID)
       }
     }
   }
@@ -155,11 +136,18 @@ export async function getLatestInstagramPost(): Promise<InstagramPost | null> {
     const fields = 'id,caption,media_type,media_url,thumbnail_url,permalink,timestamp'
     const url = `${GRAPH}/me/media?fields=${fields}&limit=1&access_token=${encodeURIComponent(token)}`
     const res = await fetch(url)
-    if (!res.ok) throw new Error(`media HTTP ${res.status}`)
-    const json = (await res.json()) as { data?: MediaNode[] }
-    const node = json.data?.[0]
-    post = node ? toPost(node) : null
+    if (!res.ok) {
+      logCode('warn', LogCode.INSTAGRAM_MEDIA_FAILED, { status: res.status })
+    } else {
+      const json = instagramMediaSchema.safeParse(await readJson(res))
+      const node = json.success ? json.data.data?.[0] : undefined
+      const mapped = node ? mediaNodeToPost(node) : null
+      if (!json.success || (node && !mapped)) logCode('warn', LogCode.INSTAGRAM_MEDIA_INVALID)
+      post = mapped
+    }
   } catch {
+    // Network failures include the request URL, which carries the access token.
+    logCode('warn', LogCode.INSTAGRAM_MEDIA_FAILED)
     post = null
   }
 

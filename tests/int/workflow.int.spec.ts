@@ -9,8 +9,8 @@ import { describe, it, beforeAll, afterAll, expect } from 'vitest'
 let payload: Payload
 let authorId: string | number
 let reviewerId: string | number
-let author: any
-let reviewer: any
+let author: { id: string | number }
+let reviewer: { id: string | number }
 let pageId: string | number
 
 describe('Publishing workflow (draft -> review -> ready -> published)', () => {
@@ -39,9 +39,12 @@ describe('Publishing workflow (draft -> review -> ready -> published)', () => {
   })
 
   afterAll(async () => {
-    if (pageId) await payload.delete({ collection: 'pages', id: pageId }).catch(() => {})
-    if (authorId) await payload.delete({ collection: 'users', id: authorId }).catch(() => {})
-    if (reviewerId) await payload.delete({ collection: 'users', id: reviewerId }).catch(() => {})
+    const cleanupFailed = () => {
+      console.error({ code: 'TEST_CLEANUP_FAILED' })
+    }
+    if (pageId) await payload.delete({ collection: 'pages', id: pageId }).catch(cleanupFailed)
+    if (authorId) await payload.delete({ collection: 'users', id: authorId }).catch(cleanupFailed)
+    if (reviewerId) await payload.delete({ collection: 'users', id: reviewerId }).catch(cleanupFailed)
   })
 
   it('blocks an author from marking a page Ready', async () => {

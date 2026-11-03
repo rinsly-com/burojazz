@@ -1,8 +1,8 @@
-import { metaImageUrl, OG_SIZE, renderOgImage } from '@/lib/og'
+import { metaImageUrl, OG_CONTENT_TYPE, OG_SIZE, renderOgImage } from '@/lib/og'
 import { getRenderablePageBySlug, getRenderablePages } from '@/lib/pages'
 
 export const size = OG_SIZE
-export const contentType = 'image/png'
+export const contentType = OG_CONTENT_TYPE
 export const alt = 'Buro J.A.Z.Z.'
 
 // accp worker: render any slug's card on demand. build-static.mjs flips this to

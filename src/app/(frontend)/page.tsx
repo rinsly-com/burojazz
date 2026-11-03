@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import React from 'react'
 
 import config from '@payload-config'
+import { resolveI18n } from '@rinsly-com/site-core/lib/locale'
 import { PreviewRuntime } from '@rinsly-com/site-core/preview'
-import { DEFAULT_LOCALE } from '@rinsly-com/site-core/lib/locale'
 
 import { JsonLd } from '@/components/frontend/JsonLd'
 import { RenderBlocks } from '@/components/frontend/RenderBlocks'
@@ -11,7 +11,6 @@ import { buildPageMetadata } from '@/lib/metadata'
 import { getRenderablePageBySlug, getRenderablePages } from '@/lib/pages'
 import { resolvePreview, type SearchParams } from '@/lib/preview'
 import { buildPageJsonLd } from '@/lib/structuredData'
-import './styles.css'
 
 // accp worker: render on demand so the homepage always reflects live content.
 // The static production export (build-static.mjs) strips this so it can prerender.
@@ -52,7 +51,10 @@ export default async function HomePage({
           <PreviewShell
             // Owned Pages layout ≠ core Page type; shell only needs the document shape at runtime.
             initialPage={page as React.ComponentProps<typeof PreviewShell>['initialPage']}
-            locale={DEFAULT_LOCALE}
+            // site.config has no i18n field. An empty argument is the weak
+            // { i18n?: … } parameter, so the resolved default stays the package
+            // default (the former DEFAULT_LOCALE). Do not invent locales here.
+            locale={resolveI18n({}).defaultLocale}
             serverURL={serverURL}
           />
         </>

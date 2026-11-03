@@ -3,6 +3,8 @@ import { ImageResponse } from 'next/og'
 import type { Page } from '@/payload-types'
 import { cfImageSrc } from '@rinsly-com/site-core/lib/image'
 
+import { envUrl } from './env'
+
 /**
  * Open Graph image rendering, shared by the `opengraph-image` routes.
  *
@@ -30,7 +32,7 @@ export function metaImageUrl(page: Page | null | undefined): string | undefined 
   if (!image || typeof image !== 'object') return undefined
   const url = (image as { url?: string | null }).url
   if (!url) return undefined
-  const origin = process.env.PAYLOAD_API_URL || 'http://localhost:3000'
+  const origin = envUrl('PAYLOAD_API_URL', 'http://localhost:3000')
   const absolute = new URL(url, origin).toString()
   return cfImageSrc(absolute, { width: OG_SIZE.width, fit: 'cover', quality: 90 })
 }

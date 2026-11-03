@@ -1,6 +1,5 @@
 import type { PayloadHandler, PayloadRequest } from 'payload'
 
-import type { User } from '@/payload-types'
 import { isReviewer } from '../access/roles'
 import { triggerDeploy } from '../hooks/triggerStaticDeploy'
 
@@ -13,7 +12,7 @@ import { triggerDeploy } from '../hooks/triggerStaticDeploy'
  * build will ship. Reviewer-only, matching who is allowed to publish.
  */
 export const deployHandler: PayloadHandler = async (req: PayloadRequest): Promise<Response> => {
-  const user = req.user as User | null
+  const user = req.user
 
   if (!isReviewer(user)) {
     return Response.json(

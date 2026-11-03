@@ -10,14 +10,18 @@
  * i.e. at build time in Node — so this module stays safe for the Workers
  * runtime (accp), where the env var is never set.
  */
+import { envOptionalPath } from './env'
+import { LogCode, logCode } from './logCode'
+
 export async function readSnapshot<T>(name: string): Promise<T | null> {
-  const dir = process.env.CONTENT_SNAPSHOT
+  const dir = envOptionalPath('CONTENT_SNAPSHOT')
   if (!dir) return null
   try {
     const { readFileSync } = await import('node:fs')
     const path = await import('node:path')
     return JSON.parse(readFileSync(path.join(dir, `${name}.json`), 'utf8')) as T
   } catch {
+    logCode('warn', LogCode.CONTENT_SNAPSHOT_READ_FAILED, { name })
     return null
   }
 }

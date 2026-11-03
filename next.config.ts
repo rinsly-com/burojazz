@@ -3,6 +3,8 @@ import type { NextConfig } from 'next'
 import path from 'path'
 import { fileURLToPath } from 'url'
 
+import { accpSecurityHeaders } from './src/lib/securityHeaders'
+
 const __filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(__filename)
 
@@ -35,8 +37,15 @@ const nextConfig: NextConfig = {
   serverExternalPackages: ['jose', 'pg-cloudflare'],
   // The static build uses its own dist dir so it can run while the dev server
   // (which owns .next and serves the content API it fetches from) stays up.
-  ...(isStatic ? { output: 'export' as const, distDir: '.next-static' } : {}),
+  // Security headers live in public/_headers for that export (`output: 'export'`
+  // does not apply headers()). Accp is the OpenNext worker: attach them here.
+  // X-Frame-Options is SAMEORIGIN so /admin live preview can iframe the site.
+  ...(isStatic
+    ? { output: 'export' as const, distDir: '.next-static' }
+    : { headers: () => Promise.resolve(accpSecurityHeaders()) }),
   webpack: (webpackConfig) => {
+    // Next types this hook's config as `any`.
+    /* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return */
     webpackConfig.resolve.extensionAlias = {
       '.cjs': ['.cts', '.cjs'],
       '.js': ['.ts', '.tsx', '.js', '.jsx'],
@@ -44,6 +53,7 @@ const nextConfig: NextConfig = {
     }
 
     return webpackConfig
+    /* eslint-enable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return */
   },
   turbopack: {
     root: path.resolve(dirname),

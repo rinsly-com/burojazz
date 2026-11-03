@@ -2,7 +2,7 @@ import type { Field, GroupField } from 'payload'
 
 import { iconField } from './icon'
 
-export type SectionHeaderPart = 'icon' | 'eyebrow' | 'title' | 'subtitle' | 'intro'
+type SectionHeaderPart = 'icon' | 'eyebrow' | 'title' | 'subtitle' | 'intro'
 
 /**
  * Standard section header shared by the blocks. Each block passes exactly the

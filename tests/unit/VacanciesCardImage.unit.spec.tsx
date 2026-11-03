@@ -1,3 +1,4 @@
+// @vitest-environment jsdom
 /**
  * Vacancy card photos (src/components/frontend/blocks/Vacancies.tsx).
  *
@@ -7,11 +8,15 @@
  * upload when one is set, and only fall back to the design images shipped in
  * /public when it is not.
  */
-import { render } from '@testing-library/react'
-import { describe, expect, it } from 'vitest'
+import { cleanup, render } from '@testing-library/react'
+import { afterEach, describe, expect, it } from 'vitest'
 
 import type { Media } from '../../src/payload-types'
 import { Vacancies } from '../../src/components/frontend/blocks/Vacancies'
+
+afterEach(() => {
+  cleanup()
+})
 
 type VacanciesProps = Parameters<typeof Vacancies>[0]
 

@@ -18,7 +18,9 @@ import { VisionMission } from '@/components/frontend/blocks/VisionMission'
 
 type BlockOf<T extends string> = Extract<NonNullable<Page['layout']>[number], { blockType: T }>
 
-const as = <T,>(block: unknown) => block as T
+// One type argument picks the block component's props. The value is the CMS block.
+// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
+const as = <T,>(block: unknown): T => block as T
 
 /**
  * This site's block renderers, on the client, for live preview.

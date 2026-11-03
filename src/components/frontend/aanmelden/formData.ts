@@ -1,6 +1,6 @@
 /** Client-side shape + validation for the "Direct aanmelden" wizard. */
 
-export type SiblingRow = { leeftijd: string; type: '' | 'broer' | 'zus' | 'nvt' }
+type SiblingRow = { leeftijd: string; type: '' | 'broer' | 'zus' | 'nvt' }
 
 export type AanmeldenData = {
   // Step 1 — Persoonsgegevens
@@ -70,6 +70,8 @@ export type Errors = Partial<Record<keyof AanmeldenData, string>>
 const REQUIRED = 'Dit veld is verplicht'
 const isBlank = (v: string) => v.trim() === ''
 const isEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim())
+const fieldText = (value: AanmeldenData[keyof AanmeldenData]): string =>
+  typeof value === 'string' ? value : ''
 
 /** Fields required per step (matching the asterisks in the design). */
 const REQUIRED_BY_STEP: Record<number, (keyof AanmeldenData)[]> = {
@@ -98,12 +100,12 @@ export function validateStep(step: number, data: AanmeldenData): Errors {
   const errors: Errors = {}
 
   for (const field of REQUIRED_BY_STEP[step] ?? []) {
-    if (isBlank(String(data[field] ?? ''))) errors[field] = REQUIRED
+    if (isBlank(fieldText(data[field]))) errors[field] = REQUIRED
   }
 
   // Email format (only when a value is present).
   for (const field of EMAIL_FIELDS) {
-    const value = String(data[field] ?? '')
+    const value = fieldText(data[field])
     if (!isBlank(value) && !isEmail(value)) errors[field] = 'Ongeldig e-mailadres'
   }
 

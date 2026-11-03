@@ -16,10 +16,9 @@
  * Override per environment with NEXT_PUBLIC_SITE_URL — it is inlined at build
  * time, so it must be set when running `build:static`.
  */
-export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || 'https://burojazz.nl').replace(
-  /\/+$/,
-  '',
-)
+import { envUrl } from './env'
+
+export const SITE_URL = envUrl('NEXT_PUBLIC_SITE_URL', 'https://burojazz.nl').replace(/\/+$/, '')
 
 export const SITE_NAME = 'Buro J.A.Z.Z.'
 

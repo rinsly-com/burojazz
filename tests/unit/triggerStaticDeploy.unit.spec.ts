@@ -89,7 +89,8 @@ describe('triggerDeploy', () => {
     ['the URL', 'DEPLOY_DISPATCH_URL'],
     ['the token', 'DEPLOY_DISPATCH_TOKEN'],
   ])('skips (never fails) when %s is not configured', async (_label, missing) => {
-    delete env[missing]
+    if (missing === 'DEPLOY_DISPATCH_URL') delete env.DEPLOY_DISPATCH_URL
+    else delete env.DEPLOY_DISPATCH_TOKEN
     const fetchMock = vi.fn(async () => okResponse)
     vi.stubGlobal('fetch', fetchMock)
 
@@ -121,7 +122,8 @@ describe('triggerDeploy', () => {
     const result = await triggerDeploy(payloadWith(), 'why')
 
     expect(result.status).toBe('failed')
-    expect(result.message).toContain('ENOTFOUND')
+    expect(result.message).toBe('Deploy dispatch request failed.')
+    expect(result.message).not.toContain('ENOTFOUND')
   })
 
   it('surfaces the reason in the log line, so a run can be attributed', async () => {

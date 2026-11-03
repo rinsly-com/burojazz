@@ -1,5 +1,7 @@
 import { headers } from 'next/headers'
 
+import { envUrl } from './env'
+
 /**
  * The origin to fetch the Payload API from, for the HTTP-based content helpers
  * (pages.ts, globals.ts) that must stay `next export`-safe.
@@ -17,7 +19,7 @@ import { headers } from 'next/headers'
  */
 export async function apiOrigin(): Promise<string> {
   if (process.env.BUILD_STATIC === 'true') {
-    return process.env.PAYLOAD_API_URL || 'http://localhost:3000'
+    return envUrl('PAYLOAD_API_URL', 'http://localhost:3000')
   }
   const h = await headers()
   const host = h.get('host')

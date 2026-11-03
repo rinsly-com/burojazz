@@ -63,3 +63,6 @@ node_modules/
 
 # graphify knowledge graph (local navigation aid; regenerate with `graphify update .`)
 /graphify-out/
+
+# one-off Lighthouse dumps (not used by the app)
+/lighthouse-out/

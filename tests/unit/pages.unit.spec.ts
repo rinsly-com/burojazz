@@ -41,7 +41,7 @@ const respondWith = (...bodies: ({ docs: Page[] } | 'error')[]) => {
   vi.stubGlobal(
     'fetch',
     vi.fn(async (url: string) => {
-      queries.push(String(url).split('/api/pages?')[1] ?? String(url))
+      queries.push(url.split('/api/pages?')[1] ?? url)
       const body = bodies[call++]
       if (body === 'error') return { ok: false, status: 500 } as unknown as Response
       return { ok: true, json: async () => body } as unknown as Response
@@ -200,6 +200,19 @@ describe('production static build', () => {
     const { getRenderablePages } = await loadPages('build')
 
     expect(await getRenderablePages()).toEqual([])
+  })
+
+  it('skips a bad row and still returns the other pages', async () => {
+    // REGRESSION: a null document in the pages list used to throw while the
+    // index rendered, so one bad row 500'd every page.
+    respondWith({
+      docs: [page('home'), null as unknown as ReturnType<typeof page>, page('contact')],
+    })
+
+    const { getRenderablePages } = await loadPages('preview')
+    const slugs = (await getRenderablePages()).map((p) => p.slug).sort()
+
+    expect(slugs).toEqual(['contact', 'home'])
   })
 
   it('degrades to an empty list when the API is unreachable', async () => {

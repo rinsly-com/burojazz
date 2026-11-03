@@ -16,7 +16,7 @@
  * emit it, so an old link keeps working and the id is never duplicated.
  */
 
-export function contentAnchorId(anchor?: string | null): string {
+function contentAnchorId(anchor?: string | null): string {
   return anchor?.trim().replace(/^#+/, '') ?? ''
 }
 

@@ -7,6 +7,8 @@ import {
   VORM_VAN_HULP_OPTIONS,
   labelFor,
 } from './aanmeldingOptions'
+import { envEmail, envText } from './env'
+import { LogCode, logCode } from './logCode'
 
 /**
  * Email for the Buro J.A.Z.Z. site, delivered through Cloudflare Email Routing.
@@ -25,9 +27,9 @@ import {
  * instead of sent — production (accp) sends for real.
  */
 
-export const EMAIL_FROM = process.env.EMAIL_FROM_ADDRESS || 'aanmelden@burojazz.com'
-export const EMAIL_FROM_NAME = process.env.EMAIL_FROM_NAME || 'Buro J.A.Z.Z. website'
-export const EMAIL_TO = process.env.AANMELDING_NOTIFY_TO || 'aanmeldingen@burojazz.com'
+const EMAIL_FROM = envEmail('EMAIL_FROM_ADDRESS', 'aanmelden@burojazz.com')
+const EMAIL_FROM_NAME = envText('EMAIL_FROM_NAME', 'Buro J.A.Z.Z. website')
+const EMAIL_TO = envEmail('AANMELDING_NOTIFY_TO', 'aanmeldingen@burojazz.com')
 
 /**
  * From address for the confirmation sent back to the submitter. Unlike the team
@@ -35,8 +37,10 @@ export const EMAIL_TO = process.env.AANMELDING_NOTIFY_TO || 'aanmeldingen@buroja
  * referrer, so it must send FROM a domain onboarded onto Cloudflare Email
  * Sending — see the AANMELDING_CONFIRM_EMAIL binding in wrangler.jsonc.
  */
-export const EMAIL_CONFIRM_FROM =
-  process.env.EMAIL_CONFIRM_FROM_ADDRESS || 'aanmelding@noreply.burojazz.com'
+const EMAIL_CONFIRM_FROM = envEmail(
+  'EMAIL_CONFIRM_FROM_ADDRESS',
+  'aanmelding@noreply.burojazz.com',
+)
 
 /** `send_email` binding names (see wrangler.jsonc). */
 const NOTIFY_BINDING = 'AANMELDING_EMAIL'
@@ -55,8 +59,18 @@ async function getEmailBinding(name: string): Promise<SendEmailBinding | null> {
       ? (binding as SendEmailBinding)
       : null
   } catch {
+    logCode('warn', LogCode.EMAIL_BINDING_UNAVAILABLE, { binding: name })
     return null
   }
+}
+
+function firstString(value: unknown): string | undefined {
+  if (typeof value === 'string' && value !== '') return value
+  if (!Array.isArray(value)) return undefined
+  for (const item of value) {
+    if (typeof item === 'string' && item !== '') return item
+  }
+  return undefined
 }
 
 /** Build a raw MIME message and hand it to the Cloudflare Email Routing binding. */
@@ -69,25 +83,40 @@ async function sendViaCloudflare(
   // it. The specifier is assembled at runtime (underscore stripped) so no bundler
   // can constant-fold it to a literal and attempt resolution — same guard style as
   // the sharp/wrangler imports in payload.config.ts.
+  const emailSpecifier = 'cloudflare:_email'.replaceAll('_', '')
   const { EmailMessage } = (await import(
-    /* webpackIgnore: true */ `${'cloudflare:_email'.replaceAll('_', '')}`
+    /* webpackIgnore: true */ emailSpecifier
   )) as { EmailMessage: new (from: string, to: string, raw: string) => unknown }
   const { createMimeMessage, Mailbox } = await import('mimetext')
 
-  const to = String(Array.isArray(message.to) ? message.to[0] : (message.to ?? EMAIL_TO))
-  const from = String(message.from ?? `${EMAIL_FROM_NAME} <${EMAIL_FROM}>`)
+  // SendEmailOptions pulls `to` / `subject` from nodemailer. When that module
+  // is unresolved the fields are an error type; read them as unknown instead.
+  const fields = message as {
+    to?: unknown
+    from?: unknown
+    subject?: unknown
+    text?: unknown
+    html?: unknown
+    replyTo?: unknown
+  }
+  const to = firstString(fields.to) ?? EMAIL_TO
+  const from = typeof fields.from === 'string' && fields.from !== '' ? fields.from : `${EMAIL_FROM_NAME} <${EMAIL_FROM}>`
   const fromAddr = from.match(/<([^>]+)>/)?.[1] ?? from
+  const subject = typeof fields.subject === 'string' ? fields.subject : ''
+  const text = typeof fields.text === 'string' ? fields.text : undefined
+  const html = typeof fields.html === 'string' ? fields.html : undefined
+  const replyTo = typeof fields.replyTo === 'string' ? fields.replyTo : undefined
 
   const mime = createMimeMessage()
   mime.setSender({ name: EMAIL_FROM_NAME, addr: fromAddr })
   mime.setRecipient(to)
-  mime.setSubject(message.subject ?? '')
+  mime.setSubject(subject)
   // Reply-To must be a Mailbox instance — mimetext's address-header validator
   // rejects a plain string/object outright ("header value is invalid").
-  if (message.replyTo) mime.setHeader('Reply-To', new Mailbox(String(message.replyTo)))
-  if (message.text) mime.addMessage({ contentType: 'text/plain', data: String(message.text) })
-  if (message.html) mime.addMessage({ contentType: 'text/html', data: String(message.html) })
-  if (!message.text && !message.html) {
+  if (replyTo) mime.setHeader('Reply-To', new Mailbox(replyTo))
+  if (text) mime.addMessage({ contentType: 'text/plain', data: text })
+  if (html) mime.addMessage({ contentType: 'text/html', data: html })
+  if (!text && !html) {
     mime.addMessage({ contentType: 'text/plain', data: '' })
   }
 
@@ -106,8 +135,6 @@ export const cloudflareEmailAdapter: EmailAdapter = ({ payload }) => ({
     if (!binding) {
       payload.logger.info({
         msg: '[email] no Email Sending binding (dev/CLI) — logging instead of sending',
-        to: message.to,
-        subject: message.subject,
       })
       return
     }
@@ -122,8 +149,16 @@ export const cloudflareEmailAdapter: EmailAdapter = ({ payload }) => ({
 // Aanmelding notification
 // ---------------------------------------------------------------------------
 
+/** Strings and finite scalars only. Objects become '' so a row cannot render as "[object Object]". */
+function textOf(value: unknown): string {
+  if (typeof value === 'string') return value
+  if (typeof value === 'number' && Number.isFinite(value)) return String(value)
+  if (typeof value === 'boolean') return value ? 'true' : 'false'
+  return ''
+}
+
 const esc = (v: unknown): string =>
-  String(v ?? '')
+  textOf(v)
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
@@ -133,12 +168,12 @@ const nl2 = (v: unknown): string => esc(v).replace(/\n/g, '<br>')
 type AanmeldingDoc = Record<string, unknown> & { id: string | number }
 
 /** Turn a stored aanmelding into { subject, text, html } for the team email. */
-export function buildAanmeldingEmail(doc: AanmeldingDoc): {
+function buildAanmeldingEmail(doc: AanmeldingDoc): {
   subject: string
   text: string
   html: string
 } {
-  const g = (k: string) => (doc[k] == null ? '' : String(doc[k]))
+  const g = (k: string) => textOf(doc[k])
   const arr = (k: string) => (Array.isArray(doc[k]) ? (doc[k] as string[]) : [])
 
   const problematiek = arr('problematiek').map((v) => labelFor(PROBLEMATIEK_OPTIONS, v))
@@ -148,7 +183,7 @@ export function buildAanmeldingEmail(doc: AanmeldingDoc): {
 
   const siblings = (Array.isArray(doc.siblings) ? doc.siblings : []) as Record<string, unknown>[]
   const siblingLines = siblings
-    .map((s) => `${s.leeftijd ?? ''} — ${labelFor(SIBLING_TYPE_OPTIONS, String(s.type ?? ''))}`.trim())
+    .map((s) => `${textOf(s.leeftijd)} — ${labelFor(SIBLING_TYPE_OPTIONS, textOf(s.type))}`.trim())
     .filter((l) => l !== '—')
 
   const subject = `Nieuwe aanmelding — ${g('clientNaam') || 'onbekend'}`
@@ -218,7 +253,7 @@ export async function sendAanmeldingNotification({
   doc: AanmeldingDoc
 }): Promise<void> {
   const { subject, text, html } = buildAanmeldingEmail(doc)
-  const replyTo = doc.verwijzerEmail ? String(doc.verwijzerEmail) : undefined
+  const replyTo = textOf(doc.verwijzerEmail).trim() || undefined
   // Team inbox stays on Email Routing (verified destination), not Payload's
   // Sending adapter used for auth / arbitrary recipients.
   const binding = await getEmailBinding(NOTIFY_BINDING)
@@ -249,7 +284,7 @@ export async function sendAanmeldingNotification({
  * Deliberately minimal — it must NOT echo the sensitive intake data (health,
  * DSM, reason) back over email; it only acknowledges receipt.
  */
-export function buildAanmeldingConfirmation(
+function buildAanmeldingConfirmation(
   doc: AanmeldingDoc,
   /** Optional staff message from the CMS (aanmelding-instellingen global). */
   extraMessage = '',
@@ -258,8 +293,8 @@ export function buildAanmeldingConfirmation(
   text: string
   html: string
 } {
-  const naam = String(doc.verwijzerNaam ?? '').trim()
-  const client = String(doc.clientNaam ?? '').trim()
+  const naam = textOf(doc.verwijzerNaam).trim()
+  const client = textOf(doc.clientNaam).trim()
   const greeting = naam ? `Beste ${naam},` : 'Beste,'
   const voor = client ? ` voor ${client}` : ''
   const subject = 'Bevestiging van uw aanmelding — Buro J.A.Z.Z.'
@@ -303,7 +338,7 @@ export async function sendAanmeldingConfirmation({
   payload: Payload
   doc: AanmeldingDoc
 }): Promise<void> {
-  const to = doc.verwijzerEmail ? String(doc.verwijzerEmail).trim() : ''
+  const to = textOf(doc.verwijzerEmail).trim()
   if (!to) return
 
   // Optional staff message from the CMS. Best-effort: if the global/table is not
@@ -318,11 +353,8 @@ export async function sendAanmeldingConfirmation({
     if (settings && typeof settings.bevestigingBericht === 'string') {
       extraMessage = settings.bevestigingBericht
     }
-  } catch (err) {
-    payload.logger.warn({
-      msg: '[email] could not read aanmelding-instellingen global',
-      err: err instanceof Error ? err.message : String(err),
-    })
+  } catch {
+    logCode('warn', LogCode.EMAIL_SETTINGS_READ_FAILED, undefined, payload.logger)
   }
 
   const binding = await getEmailBinding(CONFIRM_BINDING)

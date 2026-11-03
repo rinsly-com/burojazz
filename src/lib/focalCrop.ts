@@ -33,7 +33,7 @@
  */
 export const MIN_PAN = 0.2
 
-export type FocalCropInput = {
+type FocalCropInput = {
   /** The visible window's width / height. */
   boxAspect: number
   /** The image's intrinsic width / height. */
@@ -45,7 +45,7 @@ export type FocalCropInput = {
   minPan?: number
 }
 
-export type FocalCrop = {
+type FocalCrop = {
   /** Image width as a multiple of the box width (1 = exactly the box). */
   widthRatio: number
   /** Image height as a multiple of the box height. */
@@ -68,7 +68,7 @@ const usable = (n: number) => Number.isFinite(n) && n > 0
  */
 export const clampFocal = (value: number | null | undefined) => {
   if (value === null || value === undefined) return 50
-  const n = Number(value)
+  const n = value
   return Number.isFinite(n) ? Math.min(100, Math.max(0, n)) : 50
 }
 

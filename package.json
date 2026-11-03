@@ -37,9 +37,8 @@
     "@payloadcms/plugin-seo": "3.90.2",
     "@payloadcms/richtext-lexical": "3.90.2",
     "@payloadcms/storage-r2": "3.90.2",
-    "@payloadcms/translations": "3.90.2",
     "@payloadcms/ui": "3.90.2",
-    "@rinsly-com/site-core": "0.26.4",
+    "@rinsly-com/site-core": "0.26.7",
     "@rinsly-com/ui": "0.3.1",
     "@tabler/icons-react": "^3.44.0",
     "cross-env": "^7.0.3",
@@ -51,7 +50,8 @@
     "payload": "3.90.2",
     "react": "19.2.6",
     "react-dom": "19.2.6",
-    "sharp": "0.35.5"
+    "sharp": "0.35.5",
+    "zod": "4.6.7"
   },
   "devDependencies": {
     "@playwright/test": "1.58.2",
@@ -69,6 +69,7 @@
     "tailwindcss": "^4.3.2",
     "tsx": "4.22.4",
     "typescript": "5.7.3",
+    "typescript-eslint": "8.63.0",
     "vite-tsconfig-paths": "6.0.5",
     "vitest": "4.1.11",
     "wrangler": "^4.154.0"
